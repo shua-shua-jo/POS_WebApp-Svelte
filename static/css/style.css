@@ -1,0 +1,22 @@
+* {
+	font-family: 'Montserrat', sans-serif;
+	text-decoration: none;
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background-color: #fafafa;
+	min-height: 100%;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+}
+
+.nav-active {
+	font-weight: 600 !important;
+	text-decoration: underline;
+	text-underline-offset: 0.3em;
+}
