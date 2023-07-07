@@ -3,7 +3,7 @@
 	let name = 'Joshua';
 	let emailadd = '';
 	async function email() {
-		const response = await fetch('/emails/hello', {
+		const response = await fetch('../api/email', {
 			method: 'POST',
 			body: JSON.stringify({ name }),
 			headers: {
@@ -15,3 +15,5 @@
 			.catch((err) => console.log(err));
 	}
 </script>
+
+<button on:click={email}>Email</button>

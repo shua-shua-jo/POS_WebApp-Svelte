@@ -1,32 +1,73 @@
 <script>
+	import { onMount } from 'svelte';
+	import list_style from '$lib/images/icons/list-style.svg';
+
+	onMount(() => {
+		document.querySelector(':root').style.setProperty('--listStyle', 'url(' + list_style + ')');
+		document.querySelectorAll('.tab-label').forEach((el) => {
+			el.addEventListener('click', getTop);
+		});
+	});
+
+	// expands all tabs
 	function expand_all() {
 		const checkbox = document.querySelectorAll("input[type='checkbox']");
-		for (var i = 0; i < checkbox.length; i++) {
+		for (var i = 0, n = checkbox.length; i < n; i++) {
 			checkbox[i].checked = true;
 		}
 	}
 
+	// collapses all tabs
 	function collapse_all() {
 		const checkbox = document.querySelectorAll("input[type='checkbox']");
-		for (var i = 0; i < checkbox.length; i++) {
+		for (var i = 0, n = checkbox.length; i < n; i++) {
 			checkbox[i].checked = false;
 		}
 	}
 
+	// scroll to element
 	let top = 0;
 	function getTop(event) {
-		console.log(event);
-		top = event.y;
-		console.log(top);
+		top = event.pageY;
 	}
+
+	// scroll to top
+	let hidden = true;
+
+	const goStart = () => {
+		document.body.scrollIntoView();
+	};
+
+	const scrollElement = () => {
+		return document.documentElement || document.body;
+	};
+
+	const handleScrollToTop = () => {
+		if (scrollElement().scrollTop > 200) {
+			hidden = false;
+		} else {
+			hidden = true;
+		}
+	};
+
+	// fetch data queries
+	export let data;
 </script>
 
-<svelte:window bind:scrollY={top} />
+<svelte:window bind:scrollY={top} on:scroll={handleScrollToTop} />
 <svelte:head>
 	<title>UP2GO: FAQs</title>
 </svelte:head>
 
 <section>
+	<button class="back_to_start" on:click={goStart} class:hidden
+		><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+			><path
+				d="M12 22c5.514 0 10-4.486 10-10S17.514 2 12 2S2 6.486 2 12s4.486 10 10 10zm0-15l5 5h-4v5h-2v-5H7l5-5z"
+				fill="currentColor"
+			/></svg
+		></button
+	>
 	<div class="faq-title">FREQUENTLY ASKED QUESTIONS</div>
 	<div class="buttons">
 		<button class="expand" on:click={expand_all}
@@ -47,58 +88,58 @@
 		>
 	</div>
 	<div class="tabs">
-		<div class="tab">
-			<input type="checkbox" id="chck1" />
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-			<label class="tab-label" for="chck1" on:click={getTop}
-				>Requirements for the release of Honorable Dismissal</label
-			>
-			<div class="tab-content">
-				<ul role="list">
-					<li>
-						<b>Letter from parents (not guardian) stating the reason for HD addressed to: </b>
-						<ul>
+		{#each data.faqs as faq, i}
+			<div class="tab">
+				<input type="checkbox" id="chck{i}" />
+				<label class="tab-label" for="chck{i}">{faq.label}</label>
+				<div class="tab-content">
+					<ul role="list">
+						{#each faq.contents as content}
 							<li>
-								<p>THE UNIVERSITY REGISTRAR</p>
-								<p>Office of the University Registrar</p>
-								<p>University of the Philippines Baguio</p>
-								<p>Baguio City, 2600</p>
+								{@html content}
 							</li>
-						</ul>
-					</li>
-					<li><b>Latest University Clearance </b></li>
-					<li>
-						<b>Exit counseling from the Office of Counseling and Guidance </b>
-					</li>
-					<li><b>Official Transcript of Records (if applicable)</b></li>
-					<li><b>Proof of payments for:</b></li>
-					<ul>
-						<li><i> Honorable Dismissal: </i> ₱20.00/copy</li>
-						<li><i> Certificate of No Disciplinary Case: </i> ₱50.00/copy</li>
-						<li><i> True Copy of Grades: </i> ₱50.00/copy</li>
-						<li><i> Official Transcript of Records (OTR): </i> ₱50.00/copy</li>
-						<li><i>Certified True Copy of OTR: </i> ₱50.00/copy (if applicable)</li>
+						{/each}
 					</ul>
-				</ul>
+				</div>
 			</div>
-		</div>
-		<div class="tab">
-			<input type="checkbox" id="chck2" />
-			<label class="tab-label" for="chck2">Item 2</label>
-			<div class="tab-content">Lorem ipsum dolor sit amet consectetur adipisicing elit. A, in!</div>
-		</div>
+		{/each}
 	</div>
 </section>
 
 <style>
+	:root {
+		--listStyle: '';
+	}
+	.back_to_start {
+		opacity: 1;
+		transition: opacity 0.3s ease-in, visibility 0.3s ease-in;
+		position: fixed;
+		z-index: 99;
+		right: 20px;
+		user-select: none;
+		bottom: 20px;
+		border-radius: 50%;
+		outline: none;
+		border: none;
+		cursor: pointer;
+		color: #850038;
+		display: flex;
+		vertical-align: middle;
+	}
+	.back_to_start:hover {
+		color: #a10043;
+	}
+	.back_to_start.hidden {
+		opacity: 0;
+		visibility: hidden;
+	}
 	section {
 		display: block;
 		margin-top: 5em;
 		margin-left: auto;
 		margin-right: auto;
 		width: 75%;
+		height: 100vh;
 	}
 	input {
 		position: absolute;
@@ -139,15 +180,13 @@
 		outline: black double 2px;
 	}
 	/* Accordion styles */
-	.tabs {
-		border-radius: 8px;
-		overflow: hidden;
-		box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.5);
-	}
 	.tab {
 		width: 100%;
+		border-radius: 8px;
+		padding-top: 1em;
 		color: #850038;
 		overflow: hidden;
+		box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.5);
 	}
 	.tab-label {
 		display: flex;
@@ -156,8 +195,9 @@
 		background: #fff;
 		font-weight: bold;
 		cursor: pointer;
-		/* Icon */
+		text-transform: uppercase;
 	}
+	/* Icon */
 	.tab-label:hover {
 		background: #dfdfdf;
 	}
@@ -173,7 +213,7 @@
 		max-height: 0;
 		padding: 0 1em;
 		color: #2c3e50;
-		background: white;
+		background: #ebebeb;
 		transition: all 0.35s;
 	}
 	input:checked + .tab-label {
@@ -188,11 +228,17 @@
 		padding: 1em;
 	}
 	.tab-content ul {
-		list-style-type: disc;
+		list-style: none;
 		padding: 10px;
 	}
-	.tab-content ul ul {
-		list-style-type: none;
-		padding: 10px 15px;
+	.tab-content > ul > li::before {
+		content: '';
+		display: inline-block;
+		background-image: var(--listStyle);
+		background-size: contain;
+		background-repeat: no-repeat;
+		height: 1em;
+		width: 1em;
+		translate: 0px 2px;
 	}
 </style>
