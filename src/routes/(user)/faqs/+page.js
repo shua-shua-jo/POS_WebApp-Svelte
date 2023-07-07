@@ -4,8 +4,8 @@ import { queries } from './queries.js';
 export function load() {
 	return {
 		faqs: queries.map((faq) => ({
-			label: faq.label,
-			contents: faq.contents
+			label: faq.label ? faq.label : 'Label Missing',
+			contents: faq.contents ? faq.contents : 'Content Missing'
 		}))
 	};
 }

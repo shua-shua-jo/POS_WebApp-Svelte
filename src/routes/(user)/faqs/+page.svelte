@@ -61,7 +61,7 @@
 
 <section>
 	<button class="back_to_start" on:click={goStart} class:hidden
-		><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+		><svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24"
 			><path
 				d="M12 22c5.514 0 10-4.486 10-10S17.514 2 12 2S2 6.486 2 12s4.486 10 10 10zm0-15l5 5h-4v5h-2v-5H7l5-5z"
 				fill="currentColor"
@@ -112,22 +112,26 @@
 	}
 	.back_to_start {
 		opacity: 1;
-		transition: opacity 0.3s ease-in, visibility 0.3s ease-in;
 		position: fixed;
 		z-index: 99;
-		right: 20px;
+		right: 5%;
 		user-select: none;
-		bottom: 20px;
+		bottom: 15%;
 		border-radius: 50%;
 		outline: none;
 		border: none;
 		cursor: pointer;
-		color: #850038;
+		background-color: transparent;
+		color: rgba(0, 0, 0, 0.3);
 		display: flex;
 		vertical-align: middle;
+		-webkit-animation: bounce 2s infinite;
+		animation: bounce 2s infinite;
+		transition: opacity 0.3s ease-in, visibility 0.3s ease-in, color 0.3s ease-in-out;
 	}
 	.back_to_start:hover {
-		color: #a10043;
+		color: #850038;
+		animation: none;
 	}
 	.back_to_start.hidden {
 		opacity: 0;
@@ -206,7 +210,7 @@
 		width: 1em;
 		height: 1em;
 		text-align: center;
-		transition: all 0.35s;
+		transition: all 0.3s;
 	}
 	.tab-content {
 		pointer-events: none;
@@ -214,7 +218,7 @@
 		padding: 0 1em;
 		color: #2c3e50;
 		background: #ebebeb;
-		transition: all 0.35s;
+		transition: all 0.3s;
 	}
 	input:checked + .tab-label {
 		background: #850038;
@@ -240,5 +244,38 @@
 		height: 1em;
 		width: 1em;
 		translate: 0px 2px;
+	}
+
+	/* animations */
+	@-webkit-keyframes bounce {
+		0%,
+		20%,
+		50%,
+		80%,
+		100% {
+			transform: translateY(0);
+		}
+		40% {
+			transform: translateY(-20px);
+		}
+		60% {
+			transform: translateY(-10px);
+		}
+	}
+
+	@keyframes bounce {
+		0%,
+		20%,
+		50%,
+		80%,
+		100% {
+			transform: translateY(0);
+		}
+		40% {
+			transform: translateY(-20px);
+		}
+		60% {
+			transform: translateY(-10px);
+		}
 	}
 </style>

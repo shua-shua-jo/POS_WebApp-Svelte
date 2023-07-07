@@ -26,10 +26,15 @@
 		</div>
 		<h2 class="login-title">ADMIN LOGIN</h2>
 		<p class="notice">Please login to access the system</p>
-		<form class="form-login" action="/login" method="POST">
+		<form class="form-login" method="POST">
 			<label for="email">Email</label>
 			<div class="input-email">
-				<i class="bx bxs-envelope icon" />
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+					><path
+						d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.7l-8 5.334L4 8.7V6.297l8 5.333l8-5.333V8.7z"
+						fill="#850038"
+					/></svg
+				>
 				<input
 					class="admin_email"
 					type="email"
@@ -41,7 +46,12 @@
 			</div>
 			<label for="password">Password</label>
 			<div class="input-password">
-				<i class="bx bxs-lock icon" />
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+					><path
+						fill="#850038"
+						d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7zm4 10.723V20h-2v-2.277a1.993 1.993 0 0 1 .567-3.677A2.001 2.001 0 0 1 14 16a1.99 1.99 0 0 1-1 1.723z"
+					/></svg
+				>
 				<input
 					class="admin_password"
 					type="password"
@@ -51,8 +61,15 @@
 					required
 				/>
 			</div>
-			<div class="checkbox" />
-			<button type="submit"><i class="fas fa-door-open" /> LOGIN</button>
+			<button class="login-button" type="submit"
+				><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+					><path
+						d="M18.5 2h-13a.5.5 0 0 0-.5.5V11h6V8l5 4l-5 4v-3H5v8.5a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-19a.5.5 0 0 0-.5-.5z"
+						fill="#fff"
+					/></svg
+				>
+				<div>LOGIN</div></button
+			>
 		</form>
 		<div class="login-uplogo">
 			<img src={uplogo} alt="UP Logo" />
@@ -70,6 +87,19 @@
 </section>
 
 <style>
+	@media screen and (width < 1228.80px) {
+		.background {
+			display: none !important;
+		}
+	}
+	img {
+		-webkit-user-drag: none;
+		user-select: none;
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+
 	.login-page {
 		display: flex;
 		justify-content: center;
@@ -146,7 +176,13 @@
 		justify-content: center;
 		align-items: center;
 	}
-
+	.login-button {
+		display: flex !important;
+		flex-direction: row !important;
+		align-items: center !important;
+		justify-content: center !important;
+		gap: 1em;
+	}
 	.form-login {
 		display: flex;
 		flex-wrap: wrap;
@@ -171,23 +207,12 @@
 		margin: 4px 0 8px 0;
 		padding: 10px;
 		display: flex;
-	}
-
-	.input-email,
-	.input-password i {
-		font-size: 20px;
-	}
-
-	.icon {
-		padding: 4px;
-		color: #850038;
-		min-width: 40px;
-		text-align: center;
+		align-items: center;
+		justify-content: space-evenly;
 	}
 
 	.admin_email,
 	.admin_password {
-		width: 100%;
 		border: 0;
 		background: none;
 		font-size: 16px;
@@ -226,7 +251,6 @@
 		justify-content: flex-end;
 		align-content: center;
 		flex-direction: row;
-		transition: 2s ease;
 	}
 
 	.background .login-line-container {

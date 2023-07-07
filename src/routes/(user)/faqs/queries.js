@@ -46,7 +46,7 @@ export const queries = [
 	{
 		label: 'Instructions for Requesting True Copy of Grade (TCG)',
 		contents: [
-			'<b style="padding-left: 5px">Please pay ₱50.00 per copy</b>',
+			'<b style="padding-left: 5px">Please pay Php 50.00 per copy</b>',
 			'<b style="padding-left: 5px">Indicate your preferred format (e-copy or hard copy), choose one only.</b>',
 			'<b style="padding-left: 5px"><em>NOTE: Processing time for TCG is a minimum of 4 working days</em></b>'
 		]
@@ -54,8 +54,20 @@ export const queries = [
 	{
 		label: 'Instructions for Requesting Certificate of Enrollment',
 		contents: [
-			'<b style="padding-left: 5px">Send/Upload your duly signed Form 5</b><i>(sign under pledge and assent and indicate the date of signing)</i>',
-			'<b style="padding-left: 5px">Please pay ₱50.00/copy</b>'
+			'<b style="padding-left: 5px">Send/Upload your duly signed Form 5 </b><i>(sign under pledge and assent and indicate the date of signing)</i>',
+			'<b style="padding-left: 5px">Please pay Php 50.00/copy</b>'
+		]
+	},
+	{
+		label: 'Instructions for Requesting Various Certifications',
+		contents: [
+			'<b style="padding-left: 5px">Please pay Php 50.00 each of the documents:</b><ul style="list-style: none; padding: 10px 20px;"><li><p>Certificate of Graduation</p><p>Certificate of Disciplinary Action</p><p>Certificate of No Contract</p><p>Certificate of Units Earned</p><p>Certificate of Medium of Instruction</p><p>Certificate of Grade Equivalence</p><p>Certificate of Non-Issuance of Honorable Dismissal for Graduates</p><p>Certificate of Non-Issuance of S.O. Number</p></li></ul>'
+		]
+	},
+	{
+		label: 'List of the Certifications that does not require payment (Purpose: For Scholarship )',
+		contents: [
+			'<b style="padding-left: 5px">Here is the list of certifications that do not require payment:</b><ul style="list-style: none; padding: 10px 20px;"><li><strong>Certificate of Enrollment</strong><p>&emsp; Send/Upload your duly signed Form 5 <i>(sign under pledge and assent and indicate the date of signing)</i></p></li><br /><li><strong>Certificate of No Disciplinary Action</strong></li><br /><li><strong>True Copy of Grades</strong><p>&emsp; Indicate your preferred format (e-copy or hard copy), choose one only.</p><p>&emsp; <b>NOTE:</b> Processing time for TCG is a minimum of 4 working days.</p></li><br /><li><strong>Certificate of Non-Issuance of ID</strong><p>&emsp; Send/Upload your duly signed Form 5 <i>(sign under pledge and assent and indicate the date of signing) </i></p></li></ul>'
 		]
 	}
 ];

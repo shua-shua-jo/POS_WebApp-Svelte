@@ -45,18 +45,7 @@
 </section>
 
 <style>
-	:global(body) {
-		overflow-x: hidden;
-		overflow-y: hidden;
-	}
-
-	@media (width <= 1396px) {
-		:global(body) {
-			overflow-x: auto;
-			overflow-y: auto;
-		}
-	}
-	@media (width <= 605px) {
+	@media screen and (width <= 605px) {
 		.contact-section {
 			background-image: none !important;
 		}
@@ -66,7 +55,7 @@
 		background-position: left;
 		background-size: 60%;
 		background-color: #fdfdfd;
-		height: 100vh;
+		height: calc(100vh - 73.8px);
 	}
 
 	.contact-container {
