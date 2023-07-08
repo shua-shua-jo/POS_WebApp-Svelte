@@ -1,11 +1,5 @@
 <script>
 	import bg_upb from '$lib/images/bg/bg-upb.webp';
-
-	import { onMount } from 'svelte';
-
-	onMount(() => {
-		document.querySelector('.oblePic').style.backgroundImage = 'url(' + bg_upb + ')';
-	});
 </script>
 
 <svelte:head>
@@ -13,14 +7,16 @@
 </svelte:head>
 
 <section class="abt-container">
-	<div class="oblePic" />
+	<div class="oblePic">
+		<img src={bg_upb} alt="UPB Oble Background" />
+	</div>
 
 	<div class="abt-title">
 		<h1>OFFICE OF THE UNIVERSITY REGISTRAR</h1>
 	</div>
 
-	<div class="abt-line-container">
-		<div class="abt-line" />
+	<div class="line-container">
+		<div class="line" />
 	</div>
 
 	<div class="abt-content">
@@ -39,32 +35,29 @@
 
 <style>
 	.abt-container {
-		width: 100%;
-		height: 100%;
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr 1fr 1fr 1fr;
 		background-color: #fafafa;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+		height: calc(100vh - 73.8px);
 	}
 
 	.oblePic {
+		/* display: block; */
 		width: 100%;
 		height: 420px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background-size: cover;
-		background-position-y: 40%;
-		background-repeat: no-repeat;
+		overflow: hidden;
+	}
+
+	.oblePic > img {
+		width: inherit;
+		height: inherit;
+		object-fit: cover;
+		object-position: right 45%;
 	}
 
 	.abt-container .abt-title {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		text-align: center;
 	}
 
 	.abt-container .abt-title h1 {
@@ -75,30 +68,6 @@
 		margin-top: 40px;
 	}
 
-	.abt-container .abt-line-container {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.abt-container .abt-line-container .abt-line {
-		width: 180px;
-		height: 0px;
-		background-color: #850038;
-		border: 3px solid #850038;
-		margin: 10px 0px 20px 0px;
-	}
-
-	.abt-container .abt-content {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
 	.abt-container .abt-content p {
 		font-size: 14px;
 		font-weight: 500;
@@ -106,7 +75,6 @@
 		text-align: center;
 		line-height: 22px;
 		padding: 0 100px;
-		margin-top: 10px;
 		margin-bottom: 20px;
 	}
 </style>

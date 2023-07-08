@@ -63,13 +63,6 @@
 </div>
 
 <style>
-	img {
-		-webkit-user-drag: none;
-		user-select: none;
-		-moz-user-select: none;
-		-webkit-user-select: none;
-		-ms-user-select: none;
-	}
 	.start-page {
 		display: flex;
 		justify-content: center;

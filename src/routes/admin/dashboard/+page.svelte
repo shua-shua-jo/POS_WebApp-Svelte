@@ -16,4 +16,5 @@
 	}
 </script>
 
+<div class="dashboard">Dashboard</div>
 <button on:click={email}>Email</button>

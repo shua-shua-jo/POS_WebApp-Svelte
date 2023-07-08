@@ -1,11 +1,10 @@
-<!-- <script>
+<script>
 	import up2go_white from '$lib/images/logos/up2go-white.png';
 	import { afterUpdate } from 'svelte';
 
 	afterUpdate(() => {
 		document.querySelectorAll('.nav-link').forEach((link) => {
 			if (link.href === window.location.href) {
-				console.log(link.href);
 				link.classList.add('nav-active');
 				link.setAttribute('aria-current', 'page');
 			} else {
@@ -30,7 +29,7 @@
 					<a class="nav-link" href="/">Home</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/manual">Manual</a>
+					<a class="nav-link" href="/admin/dashboard">Dashboard</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/about">About Us</a>
@@ -44,7 +43,7 @@
 			</ul>
 		</div>
 		<div class="nav-request">
-			<a class="nav-link-req" href="/request_forms"
+			<a class="nav-link-req" href="/request_forms" data-sveltekit-reload
 				><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
 					><path
 						fill="#850038"
@@ -69,7 +68,6 @@
 		text-align: center;
 		text-transform: uppercase;
 	}
-
 	/*  */
 
 	.container {
@@ -118,10 +116,14 @@
 	.nav-link-req:hover {
 		background-color: #dfdfdf;
 	}
+	.nav-link-req:focus {
+		scale: 0.98;
+		background-color: #cfcfcf;
+	}
 	.nav-link-req * {
 		padding: 0px 5px;
 	}
 	ul {
 		list-style: none;
 	}
-</style> -->
+</style>

@@ -2,11 +2,6 @@
 	import email_icn from '$lib/images/icons/email.png';
 	import phone_icn from '$lib/images/icons/phone.png';
 	import bg_upb from '$lib/images/bg/bg-upb2.jpg';
-	import { onMount } from 'svelte';
-
-	onMount(() => {
-		document.querySelector('.contact-section').style.backgroundImage = 'url(' + bg_upb + ')';
-	});
 </script>
 
 <svelte:head>
@@ -14,13 +9,12 @@
 </svelte:head>
 
 <section class="contact-section">
+	<img src={bg_upb} alt="UP Baguio Court A" />
 	<div class="contact-container">
 		<div class="contact-title">
 			<h1>CONTACT US</h1>
 		</div>
-		<div class="contact-line-container">
-			<div class="contact-line" />
-		</div>
+		<div class="line" />
 		<div class="contact-content">
 			<h1>Office of the University Registrar</h1>
 			<p>
@@ -46,43 +40,32 @@
 
 <style>
 	@media screen and (width <= 605px) {
-		.contact-section {
-			background-image: none !important;
-		}
 	}
 	.contact-section {
-		background-repeat: no-repeat;
-		background-position: left;
-		background-size: 60%;
-		background-color: #fdfdfd;
+		display: grid;
+		width: 100%;
 		height: calc(100vh - 73.8px);
+		overflow: hidden;
+		grid-template-columns: 60% auto;
 	}
-
+	.contact-section > img {
+		width: inherit;
+		height: inherit;
+		object-fit: cover;
+	}
 	.contact-container {
 		display: flex;
 		flex-direction: column;
-		align-items: left;
 		justify-content: center;
 		margin: 70px 0 0 0;
-		width: 40%;
-		float: right;
-		background-color: #fdfdfd;
 		padding: 125px 50px;
 	}
 
 	.contact-container .contact-title h1 {
 		font-size: 30px;
 		font-weight: 800;
-		letter-spacing: 5px;
+		letter-spacing: 2px;
 		color: #000;
-	}
-
-	.contact-container .contact-line-container .contact-line {
-		width: 180px;
-		height: 0px;
-		background-color: #850038;
-		border: 3px solid #850038;
-		margin: 15px 0px 50px 0px;
 	}
 
 	.contact-container .contact-content h1 {

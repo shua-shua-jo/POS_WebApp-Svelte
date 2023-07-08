@@ -2,11 +2,6 @@
 	import up2gologo_colored from '$lib/images/logos/up2go-colored.png';
 	import uplogo from '$lib/images/logos/uplogo.png';
 	import login_bg1 from '$lib/images/bg/login-bg1.jpg';
-	import { onMount } from 'svelte';
-
-	onMount(() => {
-		document.querySelector('.background').style.backgroundImage = 'url(' + login_bg1 + ')';
-	});
 </script>
 
 <section class="login-page">
@@ -76,6 +71,7 @@
 		</div>
 	</div>
 	<div class="background">
+		<img src={login_bg1} alt="Admin Login Background" />
 		<div class="login-line-container">
 			<div class="login-line" />
 		</div>
@@ -92,12 +88,9 @@
 			display: none !important;
 		}
 	}
-	img {
-		-webkit-user-drag: none;
-		user-select: none;
-		-moz-user-select: none;
-		-webkit-user-select: none;
-		-ms-user-select: none;
+	section {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
 	}
 
 	.login-page {
@@ -241,10 +234,7 @@
 
 	.background {
 		width: 70%;
-		padding: 40px;
 		height: 100vh;
-		background-size: cover;
-		background-position-y: 80%;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: flex-end;
@@ -252,13 +242,14 @@
 		align-content: center;
 		flex-direction: row;
 	}
+	.background > img {
+		width: 100%;
+		height: inherit;
+		object-fit: cover;
+	}
 
 	.background .login-line-container {
 		width: 100%;
-		height: 100%;
-		display: flex;
-		align-items: right;
-		justify-content: right;
 	}
 
 	.background .login-line-container .login-line {

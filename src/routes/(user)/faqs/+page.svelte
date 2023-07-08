@@ -69,6 +69,9 @@
 		></button
 	>
 	<div class="faq-title">FREQUENTLY ASKED QUESTIONS</div>
+	<div class="line-container">
+		<div class="line" />
+	</div>
 	<div class="buttons">
 		<button class="expand" on:click={expand_all}
 			><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
@@ -136,6 +139,7 @@
 	.back_to_start.hidden {
 		opacity: 0;
 		visibility: hidden;
+		display: none;
 	}
 	section {
 		display: block;
@@ -154,8 +158,7 @@
 		font-size: 30px;
 		font-weight: 700;
 		line-height: 35px;
-		margin-bottom: 1em;
-		color: #850038;
+		color: black;
 		display: flex;
 		justify-content: center;
 		align-items: center;
