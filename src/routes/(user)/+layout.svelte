@@ -123,6 +123,10 @@
 	.nav-link-req:hover {
 		background-color: #dfdfdf;
 	}
+	.nav-link-req:focus {
+		scale: 0.98;
+		background-color: #cfcfcf;
+	}
 	.nav-link-req * {
 		padding: 0px 5px;
 	}

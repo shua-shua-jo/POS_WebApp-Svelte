@@ -143,7 +143,7 @@
 		margin-left: auto;
 		margin-right: auto;
 		width: 75%;
-		height: 100vh;
+		padding-bottom: 20dvh;
 	}
 	input {
 		position: absolute;
@@ -180,8 +180,16 @@
 		text-transform: uppercase;
 		border-radius: 0.25em;
 	}
-	.buttons button:focus-visible {
-		outline: black double 2px;
+	.buttons button:hover {
+		background-color: rgb(163, 0, 68);
+	}
+	.buttons button:focus-visible:not(:focus) {
+		scale: 1;
+		background-color: rgb(183, 0, 76);
+	}
+	.buttons button:active {
+		scale: 0.98;
+		background-color: #850038;
 	}
 	/* Accordion styles */
 	.tab {
