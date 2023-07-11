@@ -11,36 +11,26 @@ export function titleCase(str) {
 		.trim();
 }
 
-export function checkSnum() {
-	if (this.value.length > this.maxLength) {
-		this.value = this.value.slice(0, this.maxLength);
+export function validateNames(evt) {
+	const forbiddenChars = !/^[a-zA-Z ]*$/g.test(evt.key);
+	if (forbiddenChars) {
+		evt.preventDefault();
 	}
 }
 
-const checkedForms = new Map();
-export let totalPrice = writable(0);
-export let summaryPrices = writable(new Map());
-export function updatePrice() {
-	const checkboxForms = document.querySelectorAll('input.request-forms:checked');
-	function sum() {
-		totalPrice.set(
-			[...checkedForms.values()].reduce((prevPrice, currPrice) => prevPrice + currPrice, 0)
-		);
+export function checkSnum() {
+	if (this.value.length <= this.maxLength) {
+		return;
 	}
-	function pushPrice() {
-		summaryPrices.set(checkedForms);
+	this.value = this.value.slice(0, this.maxLength);
+}
+
+export function validateSnum(evt) {
+	const forbiddenChars = ['.', '-', '+', 'e', 'E'];
+	const inputChar = evt.key;
+	if (forbiddenChars.includes(inputChar)) {
+		evt.preventDefault();
 	}
-	checkboxForms.forEach((el) => {
-		if (el.checked) {
-			checkedForms.set(el.value, parseInt(el.dataset.price));
-			sum();
-			pushPrice();
-		} else {
-			checkedForms.delete(el.value);
-			sum();
-			pushPrice();
-		}
-	});
 }
 
 const base_values = {
@@ -75,6 +65,32 @@ const otr_prices = {
 	Alumni: '210',
 	Graduate: '280'
 };
+
+const checkedForms = new Map();
+export let totalPrice = writable(0);
+export let summaryPrices = writable(new Map());
+export function updatePrice() {
+	const checkboxForms = document.querySelectorAll('input.request-forms');
+	function sum() {
+		totalPrice.set(
+			[...checkedForms.values()].reduce((prevPrice, currPrice) => prevPrice + currPrice, 0)
+		);
+	}
+	function pushPrice() {
+		summaryPrices.set(checkedForms);
+	}
+	checkboxForms.forEach((el) => {
+		if (el.checked) {
+			checkedForms.set(el.value, parseInt(el.dataset.price));
+			sum();
+			pushPrice();
+		} else {
+			checkedForms.delete(el.value);
+			sum();
+			pushPrice();
+		}
+	});
+}
 
 export function handleYearLevel(yearlvl) {
 	const hd = document.querySelector('input[id="Honorable Dismissal"]');
@@ -127,12 +143,17 @@ export function handleChecked(name, evt) {
 	if (evt.checked) {
 		if (name == 'Honorable Dismissal') {
 			sc.disabled = true;
-		} else if (name == 'Course Description') {
+		}
+		if (name == 'Course Description') {
 			opt.disabled = true;
 		}
 	} else {
-		sc.disabled = false;
-		opt.disabled = false;
+		if (name == 'Honorable Dismissal') {
+			sc.disabled = false;
+		}
+		if (name == 'Course Description') {
+			opt.disabled = false;
+		}
 	}
 }
 
@@ -140,3 +161,18 @@ function updateFormPriceLabel(dataVal, newPrice) {
 	const pricelbl = document.querySelector('[data-value="' + dataVal + '"]');
 	pricelbl.textContent = newPrice;
 }
+
+export function handleAtLeastCheckedOne(evt) {
+	evt.preventDefault();
+	const checkboxes = document.querySelectorAll('input.request-forms:checked');
+	const errorMessage = 'At least one form must be selected.';
+	const checkbox = document.querySelector('input.request-forms');
+	if (checkboxes.length == 0) {
+		checkbox.setCustomValidity(errorMessage);
+	} else {
+		checkbox.setCustomValidity('');
+	}
+}
+
+export function handleNextButton() {}
+export function handlePrevButton() {}

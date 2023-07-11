@@ -40,7 +40,7 @@ img {
 .line {
 	width: 180px;
 	height: 0px;
-	background-color: #850038;
-	border: 3px solid #850038;
+	background-color: var(--upcolor_maroon);
+	border: 3px solid var(--upcolor_maroon);
 	margin: 15px 0px 50px 0px;
 }

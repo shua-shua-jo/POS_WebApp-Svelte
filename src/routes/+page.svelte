@@ -18,7 +18,7 @@
 	<div class="arrow bounce">
 		<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
 			><path
-				fill="#0e6021"
+				fill="var(--upcolor_green)"
 				d="m18.707 12.707l-1.414-1.414L13 15.586V6h-2v9.586l-4.293-4.293l-1.414 1.414L12 19.414z"
 			/></svg
 		>
@@ -72,7 +72,7 @@
 		padding: 10px 5%;
 		overflow: hidden;
 		margin: 0 0 70px 0;
-		background-color: #850038;
+		background-color: var(--upcolor_maroon);
 	}
 	.start-page .grp-container {
 		width: 100%;
@@ -134,14 +134,14 @@
 		content: '';
 		width: 1px;
 		height: 100%;
-		background-color: #850038;
+		background-color: var(--upcolor_maroon);
 		position: absolute;
 		top: -100%;
 	}
 
 	.content .social_icons a {
 		margin: 10px 0px;
-		color: #850038;
+		color: var(--upcolor_maroon);
 		display: block;
 		text-decoration: none;
 		font-size: 1.5em;
@@ -149,7 +149,7 @@
 	}
 
 	.content .social_icons a:hover {
-		color: #0e6021;
+		color: var(--upcolor_green);
 		transform: scale(1.3);
 	}
 
@@ -159,7 +159,7 @@
 	}
 
 	.arrow svg {
-		color: #0e6021;
+		color: var(--upcolor_green);
 		font-weight: 800;
 		font-size: 40px;
 		text-decoration: none;
@@ -208,7 +208,7 @@
 	}
 
 	.start-btn {
-		color: #0e6021;
+		color: var(--upcolor_green);
 		float: right;
 		width: 200px;
 		padding: 10px 20px;
@@ -222,12 +222,12 @@
 		text-decoration: none;
 		font-size: 20px;
 		text-align: center;
-		border: 1px solid #0e6021;
+		border: 1px solid var(--upcolor_green);
 		transition: 0.3s ease;
 	}
 
 	.start-btn:hover {
-		background-color: #0e6021;
+		background-color: var(--upcolor_green);
 		color: #fff;
 		transform: scale(1.1);
 	}

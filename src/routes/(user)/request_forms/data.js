@@ -36,24 +36,3 @@ export const formData = new Map([
 		]
 	]
 ]);
-
-export const basePrices = new Map([
-	['Honorable Dismissal', 220],
-	['Transfer to Other UP Units', 150],
-	['Certified True Copy of Diploma', 220],
-	['Diploma Translation', 50],
-	['Certified True Text of Diploma', 20],
-	['Course Description', 20],
-	['True Copy of Grades', 50],
-	['Certificate of Enrollment', 50],
-	['Certificate of Graduation', 50],
-	['Certificate of No Disciplinary Action', 50],
-	['Certificate of No Contract', 50],
-	['Certificate of Units Earned', 50],
-	['Certificate of Medium of Instruction', 50],
-	['Certificate of Grade Equivalence', 50],
-	['Certificate of Non-Issuance of Honorable Dismissal for Graduates', 50],
-	['Certificate of Non-Issuance of S.O. Number', 50],
-	['Certificate of Non-Issuance of ID', 50],
-	['Official Transcript of Records', 70]
-]);

@@ -28,7 +28,8 @@
 	// scroll to element
 	let top = 0;
 	function getTop(event) {
-		top = event.pageY;
+		console.log(event);
+		top = event.pageY - 20;
 	}
 
 	// scroll to top
@@ -133,7 +134,7 @@
 		transition: opacity 0.3s ease-in, visibility 0.3s ease-in, color 0.3s ease-in-out;
 	}
 	.back_to_start:hover {
-		color: #850038;
+		color: var(--upcolor_maroon);
 		animation: none;
 	}
 	.back_to_start.hidden {
@@ -175,7 +176,7 @@
 		align-items: center;
 		cursor: pointer;
 		color: white;
-		background-color: #850038;
+		background-color: var(--upcolor_maroon);
 		border: none;
 		padding: 10px;
 		font-weight: 600;
@@ -192,14 +193,14 @@
 	}
 	.buttons button:active {
 		scale: 0.98;
-		background-color: #850038;
+		background-color: var(--upcolor_maroon);
 	}
 	/* Accordion styles */
 	.tab {
 		width: 100%;
 		border-radius: 8px;
 		padding-top: 1em;
-		color: #850038;
+		color: var(--upcolor_maroon);
 		overflow: hidden;
 		box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.5);
 	}
@@ -232,7 +233,7 @@
 		transition: all 0.3s;
 	}
 	input:checked + .tab-label {
-		background: #850038;
+		background: var(--upcolor_maroon);
 		color: white;
 	}
 	input:checked + .tab-label::after {

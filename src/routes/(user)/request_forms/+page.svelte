@@ -3,12 +3,17 @@
 	import {
 		titleCase,
 		checkSnum,
+		validateSnum,
+		validateNames,
 		updatePrice,
 		totalPrice,
 		summaryPrices,
 		handleYearLevel,
 		handleScholarship,
 		handleChecked,
+		handleAtLeastCheckedOne,
+		handleNextButton,
+		handlePrevButton
 	} from './forms.js';
 	let fname = '',
 		mname = '',
@@ -24,9 +29,23 @@
 
 	let price = 0;
 	const priceUnsubscribe = totalPrice.subscribe((val) => (price = val));
-	const summaryPriceUnsubscribe = summaryPrices.subscribe((val) => summaryPrice = val)
+	const summaryPriceUnsubscribe = summaryPrices.subscribe((val) => (summaryPrice = val));
 
-	onDestroy(priceUnsubscribe);
+	onDestroy(
+		priceUnsubscribe,
+		summaryPriceUnsubscribe,
+		titleCase,
+		checkSnum,
+		validateSnum,
+		updatePrice,
+		totalPrice,
+		summaryPrices,
+		handleYearLevel,
+		handleScholarship,
+		handleChecked,
+		validateNames,
+		handleAtLeastCheckedOne
+	);
 
 	export let data;
 </script>
@@ -48,35 +67,44 @@
 					type="text"
 					id="fname"
 					name="fname"
+					pattern="[a-zA-Z ]*"
+					on:keydown={validateNames}
 					bind:value={fname}
 					required
 					autocomplete="off"
-					maxlength="35"
+					maxlength="50"
 				/>
 				<label for="mname">Middle Name</label>
 				<input
 					type="text"
 					id="mname"
 					name="mname"
+					pattern="[a-zA-Z ]*"
+					on:keydown={validateNames}
 					placeholder="Optional"
 					bind:value={mname}
 					autocomplete="off"
+					maxlength="50"
 				/>
 				<label for="lname">Last Name</label>
-				<input type="text" id="lname" name="lname" bind:value={lname} required autocomplete="off" />
+				<input
+					type="text"
+					id="lname"
+					name="lname"
+					pattern="[a-zA-Z ]*"
+					on:keydown={validateNames}
+					bind:value={lname}
+					required
+					autocomplete="off"
+					maxlength="50"
+				/>
 				<label for="snum">Student Number</label>
 				<input
 					type="number"
 					id="snum"
 					name="snum"
 					on:input={checkSnum}
-					on:keydown={(evt) => {
-						const forbiddenChars = ['.', '-', '+', 'e', 'E'];
-						const inputChar = evt.key;
-						if (forbiddenChars.includes(inputChar)) {
-							evt.preventDefault();
-						}
-					}}
+					on:keydown={validateSnum}
 					bind:value={snum}
 					maxLength="9"
 					required
@@ -92,7 +120,12 @@
 					autocomplete="off"
 				/>
 				<label for="yearLevel">Year Level</label>
-				<select name="yearLevel" id="yearLevel" bind:value={yearlvl} required on:change={handleYearLevel(yearlvl)}
+				<select
+					name="yearLevel"
+					id="yearLevel"
+					bind:value={yearlvl}
+					required
+					on:change={handleYearLevel(yearlvl)}
 				>
 					<option disabled selected value="">Current Year Level</option>
 					<option value="First Year">First Year</option>
@@ -114,30 +147,39 @@
 			<fieldset>
 				<legend>Choose Forms</legend>
 				Price: {price}
-				
-				{#if data.summaries}
-					{@const lists = data.summaries.list1.concat(data.summaries.list2)}
-					{#each lists as form}
-						{@const name = Object.keys(form)}
-						{@const values = Object.values(form).map((value) => value)}
-						{@const price = values[0].price}
-						{@const isScholar = values[0].scholarship}
-						<label for={name}>{name}</label>
-						<input
-							type="checkbox"
-							class="request-forms"
-							id={name}
-							value={name}
-							data-price={price}
-							data-isscholar={isScholar ? 'scholar' : null}
-							on:click={updatePrice}
-							on:click={handleChecked(name, this)}
-							bind:group={forms}
-						/>
-						<p class="price-label" data-value={name}>{price}</p>
-						<br />
-					{/each}
-				{/if}
+				<div class="request-form-list">
+					{#if data.summaries}
+						{@const lists = data.summaries.list1.concat(data.summaries.list2)}
+						{#each lists as form}
+							{@const name = Object.keys(form)}
+							{@const values = Object.values(form).map((value) => value)}
+							{@const price = values[0].price}
+							{@const isScholar = values[0].scholarship}
+							<div class="request-form-container">
+								<input
+									type="checkbox"
+									class="request-forms"
+									name="requestForms"
+									id={name}
+									value={name}
+									data-price={price}
+									data-isscholar={isScholar ? 'scholar' : null}
+									on:click={updatePrice}
+									on:click={handleChecked(name, this)}
+									bind:group={forms}
+								/>
+								<div class="request-form-label">
+									<label for={name}>{name}</label>
+								</div>
+								<div class="request-form-price">
+									<div>
+										Php <span data-value={name}>{price}</span>.00
+									</div>
+								</div>
+							</div>
+						{/each}
+					{/if}
+				</div>
 				{#if forms.length === 0}
 					<p>Please select at least 1 form.</p>
 				{:else}
@@ -146,15 +188,15 @@
 			</fieldset>
 			<fieldset>
 				<legend>Mode of Payment</legend>
-				<input type="radio" name="payment_method" value="Online" bind:group={mop} />
-				<input type="radio" name="payment_method" value="Cash" bind:group={mop} />
+				<input type="radio" name="paymentMethod" value="Online" bind:group={mop} required />
+				<input type="radio" name="paymentMethod" value="Cash" bind:group={mop} />
 				{mop}
 			</fieldset>
 			<fieldset>
 				<legend>Summary</legend>
 				<h3>Request Summary</h3>
 				{#if forms.length !== 0}
-					{#each forms as form,i}
+					{#each forms as form, i}
 						<p>
 							1x {form} : {summaryPrice.get(form.toString())}
 						</p>
@@ -170,10 +212,14 @@
 				{yearlvl !== '' ? yearlvl : 'Not specified.'} <br />
 				{scholar ? 'Yes' : 'No'}
 			</fieldset>
-			<button>Submit</button>
+			<button type="submit">Submit</button>
 		</form>
 	</main>
-	<footer class="form-footer"><a href="">Next</a><a href="">Previous</a></footer>
+	<!-- svelte-ignore a11y-invalid-attribute -->
+	<footer class="form-footer">
+		<a class="next-btn" href="javascript:;" on:click={handleNextButton}>Next</a>
+		<a class="prev-btn" href="javascript:;" on:click={handlePrevButton}>Previous</a>
+	</footer>
 </div>
 
 <style>
@@ -199,6 +245,75 @@
 		background-color: rgb(158, 173, 186);
 		grid-area: main;
 	}
+
+	.request-form-list {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 1em;
+		padding: 0px 1em;
+		font-weight: 500;
+	}
+
+	.request-form-container {
+		position: relative;
+		background-color: white;
+		height: max-content;
+		user-select: none;
+		text-align: center;
+	}
+
+	.request-forms {
+		position: absolute;
+		top: 0;
+		left: 0;
+		opacity: 0;
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+	}
+	.request-forms:disabled {
+		cursor: not-allowed;
+	}
+	.request-form-label {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 120px;
+		color: var(--upcolor_maroon);
+		vertical-align: middle;
+		border: 3px solid var(--upcolor_maroon);
+		background-color: rgb(158, 173, 186);
+	}
+
+	.request-forms:checked ~ .request-form-label {
+		color: var(--upcolor_green);
+		border-color: var(--upcolor_green);
+	}
+	.request-forms:disabled ~ .request-form-label {
+		color: white;
+		border-color: white;
+	}
+
+	.request-form-price {
+		display: flex;
+		height: 40px;
+		justify-content: center;
+		align-items: center;
+		vertical-align: middle;
+		text-align: center;
+		color: white;
+		background-color: var(--upcolor_maroon);
+	}
+
+	.request-forms:checked ~ .request-form-price {
+		background-color: var(--upcolor_green);
+	}
+	.request-forms:disabled ~ .request-form-price {
+		background-color: white;
+		color: black;
+	}
+
 	.form-footer {
 		margin-bottom: auto;
 		background-color: rgb(158, 173, 186);
