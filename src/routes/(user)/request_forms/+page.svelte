@@ -3,11 +3,12 @@
 	import {
 		titleCase,
 		checkSnum,
-		addPrice,
+		updatePrice,
 		totalPrice,
+		summaryPrices,
+		handleYearLevel,
 		handleScholarship,
-		handleHonorableDismissal,
-		summaryPrices
+		handleChecked,
 	} from './forms.js';
 	let fname = '',
 		mname = '',
@@ -17,15 +18,15 @@
 		yearlvl = '',
 		scholar = false,
 		forms = [],
+		summaryPrice = new Map(),
 		mop = '';
 	$: name = fname + ' ' + mname + ' ' + lname;
 
 	let price = 0;
-	let summaryPrice = [];
 	const priceUnsubscribe = totalPrice.subscribe((val) => (price = val));
-	const summaryPricesUnsubscribe = summaryPrices.subscribe((val) => (summaryPrice = val));
+	const summaryPriceUnsubscribe = summaryPrices.subscribe((val) => summaryPrice = val)
 
-	onDestroy(priceUnsubscribe, summaryPricesUnsubscribe);
+	onDestroy(priceUnsubscribe);
 
 	export let data;
 </script>
@@ -91,7 +92,8 @@
 					autocomplete="off"
 				/>
 				<label for="yearLevel">Year Level</label>
-				<select name="yearLevel" id="yearLevel" bind:value={yearlvl} required>
+				<select name="yearLevel" id="yearLevel" bind:value={yearlvl} required on:change={handleYearLevel(yearlvl)}
+				>
 					<option disabled selected value="">Current Year Level</option>
 					<option value="First Year">First Year</option>
 					<option value="Second Year">Second Year</option>
@@ -111,6 +113,8 @@
 			</fieldset>
 			<fieldset>
 				<legend>Choose Forms</legend>
+				Price: {price}
+				
 				{#if data.summaries}
 					{@const lists = data.summaries.list1.concat(data.summaries.list2)}
 					{#each lists as form}
@@ -126,27 +130,18 @@
 							value={name}
 							data-price={price}
 							data-isscholar={isScholar ? 'scholar' : null}
-							on:click={addPrice}
-							on:change={name == 'Honorable Dismissal' ? handleHonorableDismissal : null}
+							on:click={updatePrice}
+							on:click={handleChecked(name, this)}
 							bind:group={forms}
 						/>
-						<span>{scholar & isScholar ? 0 : price}</span>
+						<p class="price-label" data-value={name}>{price}</p>
 						<br />
 					{/each}
 				{/if}
-
-				Price: {price}
 				{#if forms.length === 0}
 					<p>Please select at least 1 form.</p>
 				{:else}
 					<p>Quantity: {forms.length}</p>
-					{#each forms as form, i}
-						<p>
-							1x {form}
-						</p>
-						:
-						<div class="summary-price">{summaryPrice[i]}</div>
-					{/each}
 				{/if}
 			</fieldset>
 			<fieldset>
@@ -156,12 +151,23 @@
 				{mop}
 			</fieldset>
 			<fieldset>
-				<legend>Request Summary</legend>
-				{name !== '  ' ? titleCase(name) : 'Name not specified.'}
+				<legend>Summary</legend>
+				<h3>Request Summary</h3>
+				{#if forms.length !== 0}
+					{#each forms as form,i}
+						<p>
+							1x {form} : {summaryPrice.get(form.toString())}
+						</p>
+					{/each}
+				{/if}
+				<h3>Payment</h3>
+				{mop !== '' ? mop : 'Not Specified'}<br />
+				<h3>Request Details</h3>
+				{name !== '  ' ? titleCase(name) : 'Not specified.'}
 				<br />
-				{snum !== null ? snum : 'Student Number not specified.'} <br />
-				{email !== '' ? email : 'Email not specified.'} <br />
-				{yearlvl !== '' ? yearlvl : 'Year Level not specified.'} <br />
+				{snum !== null ? snum : 'Not specified.'} <br />
+				{email !== '' ? email : 'Not specified.'} <br />
+				{yearlvl !== '' ? yearlvl : 'Not specified.'} <br />
 				{scholar ? 'Yes' : 'No'}
 			</fieldset>
 			<button>Submit</button>
