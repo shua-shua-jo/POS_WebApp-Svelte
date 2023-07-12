@@ -8,12 +8,12 @@
 </svelte:head>
 
 <div class="content">
-	<nav class="start-page">
+	<div class="start-page">
 		<div class="grp-container">
 			<h1 class="intro-title">A Project for University of the Philippines Baguio</h1>
 		</div>
 		<img class="intro-uplogo" alt="UP Logo" src={uplogo} />
-	</nav>
+	</div>
 	<img alt="UP2GO Logo Colored" src={up2gologo_colored} />
 	<div class="arrow bounce">
 		<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
@@ -70,7 +70,6 @@
 		width: 100%;
 		height: 50px;
 		padding: 10px 5%;
-		overflow: hidden;
 		margin: 0 0 70px 0;
 		background-color: var(--upcolor_maroon);
 	}
@@ -104,20 +103,11 @@
 		width: 100%;
 		height: 100vh;
 		margin: 0;
-		overflow: hidden;
-		background-color: #fafafa;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		position: fixed;
-	}
-
-	@media screen and (max-width: 1396px) {
-		.content {
-			overflow-x: hidden;
-			overflow-y: auto;
-		}
 	}
 
 	.content img {
@@ -130,7 +120,7 @@
 		bottom: 2vh;
 	}
 
-	.content .social_icons:before {
+	.content .social_icons::before {
 		content: '';
 		width: 1px;
 		height: 100%;
@@ -166,8 +156,14 @@
 	}
 
 	.bounce {
-		-webkit-animation: bounce 2s infinite;
 		animation: bounce 2s infinite;
+		-webkit-animation: bounce 2s infinite;
+		-o-animation: bounce 2s infinite;
+		-moz-animation: bounce 2s infinite;
+		animation-timing-function: ease-out;
+		-webkit-animation-timing-function: ease-out;
+		-o-animation-timing-function: ease-out;
+		-moz-animation-timing-function: ease-out;
 	}
 
 	@-webkit-keyframes bounce {
@@ -230,5 +226,29 @@
 		background-color: var(--upcolor_green);
 		color: #fff;
 		transform: scale(1.1);
+	}
+	@media screen and (width <= 1366px) {
+		.content {
+			overflow: auto;
+		}
+		.content img {
+			width: 50vw;
+		}
+		.start-page {
+			width: auto;
+			font-size: small;
+		}
+		/* .content .social_icons {
+			position: fixed;
+			left: 2vw;
+			top: 2vh;
+		}
+		.content .social_icons::before {
+			display: none;
+		}
+		.content .social_icons a svg {
+			width: 18px;
+			height: auto;
+		} */
 	}
 </style>

@@ -28,7 +28,6 @@
 	// scroll to element
 	let top = 0;
 	function getTop(event) {
-		console.log(event);
 		top = event.pageY - 20;
 	}
 

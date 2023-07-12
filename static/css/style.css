@@ -8,7 +8,7 @@
 }
 
 body {
-	background-color: #fafafa;
+	background-color: var(--gray_accent);
 	min-height: 100%;
 	width: 100%;
 	justify-content: center;

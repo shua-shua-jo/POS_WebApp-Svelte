@@ -2,21 +2,27 @@
 	import { fade, fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 
-	let visible = true;
+	let visible = false;
+	function start() {
+		visible = true;
+	}
+	function reset() {
+		visible = false;
+	}
 </script>
 
 <svelte:head>
 	<title>UP2GO: Manual</title>
 </svelte:head>
 
+{#if !visible}
+	<label>
+		<button on:click={start}>Start Tutorial</button>
+	</label>
+{/if}
+
 {#if visible}
-	<div
-		class="arrow"
-		in:fly={{ delay: 250, duration: 300, y: 100, opacity: 0.5, easing: quintOut }}
-		out:fade
-		on:introstart={() => console.log('starting')}
-		on:introend={() => console.log('ended')}
-	>
+	<div class="arrow" in:fly={{ delay: 250, duration: 300, y: 100, opacity: 0.5 }} out:fade>
 		<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"
 			><path
 				fill="currentColor"
@@ -24,8 +30,9 @@
 			/></svg
 		>
 	</div>
-	<h2>Home</h2>
+	<h2 transition:fly={{ delay: 250, duration: 300, y: 100, opacity: 0.5 }}>Home</h2>
 	ddlol
 
-	<h2>About</h2>
+	<h2 transition:fly={{ delay: 250, duration: 300, y: 100, opacity: 0.5 }}>About</h2>
+	<button on:click={reset}>Reset</button>
 {/if}

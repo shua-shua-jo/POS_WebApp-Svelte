@@ -18,17 +18,12 @@ export function validateNames(evt) {
 	}
 }
 
-export function checkSnum() {
-	if (this.value.length <= this.maxLength) {
+export function validateSnum(evt) {
+	if (evt.key == 'Tab' || evt.key == 'Enter' || evt.key == 'Alt' || evt.key == 'Control') {
 		return;
 	}
-	this.value = this.value.slice(0, this.maxLength);
-}
-
-export function validateSnum(evt) {
-	const forbiddenChars = ['.', '-', '+', 'e', 'E'];
-	const inputChar = evt.key;
-	if (forbiddenChars.includes(inputChar)) {
+	const forbiddenChars = !/^[\d]*$/g.test(evt.key);
+	if (forbiddenChars) {
 		evt.preventDefault();
 	}
 }
@@ -40,35 +35,38 @@ const base_values = {
 	'Certificate of Non-Issuance of ID': '50'
 };
 
-const honorable_dismissal_prices = {
-	'First Year': '220',
-	'Second Year': '220',
-	'Third Year': '290',
-	'Fourth Year': '360',
-	Alumni: '360',
-	Graduate: '430'
-};
+const honorable_dismissal_prices = new Map([
+	['First Year', '220'],
+	['Second Year', '220'],
+	['Third Year', '290'],
+	['Fourth Year', '360'],
+	['Alumni', '360'],
+	['Graduate', '430']
+]);
 
-const course_description_prices = {
-	'First Year': '20',
-	'Second Year': '40',
-	'Third Year': '60',
-	'Fourth Year': '80',
-	Alumni: '80'
-};
+const course_description_prices = new Map([
+	['First Year', '20'],
+	['Second Year', '40'],
+	['Third Year', '60'],
+	['Fourth Year', '80'],
+	['Alumni', '80']
+]);
 
-const otr_prices = {
-	'First Year': '70',
-	'Second Year': '70',
-	'Third Year': '140',
-	'Fourth Year': '210',
-	Alumni: '210',
-	Graduate: '280'
-};
+const otr_prices = new Map([
+	['First Year', '70'],
+	['Second Year', '70'],
+	['Third Year', '140'],
+	['Fourth Year', '210'],
+	['Alumni', '210'],
+	['Graduate', '280']
+]);
 
 const checkedForms = new Map();
+
 export let totalPrice = writable(0);
+
 export let summaryPrices = writable(new Map());
+
 export function updatePrice() {
 	const checkboxForms = document.querySelectorAll('input.request-forms');
 	function sum() {
@@ -97,8 +95,8 @@ export function handleYearLevel(yearlvl) {
 	const cd = document.querySelector('input[id="Course Description"]');
 	const otr = document.querySelector('input[id="Official Transcript of Records"]');
 
-	const hd_price = honorable_dismissal_prices[yearlvl];
-	const otr_price = otr_prices[yearlvl];
+	const hd_price = honorable_dismissal_prices.get(yearlvl);
+	const otr_price = otr_prices.get(yearlvl);
 
 	// change Honorable Dismissal price
 	hd.dataset.price = hd_price;
@@ -109,7 +107,7 @@ export function handleYearLevel(yearlvl) {
 	if (yearlvl !== 'Graduate') {
 		cd.disabled = false;
 		// change Course Description price
-		const cd_price = course_description_prices[yearlvl];
+		const cd_price = course_description_prices.get(yearlvl);
 		cd.dataset.price = cd_price;
 		updateFormPriceLabel(cd.value, cd_price);
 	} else {
@@ -162,17 +160,88 @@ function updateFormPriceLabel(dataVal, newPrice) {
 	pricelbl.textContent = newPrice;
 }
 
-export function handleAtLeastCheckedOne(evt) {
-	evt.preventDefault();
-	const checkboxes = document.querySelectorAll('input.request-forms:checked');
-	const errorMessage = 'At least one form must be selected.';
-	const checkbox = document.querySelector('input.request-forms');
-	if (checkboxes.length == 0) {
-		checkbox.setCustomValidity(errorMessage);
+function validateEmail(email) {
+	return /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email);
+}
+
+function handleFirstStep() {
+	let snumValid = false;
+	let namesValidNum = 0;
+	const inputNames = document.querySelectorAll('input[type="text"]:required');
+
+	for (var i = 0, len = inputNames.length; i < len; i++) {
+		if (inputNames[i].name == 'snum') {
+			snumValid = inputNames[i].value.length == 9;
+		} else {
+			if (inputNames[i].value.trim().length > 0) {
+				namesValidNum++;
+			} else {
+				continue;
+			}
+		}
+	}
+
+	const email = document.querySelector('input[type="email"]');
+	const emailValid = validateEmail(email.value.trim());
+
+	const yearLvl = document.querySelector('select[name="yearLevel"]');
+	const yearLvlValid = yearLvl.value !== '';
+
+	if (snumValid && namesValidNum == 2 && emailValid && yearLvlValid) {
+		return true;
 	} else {
-		checkbox.setCustomValidity('');
+		return false;
 	}
 }
 
-export function handleNextButton() {}
-export function handlePrevButton() {}
+function handleSecondStep() {
+	const checkboxes = document.querySelectorAll('input.request-forms:checked');
+	const errorMessage = 'At least one form must be selected.';
+	const checkbox = document.querySelector('input.request-forms');
+	if (checkboxes.length !== 0) {
+		checkbox.setCustomValidity('');
+		return true;
+	}
+	checkbox.setCustomValidity(errorMessage);
+	return false;
+}
+
+function handleThirdStep() {
+	const paymentMethod = document.querySelector('input[type=radio]:checked');
+	if (paymentMethod !== null) {
+		return true;
+	}
+	return false;
+}
+
+export let progressNum = writable(1);
+
+export function handleNextButton(progNum) {
+	if (progNum >= 4) {
+		return;
+	}
+
+	if (progNum == 1) {
+		const next = handleFirstStep();
+		if (!next) {
+			return;
+		}
+	} else if (progNum == 2) {
+		const next = handleSecondStep();
+		if (!next) {
+			return;
+		}
+	} else if (progNum == 3) {
+		const next = handleThirdStep();
+		if (!next) {
+			return;
+		}
+	}
+	progressNum.set(progNum + 1, 0);
+}
+export function handlePrevButton(progNum) {
+	if (!(progNum <= 4 && progNum > 1)) {
+		return;
+	}
+	progressNum.set(progNum - 1, 0);
+}

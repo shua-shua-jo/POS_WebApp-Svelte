@@ -38,7 +38,6 @@
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr 1fr 1fr 1fr;
-		background-color: #fafafa;
 		height: calc(100vh - 73.8px);
 	}
 
