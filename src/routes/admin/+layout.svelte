@@ -1,5 +1,6 @@
 <script>
 	import up2go_white from '$lib/images/logos/up2go-white.png';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { afterUpdate } from 'svelte';
 
 	afterUpdate(() => {
@@ -15,6 +16,7 @@
 	});
 </script>
 
+<SvelteToast options={{ duration: 5000 }} />
 <nav
 	class="navbar navbar-expand-sm"
 	style="border-bottom: 5px solid var(--upcolor_green); background-color: var(--upcolor_maroon)"
@@ -26,32 +28,19 @@
 		<div class="navbar-items">
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					<a class="nav-link" href="/">Home</a>
-				</li>
-				<li class="nav-item">
 					<a class="nav-link" href="/admin/dashboard">Dashboard</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="/about">About Us</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="/contact">Contact Us</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="/faqs">FAQs</a>
 				</li>
 			</ul>
 		</div>
 		<div class="nav-request">
-			<a class="nav-link-req" href="/request_forms" data-sveltekit-reload
-				><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+			<button class="nav-link-req">
+				<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24"
 					><path
-						fill="var(--upcolor_maroon)"
-						d="M14 2H6c-1.11 0-2 .89-2 2v16c0 1.11.89 2 2 2h7.81c-.53-.91-.81-1.95-.81-3c0-.33.03-.67.08-1H6v-2h7.81c.46-.8 1.1-1.5 1.87-2H6v-2h12v1.08c.33-.05.67-.08 1-.08s.67.03 1 .08V8l-6-6m-1 7V3.5L18.5 9H13m5 6v3h-3v2h3v3h2v-3h3v-2h-3v-3h-2Z"
-					/></svg
-				>
-				<div>Request Forms</div></a
-			>
+						fill="currentColor"
+						d="M12 4a4 4 0 0 1 4 4a4 4 0 0 1-4 4a4 4 0 0 1-4-4a4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4Z"
+					/>
+				</svg>
+			</button>
 		</div>
 	</div>
 </nav>
@@ -101,17 +90,19 @@
 	.nav-request {
 		margin-right: 20px;
 	}
+	button {
+		border: none;
+	}
 	.nav-link-req {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		padding: 5px 5px;
 		font-size: small;
 		color: var(--upcolor_maroon);
 		font-weight: 600;
 		background-color: #fff;
-		border-radius: 0.25em;
+		border-radius: 50vw;
 	}
 	.nav-link-req:hover {
 		background-color: #dfdfdf;

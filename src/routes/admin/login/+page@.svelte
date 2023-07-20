@@ -33,7 +33,7 @@
 				<input
 					class="admin_email"
 					type="email"
-					name="email_login"
+					name="email"
 					placeholder="Enter your email"
 					autocomplete="off"
 					required

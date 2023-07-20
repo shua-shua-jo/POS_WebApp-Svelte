@@ -1,4 +1,5 @@
 <script>
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import up2go_white from '$lib/images/logos/up2go-white.png';
 	import { afterUpdate } from 'svelte';
 
@@ -15,6 +16,7 @@
 	});
 </script>
 
+<SvelteToast options={{ duration: 5000 }} />
 <nav
 	class="navbar navbar-expand-sm"
 	style="border-bottom: 5px solid var(--upcolor_green); background-color: var(--upcolor_maroon)"

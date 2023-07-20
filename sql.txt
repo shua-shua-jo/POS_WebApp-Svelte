@@ -1,0 +1,56 @@
+CREATE TABLE IF NOT EXISTS usersTable (
+  id serial AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  first_name varchar(60) NOT NULL,
+  middle_name varchar(60) NOT NULL,
+  last_name varchar(60) NOT NULL,
+  email varchar(60) NOT NULL,
+  student_number varchar(9) NOT NULL,
+  year_level varchar(15) NOT NULL,
+  is_scholar boolean NOT NULL,
+  purpose varchar(255) NOT NULL,
+  payment_method varchar(10) NOT NULL,
+  request_date timestamp DEFAULT CURRENT_TIMESTAMP,
+  payment_date timestamp,
+  request_paid boolean DEFAULT false,
+  request_approved boolean DEFAULT false,
+  request_available boolean DEFAULT false,
+  CONSTRAINT user_unique UNIQUE(email, student_number)
+);
+
+CREATE TABLE IF NOT EXISTS `usersTable` (
+  `id` serial NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(60) NOT NULL,
+  `middle_name` varchar(60) NOT NULL,
+  `last_name` varchar(60) NOT NULL,
+  `email` varchar(60) NOT NULL,
+  `student_number` varchar(9) NOT NULL,
+  `year_level` varchar(15) NOT NULL,
+  `is_scholar` boolean NOT NULL,
+  `purpose` varchar(255) NOT NULL,
+  `payment_method` varchar(10) NOT NULL,
+  `request_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `payment_date` timestamp NULL DEFAULT NULL,
+  `request_paid` boolean DEFAULT false,
+  `request_approved` boolean DEFAULT false,
+  `request_available` boolean DEFAULT false,
+  `total_price` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `user_unique` (`email`,`student_number`)
+);
+
+CREATE TABLE IF NOT EXISTS requestsTable (
+  id serial AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  document varchar(100) NOT NULL,
+  price int NOT NULL,
+  userId int NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `requestsTable` (
+  `id` serial NOT NULL AUTO_INCREMENT,
+  `document` varchar(100) NOT NULL,
+  `price` int NOT NULL,
+  `userId` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

@@ -6,12 +6,12 @@
 		try {
 			const response = await fetch('../api/email', {
 				method: 'POST',
-				body: JSON.stringify({ name }),
+				body: JSON.stringify({ name, emailadd }),
 				headers: {
 					'Content-Type': 'application/json'
 				}
 			});
-			const data = response.json();
+			const data = await response.json();
 			emailadd = data;
 		} catch (error) {
 			console.log(error);
@@ -21,3 +21,4 @@
 
 <div class="dashboard">Dashboard</div>
 <button on:click={email}>Email</button>
+{emailadd}

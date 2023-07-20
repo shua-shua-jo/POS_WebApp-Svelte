@@ -12,6 +12,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.20.4",
+		"@zerodevx/svelte-toast": "^0.9.5",
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte": "^2.30.0",
@@ -22,6 +23,9 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@planetscale/database": "^1.8.0",
+		"bcrypt": "^5.1.0",
+		"drizzle-orm": "^0.27.2",
 		"nodemailer": "^6.9.3",
 		"svelte-email": "^0.0.4"
 	}

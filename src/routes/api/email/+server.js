@@ -5,8 +5,9 @@ import nodemailer from 'nodemailer';
 import { EMAIL, APP_PASSWORD } from '$env/static/private';
 
 export async function POST({ request }) {
-	const { name } = await request.json();
+	const data = await request.json();
 
+	console.time('creating transporter');
 	const transporter = nodemailer.createTransport({
 		host: 'smtp.gmail.com',
 		port: 587,
@@ -16,22 +17,28 @@ export async function POST({ request }) {
 			pass: APP_PASSWORD
 		}
 	});
+	console.timeEnd('creating transporter');
 
+	console.time('rendering template');
 	const emailHtml = render({
 		template: email_template,
 		props: {
-			name: 'me'
+			emailType: 'invoice',
+			name: data.fname
 		}
 	});
+	console.timeEnd('rendering template');
 
 	const options = {
-		from: 'joshuaabello200@gmail.com',
-		to: 'edabello@up.edu.ph',
+		from: 'up2go.test@gmail.com',
+		to: data.email,
 		subject: 'Test Mail',
 		html: emailHtml
 	};
 
-	const { res } = await transporter.sendMail(options);
+	console.time('sending email');
+	const res = await transporter.sendMail(options);
+	console.timeEnd('sending email');
 
-	return json(name + '@up.edu.ph');
+	return json(res.accepted);
 }

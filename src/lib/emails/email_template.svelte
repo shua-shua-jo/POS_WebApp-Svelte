@@ -1,7 +1,8 @@
 <script>
 	import { Heading, Section, Container, Button, Hr, Html, Text } from 'svelte-email';
 
-	export let name = 'Joshua';
+	export let name = '';
+	export let emailType = '';
 
 	const wrapper = {
 		display: 'flex',
@@ -35,7 +36,9 @@
 				Hi, {name}!
 			</Text>
 			<Hr />
-			<Button href="youtube.com">Visit Youtube</Button>
+			{#if emailType == 'invoice'}
+				<Button href="http://localhost:5173/upload_image">Visit Youtube</Button>
+			{/if}
 		</Container>
 	</Section>
 </Html>

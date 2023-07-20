@@ -9,11 +9,13 @@
 		});
 	});
 
+	let buttonExpand = true;
 	// expands all tabs
 	function expand_all() {
 		const checkbox = document.querySelectorAll("input[type='checkbox']");
 		for (var i = 0, n = checkbox.length; i < n; i++) {
 			checkbox[i].checked = true;
+			buttonExpand = false;
 		}
 	}
 
@@ -22,6 +24,7 @@
 		const checkbox = document.querySelectorAll("input[type='checkbox']");
 		for (var i = 0, n = checkbox.length; i < n; i++) {
 			checkbox[i].checked = false;
+			buttonExpand = true;
 		}
 	}
 
@@ -73,22 +76,25 @@
 		<div class="line" />
 	</div>
 	<div class="buttons">
-		<button class="expand" on:click={expand_all}
-			><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-				><path
-					fill="currentColor"
-					d="m12 19.24l-4.95-4.95l-1.41 1.42L12 22.07l6.36-6.36l-1.41-1.42L12 19.24zM5.64 8.29l1.41 1.42L12 4.76l4.95 4.95l1.41-1.42L12 1.93L5.64 8.29z"
-				/></svg
-			>Expand All</button
-		>
-		<button class="collapse" on:click={collapse_all}
-			><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-				><path
-					fill="currentColor"
-					d="M12 7.59L7.05 2.64L5.64 4.05L12 10.41l6.36-6.36l-1.41-1.41L12 7.59zM5.64 19.95l1.41 1.41L12 16.41l4.95 4.95l1.41-1.41L12 13.59l-6.36 6.36z"
-				/></svg
-			>Collapse All</button
-		>
+		{#if buttonExpand}
+			<button class="expand" on:click={expand_all}
+				><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+					><path
+						fill="currentColor"
+						d="m12 19.24l-4.95-4.95l-1.41 1.42L12 22.07l6.36-6.36l-1.41-1.42L12 19.24zM5.64 8.29l1.41 1.42L12 4.76l4.95 4.95l1.41-1.42L12 1.93L5.64 8.29z"
+					/></svg
+				>Expand All</button
+			>
+		{:else}
+			<button class="collapse" on:click={collapse_all}
+				><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+					><path
+						fill="currentColor"
+						d="M12 7.59L7.05 2.64L5.64 4.05L12 10.41l6.36-6.36l-1.41-1.41L12 7.59zM5.64 19.95l1.41 1.41L12 16.41l4.95 4.95l1.41-1.41L12 13.59l-6.36 6.36z"
+					/></svg
+				>Collapse All</button
+			>
+		{/if}
 	</div>
 	<div class="tabs">
 		{#each data.faqs as faq, i}
