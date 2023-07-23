@@ -35,26 +35,10 @@
 				console.log('Error!');
 				await failed(data.message);
 			}
-			if (data.emailSent !== undefined) {
-				await success(emailSent);
-			}
-			if (data.email !== undefined) {
-				try {
-					const response = await fetch('/api/email', {
-						method: 'POST',
-						body: JSON.stringify({ fname: data.fname, email: data.email }),
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					});
-					const emailSent = await response.json();
-					console.log('Email sent!');
-					console.log(emailSent);
-					console.log(emailSent.length);
-					success(`An email has been sent to ${data.email}`);
-				} catch (error) {
-					console.log(error);
-				}
+			if (data.emailSent == 'true') {
+				success(`An email has been sent to ${data.email}`);
+			} else {
+				failed(`Error sending email to ${data.email}`);
 			}
 		}
 	});
@@ -80,7 +64,7 @@
 
 		<main class="form-main">
 			<!-- personal information -->
-			<fieldset class="info-fieldset {progNum !== 1 ? 'hidden' : ''}">
+			<fieldset class="info-fieldset" class:hidden={progNum != 1}>
 				<legend>Personal Information</legend>
 				<div class="inputs">
 					<label class="info-label" for="fname">
@@ -263,7 +247,7 @@
 					{/if}
 				</div>
 			</fieldset>
-			<fieldset class="forms-fieldset {progNum != 2 ? 'hidden' : ''}">
+			<fieldset class="forms-fieldset" class:hidden={progNum != 2}>
 				<legend>Choose Forms</legend>
 				<div class="form-labels">
 					<div class="total-price-label"><b>Price:</b> Php {price}.00</div>
@@ -309,7 +293,7 @@
 					{/if}
 				</div>
 			</fieldset>
-			<fieldset class="payment-fieldset {progNum !== 3 ? 'hidden' : ''}">
+			<fieldset class="payment-fieldset" class:hidden={progNum != 3}>
 				<legend>Mode of Payment</legend>
 				<div class="payment-container">
 					<div class="online-container">
@@ -392,7 +376,7 @@
 					{/if}
 				</div>
 			</fieldset>
-			<fieldset class="summary-fieldset {progNum !== 4 ? 'hidden' : ''}">
+			<fieldset class="summary-fieldset" class:hidden={progNum != 4}>
 				<div class="summary-container">
 					<h4>Request Summary</h4>
 					<div class="summary-grid">
@@ -442,7 +426,8 @@
 			<div class="form-buttons">
 				{#if next}
 					<a
-						class="btn {progNum == 1 ? 'invinsible' : ''}"
+						class="btn"
+						class:invinsible={progNum == 1}
 						href=""
 						on:click={func.handlePrevButton(progNum)}
 					>
@@ -508,7 +493,6 @@
 	.form-main {
 		grid-area: main;
 	}
-
 	fieldset {
 		height: 60vh;
 		padding: 20px;
@@ -605,8 +589,8 @@
 	.info-label .info-input:valid:not(:required) + .label-text {
 		color: #8e8e8e;
 	}
-	label.for-scholarship-label,
-	label.confirm-label {
+	label.confirm-label,
+	label.for-scholarship-label {
 		position: relative;
 		user-select: none;
 		cursor: pointer;
@@ -615,21 +599,21 @@
 		font-weight: 400;
 		color: #7a7a7a;
 	}
-	label.for-scholarship-label input,
-	label.confirm-label input {
+	label.confirm-label input,
+	label.for-scholarship-label input {
 		visibility: hidden;
 		-moz-appearance: initial;
 	}
-	label.for-scholarship-label svg,
-	label.confirm-label svg {
+	label.confirm-label svg,
+	label.for-scholarship-label svg {
 		position: absolute;
 		visibility: hidden;
 		top: 0;
 		left: 1px;
 		z-index: 1;
 	}
-	label.for-scholarship-label input::before,
-	label.confirm-label input::before {
+	label.confirm-label input::before,
+	label.for-scholarship-label input::before {
 		content: '';
 		position: absolute;
 		top: 0;
@@ -642,17 +626,17 @@
 		border: 1px solid #8e8e8e;
 		visibility: visible;
 	}
-	label.for-scholarship-label input:checked + svg,
-	label.confirm-label input:checked + svg {
+	label.confirm-label input:checked + svg,
+	label.for-scholarship-label input:checked + svg {
 		visibility: visible;
 		color: white;
 	}
-	label.for-scholarship-label input:checked::before,
-	label.confirm-label input:checked::before {
+	label.confirm-label input:checked::before,
+	label.for-scholarship-label input:checked::before {
 		background-color: var(--upcolor_green);
 	}
-	label.for-scholarship-label:has(input:checked),
-	label.confirm-label:has(input:checked) {
+	label.confirm-label:has(input:checked),
+	label.for-scholarship-label:has(input:checked) {
 		color: black;
 	}
 	label.for-scholarship-label:has(input:disabled) {
@@ -675,7 +659,7 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
 		gap: 1em;
-		padding: 0px 1em;
+		padding: 0 1em;
 		font-weight: 500;
 		height: 91%;
 		overflow: scroll;
@@ -698,14 +682,12 @@
 	.request-form-list::-webkit-scrollbar-track {
 		background: white;
 	}
-
 	.request-form-container {
 		position: relative;
 		height: max-content;
 		user-select: none;
 		text-align: center;
 	}
-
 	.request-forms {
 		position: absolute;
 		top: 0;
@@ -730,7 +712,6 @@
 		line-height: 125%;
 		border: 3px solid var(--upcolor_maroon);
 	}
-
 	.request-forms:checked ~ .request-form-label {
 		color: var(--upcolor_green);
 		border-color: var(--upcolor_green);
@@ -739,7 +720,6 @@
 		color: var(--disabled_text);
 		border-color: var(--disabled);
 	}
-
 	.request-form-price {
 		display: flex;
 		height: 40px;
@@ -750,7 +730,6 @@
 		color: var(--disabled);
 		background-color: var(--upcolor_maroon);
 	}
-
 	.request-forms:checked ~ .request-form-price {
 		background-color: var(--upcolor_green);
 	}
@@ -758,7 +737,6 @@
 		background-color: var(--disabled);
 		color: var(--disabled_text);
 	}
-
 	.payment-container {
 		display: flex;
 		flex-direction: row;
@@ -785,7 +763,6 @@
 		border: 2px solid var(--upcolor_maroon);
 		background-color: var(--upcolor_maroon);
 	}
-
 	.payment-container input {
 		position: absolute;
 		top: 0;
@@ -816,7 +793,7 @@
 	.cash-info > div {
 		display: grid;
 		background-color: var(--disabled);
-		box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+		box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
 		border-radius: 10px;
 		padding: 10px;
 		width: 75%;
@@ -827,7 +804,7 @@
 	.online-info > div {
 		display: grid;
 		background-color: var(--disabled);
-		box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+		box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
 		border-radius: 10px;
 		padding: 10px;
 		width: 75%;
@@ -908,13 +885,13 @@
 	.form-progress-steps li.activated:last-child::after {
 		width: 50%;
 	}
-	.form-progress-steps li.active span,
-	.form-progress-steps li.activated span {
+	.form-progress-steps li.activated span,
+	.form-progress-steps li.active span {
 		background-color: var(--upcolor_maroon);
 		color: #ffffff;
 	}
-	.form-progress-steps li.active::after,
-	.form-progress-steps li.activated::after {
+	.form-progress-steps li.activated::after,
+	.form-progress-steps li.active::after {
 		background-color: var(--upcolor_maroon);
 		left: 50%;
 		width: 50%;
@@ -927,7 +904,6 @@
 	.form-progress-steps li.activated:last-child::after {
 		left: 0;
 	}
-
 	.form-footer {
 		margin-bottom: auto;
 		padding: 0 calc(1em + 20px);
@@ -977,8 +953,8 @@
 	.summary-grid b {
 		text-align: end;
 	}
-	.summary-grid > div,
-	.summary-grid > b {
+	.summary-grid > b,
+	.summary-grid > div {
 		padding: 5px 0;
 	}
 	.item {

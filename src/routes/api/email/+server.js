@@ -10,8 +10,8 @@ export async function POST({ request }) {
 	console.time('creating transporter');
 	const transporter = nodemailer.createTransport({
 		host: 'smtp.gmail.com',
-		port: 587,
-		secure: false,
+		port: 465,
+		secure: true,
 		auth: {
 			user: EMAIL,
 			pass: APP_PASSWORD
@@ -23,22 +23,24 @@ export async function POST({ request }) {
 	const emailHtml = render({
 		template: email_template,
 		props: {
-			emailType: 'invoice',
-			name: data.fname
+			data: {
+				emailType: data.emailType,
+				name: data.fname,
+				request_number: data.request_number
+			}
 		}
 	});
 	console.timeEnd('rendering template');
 
 	const options = {
 		from: 'up2go.test@gmail.com',
-		to: data.email,
-		subject: 'Test Mail',
+		to: 'joshuaabello02@gmail.com',
+		subject: data.subject,
 		html: emailHtml
 	};
 
 	console.time('sending email');
 	const res = await transporter.sendMail(options);
 	console.timeEnd('sending email');
-
-	return json(res.accepted);
+	return json(res.response);
 }

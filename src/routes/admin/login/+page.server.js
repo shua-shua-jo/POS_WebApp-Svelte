@@ -8,7 +8,7 @@ export async function load({ cookies }) {
 	const token = cookies.get('auth_token');
 
 	if (token && token !== '') {
-		throw redirect(301, '/admin/dashboard');
+		throw redirect(301, '/admin');
 	}
 }
 
@@ -44,6 +44,6 @@ export const actions = {
 			sameSite: 'lax'
 		});
 
-		throw redirect(303, '/admin/dashboard?login=success');
+		throw redirect(303, '/admin?login=success');
 	}
 };

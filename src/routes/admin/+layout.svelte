@@ -28,7 +28,10 @@
 		<div class="navbar-items">
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					<a class="nav-link" href="/admin/dashboard">Dashboard</a>
+					<a class="nav-link" href="/admin/users">Users</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/admin/requests">Requests</a>
 				</li>
 			</ul>
 		</div>

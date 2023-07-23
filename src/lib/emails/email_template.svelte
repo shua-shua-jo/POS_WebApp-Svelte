@@ -1,16 +1,11 @@
 <script>
-	import { Heading, Section, Container, Button, Hr, Html, Text } from 'svelte-email';
+	import { Heading, Section, Preview, Container, Button, Hr, Html, Text } from 'svelte-email';
 
-	export let name = '';
-	export let emailType = '';
+	export let data;
 
-	const wrapper = {
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center'
-	};
 	const container = {
-		textAlign: 'center'
+		textAlign: 'center',
+		margin: '0 auto'
 	};
 	const section = {
 		backgroundColor: '#850038',
@@ -22,23 +17,61 @@
 	};
 
 	const greetings = {
-		color: 'black'
+		color: 'black',
+		margin: '20px 0'
+	};
+
+	const hr = {
+		borderColor: '#8e8e8e',
+		marginTop: '20px'
+	};
+
+	const button = {
+		alignItems: 'center',
+		appearance: 'button',
+		backgroundColor: '#0e6021',
+		borderRadius: '8px',
+		borderStyle: 'none',
+		boxSizing: 'border-box',
+		color: '#fff',
+		cursor: 'pointer',
+		display: 'flex',
+		flexDirection: 'row',
+		flexShrink: '0',
+		fontSize: '100%',
+		lineHeight: '1.15',
+		fontWeight: 'bold',
+		margin: '0',
+		padding: '10px 21px',
+		textAlign: 'center',
+		textTransform: 'none',
+		userSelect: 'none',
+		touchAction: 'manipulation'
+	};
+
+	const footer = {
+		color: '#8e8e8e',
+		fontSize: 'x-small'
 	};
 </script>
 
 <Html lang="en">
-	<Section>
-		<Container style={container}>
-			<Section style={section}>
-				<Heading as="h1" style={heading}>UP-2-Go</Heading>
-			</Section>
-			<Text style={greetings}>
-				Hi, {name}!
-			</Text>
-			<Hr />
-			{#if emailType == 'invoice'}
-				<Button href="http://localhost:5173/upload_image">Visit Youtube</Button>
-			{/if}
-		</Container>
-	</Section>
+	<Preview preview={'Please upload the required documents.'} />
+	<Container style={container}>
+		<Section style={section}>
+			<Heading as="h1" style={heading}>UP 2 GO</Heading>
+		</Section>
+		<Text style={greetings}>
+			Hi, {data.name}!
+		</Text>
+		{#if data.emailType == 'invoice'}
+			<Button
+				style={button}
+				href="http://localhost:5173/upload-requirements?request_number={data.request_number}"
+				>Upload Here</Button
+			>
+		{/if}
+		<Hr style={hr} />
+		<Text style={footer}>&#169; 2023 OUR UPB. All rights reserved.</Text>
+	</Container>
 </Html>

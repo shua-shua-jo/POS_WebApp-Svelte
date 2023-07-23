@@ -1,6 +1,5 @@
-<script>
+<script lang="ts">
 	import { fade, fly } from 'svelte/transition';
-	import { quintOut } from 'svelte/easing';
 
 	let visible = false;
 	function start() {
