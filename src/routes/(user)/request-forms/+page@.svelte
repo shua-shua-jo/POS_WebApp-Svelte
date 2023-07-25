@@ -2,7 +2,9 @@
 	import bg_upb1 from '$lib/images/bg/bg-upb1.jpg';
 	import { success, failed } from '$lib/toast/themes.js';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import * as func from './forms.js';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 
 	let fname = '',
 		mname = '',
@@ -18,6 +20,8 @@
 		confirm = false;
 	$: name = fname + ' ' + mname + ' ' + lname;
 
+	let histLength = 0;
+
 	let price = 0;
 	func.totalPrice.subscribe((val) => (price = val));
 	func.summaryPrices.subscribe((val) => (summaryPrice = val));
@@ -27,6 +31,7 @@
 	func.progressNum.subscribe((val) => (progNum = val));
 
 	onMount(async () => {
+		histLength = history.length;
 		if (data.success !== undefined) {
 			if (data.success == 'true') {
 				console.log('Success!');
@@ -49,16 +54,39 @@
 <svelte:head>
 	<title>UP2GO: Request Forms</title>
 </svelte:head>
+<SvelteToast options={{ duration: 5000 }} />
 <div class="grid-container">
 	<form method="POST" on:submit={func.handleSubmit}>
 		<aside class="aside-image"><img src={bg_upb1} alt="UPB Oblation at night" /></aside>
+		<div class="back-btn" id="back-btn-log">
+			<button
+				on:click={() => {
+					if (history.length <= 2) {
+						goto('/');
+					} else {
+						history.back();
+					}
+				}}
+				><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+					><path
+						d="M13.939 4.939L6.879 12l7.06 7.061l2.122-2.122L11.121 12l4.94-4.939z"
+						fill="currentColor"
+					/></svg
+				>
+				{#if histLength > 2}
+					<span>Back</span>
+				{:else}
+					<span>Home</span>
+				{/if}
+			</button>
+		</div>
 		<header class="form-header">Please fill all form fields to go to next step.</header>
 		<div class="form-progress-bar">
 			<ul class="form-progress-steps">
 				<li class="active activated"><span>1</span></li>
-				<li class={progNum >= 2 ? 'activated' : 'null'}><span>2</span></li>
-				<li class={progNum >= 3 ? 'activated' : 'null'}><span>3</span></li>
-				<li class={progNum >= 4 ? 'activated' : 'null'}><span>4</span></li>
+				<li class:activated={progNum >= 2}><span>2</span></li>
+				<li class:activated={progNum >= 3}><span>3</span></li>
+				<li class:activated={progNum >= 4}><span>4</span></li>
 			</ul>
 		</div>
 
@@ -396,7 +424,7 @@
 					<h4>Request Details</h4>
 					<div class="summary-grid">
 						<div class="item">Name</div>
-						<b class="item">{func.titleCase(name)}</b>
+						<b class="item name">{name}</b>
 						<div class="item">Student Number</div>
 						<b class="item">{snum}</b>
 						<div class="item">Email</div>
@@ -464,10 +492,10 @@
 	.grid-container > form {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		grid-template-rows: 50px auto 1fr 100px;
-		grid-template-areas: 'aside header' 'aside progress-bar' 'aside main' 'aside footer';
+		grid-template-rows: auto 50px auto auto 100px;
+		grid-template-areas: 'aside back-btn' 'aside header' 'aside progress-bar' 'aside main' 'aside footer';
 		row-gap: 10px;
-		height: calc(100vh - 73.8px);
+		height: 100vh;
 	}
 	.aside-image {
 		background-color: rgb(158, 173, 186);
@@ -480,8 +508,35 @@
 		height: inherit;
 		object-fit: cover;
 	}
+	.back-btn {
+		margin-top: 1.5em;
+		padding: 0 5em;
+		grid-area: back-btn;
+	}
+	.back-btn button {
+		display: flex;
+		width: max-content;
+		justify-content: flex-start;
+		align-items: center;
+		color: var(--upcolor_maroon);
+		padding: 0 20px;
+		border: none;
+		border-radius: 50vw;
+		transition: all 0.3s ease-in-out;
+	}
+	.back-btn button:hover {
+		color: white;
+		background-color: var(--upcolor_maroon) !important;
+		transition: none;
+	}
+	.back-btn button > svg {
+		transition: translate 0.3s ease-in-out;
+	}
+	.back-btn button:hover > svg {
+		translate: -5px;
+	}
 	.form-header {
-		margin-top: auto;
+		margin: auto;
 		text-align: center;
 		color: gray;
 		grid-area: header;
@@ -595,14 +650,14 @@
 		user-select: none;
 		cursor: pointer;
 		margin-bottom: 0;
-		padding-left: 10px;
+		padding-left: 20px;
 		font-weight: 400;
 		color: #7a7a7a;
 	}
 	label.confirm-label input,
 	label.for-scholarship-label input {
 		visibility: hidden;
-		-moz-appearance: initial;
+		appearance: initial;
 	}
 	label.confirm-label svg,
 	label.for-scholarship-label svg {
@@ -677,7 +732,7 @@
 		background: #b3004a;
 	}
 	.request-form-list::-webkit-scrollbar-thumb:active {
-		background: rgb(247, 235, 235);
+		background: var(--upcolor_maroon);
 	}
 	.request-form-list::-webkit-scrollbar-track {
 		background: white;
@@ -959,6 +1014,9 @@
 	}
 	.item {
 		border-bottom: 1px solid var(--disabled);
+	}
+	.name {
+		text-transform: capitalize;
 	}
 	.summary-total {
 		padding-top: 5px;

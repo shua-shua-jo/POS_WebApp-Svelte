@@ -22,7 +22,7 @@
 	style="border-bottom: 5px solid var(--upcolor_green); background-color: var(--upcolor_maroon)"
 >
 	<div class="container">
-		<a class="navbar-brand" href="/"
+		<a class="navbar-brand" href="/admin"
 			><img src={up2go_white} alt="UP2GoLogoWhite" width="auto" height="45" class="navlogo" /></a
 		>
 		<div class="navbar-items">
@@ -51,6 +51,9 @@
 <slot />
 
 <style>
+	:root {
+		--toastContainerTop: 5rem;
+	}
 	/* template */
 
 	a {

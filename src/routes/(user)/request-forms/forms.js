@@ -1,16 +1,5 @@
 import { writable } from 'svelte/store';
 
-export function titleCase(str) {
-	return str
-		.toLowerCase()
-		.split(' ')
-		.map((word) => {
-			return word.charAt(0).toUpperCase() + word.slice(1);
-		})
-		.join(' ')
-		.trim();
-}
-
 export function handleNames(evt) {
 	const valid = validateNames(evt.key);
 	if (!valid) {

@@ -35,6 +35,7 @@
 		boxSizing: 'border-box',
 		color: '#fff',
 		cursor: 'pointer',
+		textTransform: 'uppercase',
 		display: 'flex',
 		flexDirection: 'row',
 		flexShrink: '0',
@@ -65,11 +66,9 @@
 			Hi, {data.name}!
 		</Text>
 		{#if data.emailType == 'invoice'}
-			<Button
-				style={button}
-				href="http://localhost:5173/upload-requirements?request_number={data.request_number}"
-				>Upload Here</Button
-			>
+			<Button style={button} href="http://localhost:5173/upload-requirements/{data.request_number}">
+				Upload Here
+			</Button>
 		{/if}
 		<Hr style={hr} />
 		<Text style={footer}>&#169; 2023 OUR UPB. All rights reserved.</Text>

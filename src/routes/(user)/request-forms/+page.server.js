@@ -12,14 +12,9 @@ export async function load({ cookies }) {
 	const email = cookies.get('email');
 	const emailSent = cookies.get('emailSent');
 
-	if (emailSent) {
+	if (emailSent || email || success || message) {
 		cookies.delete('emailSent');
-	}
-	if (email) {
 		cookies.delete('email');
-	}
-
-	if (success && message) {
 		cookies.delete('success');
 		cookies.delete('message');
 	}
