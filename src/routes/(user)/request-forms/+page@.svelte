@@ -5,6 +5,9 @@
 	import { goto } from '$app/navigation';
 	import * as func from './forms.js';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import { enhance } from '$app/forms';
+
+	let submittingForm = false;
 
 	let fname = '',
 		mname = '',
@@ -55,31 +58,38 @@
 	<title>UP2GO: Request Forms</title>
 </svelte:head>
 <SvelteToast options={{ duration: 3000 }} />
+
+{#if submittingForm}
+	<div class="loader-container">
+		<span class="loader" />
+		<h3>Submitting Form</h3>
+	</div>
+{/if}
+
 <div class="grid-container">
-	<form method="POST" on:submit={func.handleSubmit}>
+	<form
+		method="POST"
+		on:submit={func.handleSubmit}
+		use:enhance={async () => {
+			submittingForm = true;
+			return async ({ update }) => {
+				submittingForm = false;
+				await update();
+				window.location.reload();
+			};
+		}}
+	>
 		<aside class="aside-image"><img src={bg_upb1} alt="UPB Oblation at night" /></aside>
 		<div class="back-btn" id="back-btn-log">
-			<button
-				aria-label="Back"
-				on:click={() => {
-					if (history.length <= 2) {
-						goto('/');
-					} else {
-						history.back();
-					}
-				}}
+			<a aria-label="Back to Home" href="/"
 				><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
 					><path
 						d="M13.939 4.939L6.879 12l7.06 7.061l2.122-2.122L11.121 12l4.94-4.939z"
 						fill="currentColor"
 					/></svg
 				>
-				{#if histLength > 2}
-					<span>Back</span>
-				{:else}
-					<span>Home</span>
-				{/if}
-			</button>
+				<span>Home</span>
+			</a>
 		</div>
 		<header class="form-header">Please fill all form fields to go to next step.</header>
 		<div class="form-progress-bar">
@@ -479,6 +489,121 @@
 </div>
 
 <style>
+	.loader-container {
+		user-select: none;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		gap: 5px;
+		background-color: #26303887;
+		backdrop-filter: blur(6px);
+		z-index: 100;
+	}
+	.loader-container h3 {
+		width: max-content;
+		overflow-wrap: break-word;
+		text-transform: uppercase;
+		font-size: 1em;
+		letter-spacing: 4px;
+		color: white;
+		z-index: -1;
+		animation: textanim 4s linear infinite;
+	}
+	@keyframes textanim {
+		0% {
+			transform: scale(0.95);
+		}
+		5% {
+			transform: scale(1);
+		}
+		0%,
+		30% {
+			filter: blur(0px);
+		}
+		95% {
+			opacity: 0;
+			filter: blur(10px);
+		}
+		100% {
+			opacity: 1;
+			filter: blur(0px);
+		}
+	}
+	.loader {
+		position: relative;
+		width: 180px;
+		height: 82.5px;
+		background-repeat: no-repeat;
+		background-image: radial-gradient(circle 2.5px, #ff3d00 100%, transparent 0),
+			linear-gradient(#525252 90px, transparent 0), linear-gradient(#ececec 120px, transparent 0),
+			linear-gradient(to right, #eee 10%, #333 10%, #333 90%, #eee 90%);
+
+		background-size: 7.5px 7.5px, 135px 15px, 180px 67.5px, 150px 22.5px;
+		background-position: 165px 22.5px, center bottom, center bottom, center 0;
+	}
+	.loader:before {
+		content: '';
+		width: 105px;
+		background-color: #fff;
+		box-shadow: 0 0 10px #0003;
+		position: absolute;
+		left: 50%;
+		transform: translatex(-50%);
+		bottom: calc(100% - 15px);
+		animation: printerPaper 4s ease-in infinite;
+	}
+	.loader:after {
+		content: '';
+		width: 105px;
+		height: 120px;
+		background-color: #fff;
+		background-image: linear-gradient(to bottom, #fff 50%, var(--upcolor_maroon) 51%),
+			linear-gradient(to bottom, #bbb 50%, #0000 51%);
+		background-size: 90px 30px, 90px 15px;
+		background-repeat: no-repeat, repeat-y;
+		background-position: center 82.5px, center 0;
+		position: absolute;
+		left: 50%;
+		transform: translatex(-50%) rotate(180deg);
+		box-shadow: 0 15px #fff inset;
+		top: calc(100% - 12px);
+		animation: PrintedPaper 4s ease-in infinite;
+	}
+
+	@keyframes printerPaper {
+		0%,
+		25% {
+			height: 75px;
+		}
+		75%,
+		100% {
+			height: 0;
+		}
+	}
+
+	@keyframes PrintedPaper {
+		0%,
+		30% {
+			height: 0px;
+			top: calc(100% - 12px);
+		}
+
+		80% {
+			height: 120px;
+			top: calc(100% - 12px);
+			opacity: 1;
+		}
+		100% {
+			height: 120px;
+			top: calc(100% + 15px);
+			opacity: 0;
+		}
+	}
+
 	.hidden {
 		display: none !important;
 	}
@@ -517,7 +642,7 @@
 		padding: 0 5em;
 		grid-area: back-btn;
 	}
-	.back-btn button {
+	.back-btn a {
 		display: flex;
 		width: max-content;
 		justify-content: flex-start;
@@ -528,15 +653,15 @@
 		border-radius: 50vw;
 		transition: all 0.3s ease-in-out;
 	}
-	.back-btn button:hover {
+	.back-btn a:hover {
 		color: white;
 		background-color: var(--upcolor_maroon) !important;
 		transition: none;
 	}
-	.back-btn button > svg {
+	.back-btn a > svg {
 		transition: translate 0.3s ease-in-out;
 	}
-	.back-btn button:hover > svg {
+	.back-btn a:hover > svg {
 		translate: -5px;
 	}
 	.form-header {
