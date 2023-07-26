@@ -10,6 +10,7 @@ export const load = async ({ cookies, fetch }) => {
 	if (!token) {
 		throw error(401, 'Unauthorized User');
 	}
+
 	const response = await fetch('/admin/database');
 
 	if (response.ok) {

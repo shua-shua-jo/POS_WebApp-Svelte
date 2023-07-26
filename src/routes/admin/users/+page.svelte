@@ -4,6 +4,7 @@
 	import { enhance } from '$app/forms';
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
+	import { quintInOut } from 'svelte/easing';
 
 	export let data;
 
@@ -31,6 +32,11 @@
 		currentPage = lastPage;
 	}
 
+	$: if (showPanel) {
+		userData = userData;
+		documentData = documentData;
+	}
+
 	// Holds table sort state.  Initialized to reflect table sorted by id column ascending.
 	let sortBy = { col: 'id', ascending: true };
 
@@ -55,6 +61,7 @@
 	let updated = false;
 
 	async function updateData() {
+		showPanel = false;
 		updated = true;
 		await refresh();
 		const response = await fetch('/admin/database');
@@ -68,6 +75,11 @@
 			console.log(new Date().toLocaleString('fil-PH'));
 		}
 	}
+
+	let showPanel = false;
+	let userData = [];
+	let documentData = [];
+	let prevUserData;
 
 	onMount(async () => {
 		setInterval(async () => {
@@ -85,6 +97,16 @@
 <svelte:head>
 	<title>UP2GO: Admin | Users</title>
 </svelte:head>
+
+<!-- THIS CLOSES PANEL WHEN CLICKED OUTSIDE -->
+<!-- <svelte:body
+	on:click={(event) => {
+		const className = event.target.className;
+		if (showPanel && !className.includes('id-btn') && !className.includes('panel-wrapper')) {
+			showPanel = false;
+		}
+	}}
+/> -->
 
 <div class="container">
 	<button aria-label="Update Data" on:click={updateData}>
@@ -188,15 +210,34 @@
 		</thead>
 		<tbody>
 			{#each slice as user (user.id)}
-				<tr
-					class="user-rows"
-					out:slide={{ axis: 'x', duration: 250, key: user.id }}
-					animate:flip={{ duration: 250 }}
-				>
+				<tr class="user-rows" animate:flip={{ duration: 250 }}>
 					<td>
-						<a href="/admin/users/{user.id}" class="user-info">
+						<button
+							on:click={() => {
+								userData = [];
+								documentData = [];
+								for (var i = 0; i < data.requestsData.length; i++) {
+									const id = data.requestsData[i].userId;
+									if (user.id == id) {
+										documentData.push(data.requestsData[i]);
+									}
+								}
+
+								userData.push(user);
+								if (prevUserData !== userData[0].id) {
+									showPanel = false;
+									prevUserData = userData[0].id;
+									setTimeout(() => {
+										showPanel = true;
+									}, 300);
+								} else {
+									showPanel = true;
+								}
+							}}
+							class="id-btn"
+						>
 							{user.id}
-						</a>
+						</button>
 					</td>
 					<td>
 						<div class="dropdown">
@@ -224,9 +265,9 @@
 							<label for="docs{user.id}">Documents</label>
 							<div class="documents-drop contents">
 								<ul role="list">
-									{#each data.requestsData as request}
-										{#if user.id == request.userId}
-											<li>{request.document}</li>
+									{#each data.requestsData as document}
+										{#if user.id == document.userId}
+											<li>{document.document}</li>
 										{/if}
 									{/each}
 								</ul>
@@ -413,6 +454,7 @@
 						<div>
 							<label for="rpp">Rows Per Page</label>
 							<select name="row-pagination" id="rpp" bind:value={rowsPerPage}>
+								<option value={5}>5</option>
 								<option value={10}>10</option>
 								<option value={25}>25</option>
 								<option value={50}>50</option>
@@ -479,6 +521,181 @@
 			</tr>
 		</tfoot>
 	</table>
+	{#if showPanel}
+		<div class="side-panel" transition:slide={{ duration: 300, easing: quintInOut, axis: 'x' }}>
+			<div class="panel-wrapper">
+				{#each userData as user}
+					<button
+						class="close-btn"
+						on:click={() => {
+							showPanel = false;
+							userData = [];
+							documentData = [];
+						}}
+						aria-label="Close Side Panel"
+						title="Close Panel"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+							><path
+								fill="currentColor"
+								d="m11.71 15.29l2.59-2.59a.996.996 0 0 0 0-1.41L11.71 8.7c-.63-.62-1.71-.18-1.71.71v5.17c0 .9 1.08 1.34 1.71.71z"
+							/></svg
+						>
+					</button>
+					<div class="panel-data">
+						<h3>Request No. {user.id}</h3>
+						<div class="wrapper">
+							<h4>User Info</h4>
+							<div class="user-grid">
+								<p class="user-info">
+									<b>Name: </b>{user.first_name + ' ' + user.middle_name + ' ' + user.last_name}
+								</p>
+								<p><b>Student Number: </b>{user.student_number}</p>
+								<div class="row-border" />
+								<p><b>Email: </b>{user.email}</p>
+								<p><b>Year Level: </b>{user.year_level}</p>
+								<div class="row-border" />
+								<p><b>Scholarship: </b>{user.scholarship ? 'Yes' : 'No'}</p>
+								<p><b>Purpose: </b>{user.purpose}</p>
+							</div>
+						</div>
+						<div class="wrapper">
+							<h4>Documents Requested</h4>
+							<div class="list" role="list">
+								{#each documentData as document, i}
+									<p>{document.document} - PHP {document.price}</p>
+									{#if i % 2 !== 0 && i < documentData.length - 1}
+										<div class="row-border" />
+									{/if}
+								{/each}
+							</div>
+							<div class="document-total-price"><b>Total Price: </b>PHP {user.total_price}</div>
+							<div><b>Payment Method: </b>{user.payment_method}</div>
+						</div>
+						<div class="wrapper">
+							<h4>Request Status</h4>
+							<div class="bool-grid">
+								<div>
+									{#if user.request_approved}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											><path
+												fill="#0e6021"
+												d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5l1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+											/></svg
+										>
+									{:else}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											><path
+												fill="#850038"
+												d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17L12 13.41L8.41 17L7 15.59L10.59 12L7 8.41L8.41 7L12 10.59L15.59 7L17 8.41L13.41 12L17 15.59z"
+											/></svg
+										>
+									{/if}
+									Request Approved
+								</div>
+								<div>
+									{#if user.documents_approved}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											><path
+												fill="#0e6021"
+												d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5l1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+											/></svg
+										>
+									{:else}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											><path
+												fill="#850038"
+												d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17L12 13.41L8.41 17L7 15.59L10.59 12L7 8.41L8.41 7L12 10.59L15.59 7L17 8.41L13.41 12L17 15.59z"
+											/></svg
+										>
+									{/if}
+									Requirements Verified
+								</div>
+								<div>
+									{#if user.request_paid}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											><path
+												fill="#0e6021"
+												d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5l1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+											/></svg
+										>
+										{user.payment_date}
+									{:else}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											><path
+												fill="#850038"
+												d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17L12 13.41L8.41 17L7 15.59L10.59 12L7 8.41L8.41 7L12 10.59L15.59 7L17 8.41L13.41 12L17 15.59z"
+											/></svg
+										>
+										Request Paid
+									{/if}
+								</div>
+								<div>
+									{#if user.request_available}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											><path
+												fill="#0e6021"
+												d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5l1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+											/></svg
+										>
+									{:else}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											><path
+												fill="#850038"
+												d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17L12 13.41L8.41 17L7 15.59L10.59 12L7 8.41L8.41 7L12 10.59L15.59 7L17 8.41L13.41 12L17 15.59z"
+											/></svg
+										>
+									{/if}
+									Requirements Available
+								</div>
+							</div>
+						</div>
+					</div>
+					<a href="/admin/users/{user.id}" target="_blank">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+							><path
+								fill="currentColor"
+								d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3h-7z"
+							/>
+						</svg>
+						Open in New Tab
+					</a>
+				{/each}
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -490,7 +707,7 @@
 		display: flex;
 		justify-content: space-between;
 		color: white;
-		background-color: #1911ee;
+		background-color: var(--blue_accent);
 		border: none;
 		border-radius: 0.5em;
 		cursor: pointer;
@@ -502,6 +719,114 @@
 	.container > button:active {
 		scale: 0.95;
 	}
+	.side-panel {
+		position: absolute;
+		padding: 1em 0;
+		top: 73.8px;
+		background: transparent;
+		right: 0;
+		height: calc(100% - 73.8px);
+		width: 40vw;
+		z-index: 10;
+	}
+	.panel-wrapper {
+		position: relative;
+		border-radius: 10px 0 0 10px;
+		background-color: #efefef;
+		box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px,
+			rgba(17, 17, 26, 0.1) 0px 16px 48px;
+		height: 100%;
+		padding: 1em;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	.panel-wrapper button {
+		position: absolute;
+		margin-top: -1.2em;
+		margin-left: -1.2em;
+		border-radius: 10px 0 0 10px;
+		background: var(--disabled);
+		color: black;
+		height: 100%;
+		cursor: pointer;
+		appearance: none;
+		border: 0;
+	}
+	.panel-wrapper button:hover {
+		background-color: var(--disabled_text);
+	}
+	.panel-data {
+		padding-left: 1em;
+	}
+	.panel-data h3 {
+		padding: 1em;
+		color: white;
+		background-color: var(--upcolor_maroon);
+		border-radius: 10px;
+		text-transform: uppercase;
+	}
+	.panel-data > .wrapper {
+		padding: 5px;
+		margin: 1em 0;
+		/* border: 1px solid var(--upcolor_maroon); */
+		border-radius: 10px;
+		font-size: small;
+	}
+	.panel-data > .wrapper h4 {
+		font-size: medium;
+		color: black;
+		margin-bottom: 10px;
+		border-bottom: 2px solid var(--upcolor_maroon);
+	}
+	.row-border {
+		border-top: 1px solid #00000022;
+		grid-column: 1 / 3; /* this code makes the row stretch to entire width of the container */
+	}
+	.panel-data > .wrapper .list {
+		display: grid;
+		font-size: 9pt;
+		list-style: none;
+		grid-template-columns: auto auto;
+		/* grid-template-rows: repeat(9, auto); */
+		grid-gap: 0.5em;
+	}
+	.document-total-price {
+		margin-top: 1em;
+		border-top: 1px solid #00000022;
+	}
+	.user-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 0.5em;
+	}
+	.bool-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 1em;
+	}
+	.bool-grid div {
+		display: flex;
+		justify-content: start;
+		gap: 5px;
+		align-items: center;
+	}
+	.panel-wrapper a {
+		position: absolute;
+		bottom: 1em;
+		width: 566.4px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 5px;
+		font-size: small;
+		color: var(--upcolor_maroon);
+		background-color: transparent;
+		border: 2px solid var(--upcolor_maroon);
+		margin-left: 1.2em;
+		padding: 0.5em 0;
+		border-radius: 10px;
+	}
+
 	table {
 		border-radius: 20px;
 	}
@@ -657,10 +982,14 @@
 	.user-rows:hover {
 		background-color: var(--disabled);
 	}
-	.user-rows > td > a {
-		color: #1911ee;
+	.user-rows > td > button {
+		cursor: pointer;
+		font-weight: 600;
+		color: var(--blue_accent);
+		background-color: transparent;
+		border: 0;
 	}
-	.user-rows > td > a:is(:active, :focus) {
+	.user-rows > td > button:active {
 		color: var(--upcolor_maroon);
 	}
 	.user-info {
