@@ -26,4 +26,6 @@
 	{request.id}
 	{request.document}
 	{request.price}
+{:else}
+	User does not exist
 {/each}

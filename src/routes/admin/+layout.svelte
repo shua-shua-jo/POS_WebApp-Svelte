@@ -16,7 +16,7 @@
 	});
 </script>
 
-<SvelteToast options={{ duration: 5000 }} />
+<SvelteToast options={{ duration: 2000 }} />
 <nav
 	class="navbar navbar-expand-sm"
 	style="border-bottom: 5px solid var(--upcolor_green); background-color: var(--upcolor_maroon)"
@@ -35,8 +35,8 @@
 				</li>
 			</ul>
 		</div>
-		<div class="nav-request">
-			<button class="nav-link-req">
+		<div class="nav-admin">
+			<button class="nav-link-req" aria-label="Admin Icon">
 				<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24"
 					><path
 						fill="currentColor"
@@ -93,7 +93,7 @@
 		text-decoration: underline;
 		text-underline-offset: 0.3em;
 	}
-	.nav-request {
+	.nav-admin {
 		margin-right: 20px;
 	}
 	button {

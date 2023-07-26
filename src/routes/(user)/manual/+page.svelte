@@ -16,7 +16,7 @@
 
 {#if !visible}
 	<label>
-		<button on:click={start}>Start Tutorial</button>
+		<button aria-label="Start Tutorial" on:click={start}>Start Tutorial</button>
 	</label>
 {/if}
 
@@ -33,5 +33,5 @@
 	ddlol
 
 	<h2 transition:fly={{ delay: 250, duration: 300, y: 100, opacity: 0.5 }}>About</h2>
-	<button on:click={reset}>Reset</button>
+	<button aria-label="Reset Tutorial" on:click={reset}>Reset</button>
 {/if}

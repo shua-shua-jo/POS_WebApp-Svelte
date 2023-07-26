@@ -63,7 +63,7 @@
 </svelte:head>
 
 <section>
-	<button class="back_to_start" on:click={backToStart} class:hidden
+	<button class="back_to_start" aria-label="Scroll Up" on:click={backToStart} class:hidden
 		><svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24"
 			><path
 				d="M12 22c5.514 0 10-4.486 10-10S17.514 2 12 2S2 6.486 2 12s4.486 10 10 10zm0-15l5 5h-4v5h-2v-5H7l5-5z"
@@ -77,7 +77,7 @@
 	</div>
 	<div class="buttons">
 		{#if buttonExpand}
-			<button class="expand" on:click={expand_all}
+			<button class="expand" aria-label="Expand All" on:click={expand_all}
 				><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
 					><path
 						fill="currentColor"
@@ -86,7 +86,7 @@
 				>Expand All</button
 			>
 		{:else}
-			<button class="collapse" on:click={collapse_all}
+			<button class="collapse" aria-label="Collapse All" on:click={collapse_all}
 				><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
 					><path
 						fill="currentColor"

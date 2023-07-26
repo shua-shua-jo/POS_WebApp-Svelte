@@ -54,12 +54,13 @@
 <svelte:head>
 	<title>UP2GO: Request Forms</title>
 </svelte:head>
-<SvelteToast options={{ duration: 5000 }} />
+<SvelteToast options={{ duration: 3000 }} />
 <div class="grid-container">
 	<form method="POST" on:submit={func.handleSubmit}>
 		<aside class="aside-image"><img src={bg_upb1} alt="UPB Oblation at night" /></aside>
 		<div class="back-btn" id="back-btn-log">
 			<button
+				aria-label="Back"
 				on:click={() => {
 					if (history.length <= 2) {
 						goto('/');
@@ -463,8 +464,11 @@
 					</a>
 				{/if}
 				{#if progNum == 4}
-					<button class="submit-button" type="submit" disabled={confirm ? '' : 'disabled'}
-						>Submit</button
+					<button
+						class="submit-button"
+						aria-label="Submit"
+						type="submit"
+						disabled={confirm ? '' : 'disabled'}>Submit</button
 					>
 				{:else}
 					<a class="btn" href="" on:click={func.handleNextButton(progNum)}>Next</a>
