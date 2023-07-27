@@ -34,9 +34,16 @@ export async function POST({ request }) {
 
 	const options = {
 		from: 'up2go.test@gmail.com',
-		to: 'joshuaabello02@gmail.com',
+		to: data.email,
 		subject: data.subject,
-		html: emailHtml
+		html: emailHtml,
+		attachments: [
+			{
+				filename: `${data.lname}_invoice`,
+				content: new Buffer.from(data.pdf),
+				contentType: 'application/pdf'
+			}
+		]
 	};
 
 	console.time('sending email');

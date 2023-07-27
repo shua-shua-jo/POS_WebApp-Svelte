@@ -2,7 +2,9 @@
 	import up2go_white from '$lib/images/logos/up2go-white.png';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { afterUpdate } from 'svelte';
+	import { fade } from 'svelte/transition';
 
+	let dropdown = false;
 	afterUpdate(() => {
 		document.querySelectorAll('.nav-link').forEach((link) => {
 			if (link.href === window.location.href) {
@@ -31,12 +33,18 @@
 					<a class="nav-link" href="/admin/users">Users</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/admin/requests">Requests</a>
+					<a class="nav-link" href="/admin/documents">Documents</a>
 				</li>
 			</ul>
 		</div>
 		<div class="nav-admin">
-			<button class="nav-link-req" aria-label="Admin Icon">
+			<button
+				class="nav-link-req"
+				aria-label="Admin Icon"
+				on:click={() => {
+					dropdown = !dropdown;
+				}}
+			>
 				<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24"
 					><path
 						fill="currentColor"
@@ -44,6 +52,11 @@
 					/>
 				</svg>
 			</button>
+			{#if dropdown}
+				<div class="dropdown" transition:fade={{ duration: 250 }}>
+					<a href="/admin/logout">Logout</a>
+				</div>
+			{/if}
 		</div>
 	</div>
 </nav>
@@ -94,7 +107,18 @@
 		text-underline-offset: 0.3em;
 	}
 	.nav-admin {
+		position: relative;
 		margin-right: 20px;
+	}
+	.nav-admin .dropdown {
+		position: absolute;
+		background-color: white;
+		border: 2px solid black;
+		color: black;
+		right: 0;
+	}
+	.dropdown a {
+		color: black;
 	}
 	button {
 		border: none;

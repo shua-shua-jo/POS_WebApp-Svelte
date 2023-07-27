@@ -44,9 +44,9 @@
 				await failed(data.message);
 			}
 			if (data.emailSent == 'true') {
-				success(`An email has been sent to ${data.email}`);
+				await success(`An email has been sent to ${data.email}`);
 			} else {
-				failed(`Error sending email to ${data.email}`);
+				await failed(`Error sending email to ${data.email}`);
 			}
 		}
 	});

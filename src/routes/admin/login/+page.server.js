@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { db } from '$lib/server/db.js';
+import { db_user } from '$lib/server/db.js';
 import { adminTable } from '$lib/server/schema.js';
 import { eq } from 'drizzle-orm';
 import { error, redirect } from '@sveltejs/kit';
@@ -22,7 +22,7 @@ export const actions = {
 			throw error(400, 'Password is not valid');
 		}
 
-		const admin = await db
+		const admin = await db_user
 			.select({ email: adminTable.email, password: adminTable.password })
 			.from(adminTable)
 			.where(eq(adminTable.email, email));

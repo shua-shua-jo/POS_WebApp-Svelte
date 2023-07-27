@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db.js';
+import { db_user } from '$lib/server/db.js';
 import { usersTable, requestsTable } from '$lib/server/schema.js';
 import { error } from '@sveltejs/kit';
 import { toast } from '@zerodevx/svelte-toast';
@@ -30,7 +30,7 @@ export const actions = {
 		const data = await request.formData();
 		const id = data.get('id');
 
-		await db.update(usersTable).set({ request_approved: true }).where(eq(usersTable.id, id));
+		await db_user.update(usersTable).set({ request_approved: true }).where(eq(usersTable.id, id));
 
 		return { success: true };
 		//send email
@@ -39,7 +39,7 @@ export const actions = {
 		const data = await request.formData();
 		const id = data.get('id');
 
-		await db.update(usersTable).set({ documents_approved: true }).where(eq(usersTable.id, id));
+		await db_user.update(usersTable).set({ documents_approved: true }).where(eq(usersTable.id, id));
 
 		return { success: true };
 		//send email
@@ -48,7 +48,7 @@ export const actions = {
 		const data = await request.formData();
 		const id = data.get('id');
 
-		await db.update(usersTable).set({ request_available: true }).where(eq(usersTable.id, id));
+		await db_user.update(usersTable).set({ request_available: true }).where(eq(usersTable.id, id));
 
 		return { success: true };
 		//send email
@@ -57,8 +57,8 @@ export const actions = {
 		const data = await request.formData();
 		const id = data.get('id');
 
-		await db.delete(usersTable).where(eq(usersTable.id, id));
-		await db.delete(requestsTable).where(eq(requestsTable.userId, id));
+		await db_user.delete(usersTable).where(eq(usersTable.id, id));
+		await db_user.delete(requestsTable).where(eq(requestsTable.userId, id));
 
 		return { success: true };
 		//send email
@@ -68,8 +68,8 @@ export const actions = {
 		const id = data.get('id');
 		const reason = data.get('reason');
 
-		await db.delete(usersTable).where(eq(usersTable.id, id));
-		await db.delete(requestsTable).where(eq(requestsTable.userId, id));
+		await db_user.delete(usersTable).where(eq(usersTable.id, id));
+		await db_user.delete(requestsTable).where(eq(requestsTable.userId, id));
 
 		return { success: true };
 		// send email with reason

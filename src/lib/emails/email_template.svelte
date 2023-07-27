@@ -29,8 +29,8 @@
 	const button = {
 		alignItems: 'center',
 		appearance: 'button',
-		backgroundColor: '#0e6021',
-		borderRadius: '8px',
+		backgroundColor: '#1911ee',
+		borderRadius: '5px',
 		borderStyle: 'none',
 		boxSizing: 'border-box',
 		color: '#fff',

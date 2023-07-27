@@ -47,7 +47,6 @@
 			sortBy.col = column;
 			sortBy.ascending = true;
 		}
-		console.log(sortBy.ascending);
 
 		// Modifier to sorting function for ascending or descending
 		let sortModifier = sortBy.ascending ? 1 : -1;

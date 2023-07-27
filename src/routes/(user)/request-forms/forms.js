@@ -282,9 +282,7 @@ export function handlePrevButton(progNum) {
 
 export function handleSubmit() {
 	if (!handleFirstStep || !handleSecondStep || !handleThirdStep) {
-		console.log('Cannot submit form!');
 		return false;
 	}
 	return true;
-	console.log('Submit');
 }

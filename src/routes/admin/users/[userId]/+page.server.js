@@ -1,4 +1,4 @@
-import { db } from '$lib/server/db.js';
+import { db_user } from '$lib/server/db.js';
 import { eq, and } from 'drizzle-orm';
 import { usersTable, requestsTable } from '$lib/server/schema.js';
 import { error } from '@sveltejs/kit';
@@ -17,7 +17,7 @@ export async function load({ cookies, url }) {
 	const id = path[length - 1];
 
 	const userData = async () => {
-		return await db
+		return await db_user
 			.select()
 			.from(usersTable)
 			.innerJoin(

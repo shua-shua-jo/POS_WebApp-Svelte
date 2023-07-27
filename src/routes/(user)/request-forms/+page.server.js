@@ -1,10 +1,11 @@
 import { formData } from './data.js';
 import { toast } from '@zerodevx/svelte-toast';
 import { redirect, error } from '@sveltejs/kit';
-import { db } from '$lib/server/db.js';
+import { db_user } from '$lib/server/db.js';
 import { usersTable, requestsTable } from '$lib/server/schema.js';
 import { validateEmail, validateSnum } from '$lib/server/validate.js';
 import { parseISOString } from '$lib/server/utils.js';
+import { eq } from 'drizzle-orm';
 
 export async function load({ cookies }) {
 	const success = cookies.get('success');
@@ -57,7 +58,7 @@ export const actions = {
 		if (validEmail[0].count >= 1) {
 			cookies.set('success', false);
 			cookies.set('message', 'Error! Your request has been declined: Email has a pending request.');
-			throw error(400, '?request-forms?success=false');
+			throw error(400, 'Email already exists');
 		}
 
 		const validSnum = await validateSnum(snum);
@@ -68,7 +69,7 @@ export const actions = {
 				'message',
 				'Error! Your request has been declined: Student number has a pending request.'
 			);
-			throw error(400, '?request-forms?success=false');
+			throw error(400, 'Student number already exists.');
 		}
 
 		const date = new Date();
@@ -88,7 +89,7 @@ export const actions = {
 			date.getMilliseconds() +
 			'Z';
 
-		const user = await db.insert(usersTable).values({
+		const user = await db_user.insert(usersTable).values({
 			first_name: fname.toString(),
 			middle_name: mname.toString(),
 			last_name: lname.toString(),
@@ -102,47 +103,56 @@ export const actions = {
 			request_date: parseISOString(localdate)
 		});
 
-		console.log(user.time);
-
 		const requests = requestForms.map((item, index) => ({
 			document: item,
 			price: requestPrices[index],
 			userId: user.insertId
 		}));
 
-		const formRequest = await db.insert(requestsTable).values(requests);
+		const formRequest = await db_user.insert(requestsTable).values(requests);
 
-		console.log(formRequest.time);
 		try {
-			const response = await fetch('http://localhost:5173/api/email', {
+			const pdf_response = await fetch('http://localhost:5173/api/generate-invoice', {
 				method: 'POST',
 				body: JSON.stringify({
-					subject: `Invoice for Request No. ${user.insertId}`,
-					request_number: user.insertId,
-					emailType: 'invoice',
 					name: name,
-					lname: lname,
-					fname: fname,
-					email: email,
 					snum: snum,
-					isScholar: isScholar,
+					date: new Date().toDateString('fil-PH'),
+					scholarship: isScholar,
 					forms: requestForms,
-					prices: requestPrices
+					prices: requestPrices,
+					total_price: totalPrice
 				}),
 				headers: {
 					'Content-Type': 'application/json'
 				}
 			});
-			const emailSent = await response.json();
+			const gen_pdf = await pdf_response.json();
+			const email_response = await fetch('http://localhost:5173/api/email', {
+				method: 'POST',
+				body: JSON.stringify({
+					subject: `Invoice for Request No. ${user.insertId}`,
+					request_number: user.insertId,
+					emailType: 'invoice',
+					lname: lname,
+					fname: fname,
+					email: email,
+					pdf: gen_pdf
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			const emailSent = await email_response.json();
 			if (emailSent.includes('250')) {
-				console.log('Email sent!');
 				cookies.set('emailSent', true);
-			} else {
-				console.log('Email not sent!');
-				cookies.set('emailSent', false);
 			}
 		} catch (error) {
-			console.log(error);
+			await db_user.delete(usersTable).where(eq(usersTable.id, user.insertId));
+			await db_user.delete(requestsTable).where(eq(requestsTable.userId, user.insertId));
+			cookies.set('emailSent', false);
+			cookies.set('message', error.message);
+			throw error(400, error.message);
 		}
 
 		cookies.set('success', true);
