@@ -3,7 +3,7 @@
 	import { success, failed } from '$lib/toast/themes.js';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import * as func from './forms.js';
+	import * as func from '$lib/utils/forms.js';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { enhance } from '$app/forms';
 
