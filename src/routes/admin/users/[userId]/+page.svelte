@@ -3,7 +3,7 @@
 </script>
 
 <div class="container">
-	<div class="navigation"><div class="text">Users &#x276F; User</div></div>
+	<div class="navigation"><div class="text">Users &#x276F; <span>User</span></div></div>
 	<div class="wrapper-container">
 		<div class="wrapper">
 			<div class="header">
@@ -53,11 +53,16 @@
 		align-items: center;
 	}
 	.container .navigation {
+		user-select: none;
 		width: 70vw;
 		margin: 0 auto;
+		color: var(--disabled_text);
 	}
 	.navigation .text {
 		width: max-content;
+	}
+	.navigation .text span {
+		border-bottom: 1px solid var(--disabled_text);
 	}
 	.wrapper-container {
 		display: flex;
