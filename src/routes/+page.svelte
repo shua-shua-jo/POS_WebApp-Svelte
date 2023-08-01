@@ -1,12 +1,24 @@
 <script>
 	import uplogo from '$lib/images/logos/uplogo.png';
 	import up2gologo_colored from '$lib/images/logos/up2go-colored.png';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import { failed } from '$lib/toast/themes.js';
+	import { onMount } from 'svelte';
+
+	export let data;
+
+	onMount(async () => {
+		const req_message = data.req_message;
+		if (req_message !== undefined) {
+			await failed(data.req_message);
+		}
+	});
 </script>
 
 <svelte:head>
 	<title>UP2GO: Home</title>
 </svelte:head>
-
+<SvelteToast options={{ duration: 3000 }} />
 <div class="content">
 	<div class="start-page">
 		<div class="grp-container">

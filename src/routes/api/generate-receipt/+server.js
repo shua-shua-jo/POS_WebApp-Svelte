@@ -4,7 +4,7 @@ import HelveticaBold from 'pdfjs/font/Helvetica-Bold.js';
 
 export async function POST({ request, fetch }) {
 	const data = await request.json();
-	const scholarship = data.scholarship == 'true' ? 'Yes' : 'No';
+	const scholarship = data.isScholar == 'true' ? 'Yes' : 'No';
 	const doc = new pdf.Document({ padding: 40 });
 	const pdf_template = await fetch('http://localhost:5173/src/lib/pdfs/invoice.pdf').then((res) =>
 		res.arrayBuffer()

@@ -8,7 +8,14 @@ export const requirements = new Map([
 			'Exit counseling from the Office of Counseling and Guidance',
 			'Official Transcript of Records'
 		]
-	]
+	],
+	['Official Transcript of Records', 'Latest University Clearance'],
+	['Certified True Text of Diploma', 'Affidavit of Loss'],
+	['Diploma Translation', 'Scanned Copy of Diploma'],
+	['Certified True Copy of Diploma', 'Scanned Copy of Diploma'],
+	['True Copy of Grades', 'Preferred Format for True Copy of Grades'],
+	['Certificate of Enrollment', 'Signed Form 5'],
+	['Certificate of Non-Issuance of ID', 'Signed Form 5']
 ]);
 
 export const formData = new Map([

@@ -1,9 +1,17 @@
 <script>
+	import { page } from '$app/stores';
+
 	export let data;
 </script>
 
+<svelte:head>
+	<title>UP2GO: Admin | Show User</title>
+</svelte:head>
+
 <div class="container">
-	<div class="navigation"><div class="text">Users &#x276F; <span>User</span></div></div>
+	<div class="navigation">
+		<div class="text">Users &#x276F; User &#x276F; <span>{$page.params.userId}</span></div>
+	</div>
 	<div class="wrapper-container">
 		<div class="wrapper">
 			<div class="header">

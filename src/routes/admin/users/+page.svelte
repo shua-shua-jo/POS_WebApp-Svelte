@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { refresh, success } from '$lib/toast/themes.js';
+	import { toast } from '@zerodevx/svelte-toast';
 	import { enhance } from '$app/forms';
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
@@ -60,9 +61,15 @@
 	let updated = false;
 
 	async function updateData() {
+		toast.pop();
+		const date = new Date().toLocaleDateString();
+		const time = new Date().toLocaleTimeString();
+
 		showPanel = false;
 		updated = true;
-		await refresh();
+
+		await refresh(time);
+
 		const response = await fetch('/admin/database');
 
 		if (response.ok) {
@@ -71,23 +78,35 @@
 				data = { usersData: update.usersData, requestsData: update.requestsData };
 				updated = false;
 			}, 2000);
-			console.log(new Date().toLocaleString('fil-PH'));
+			console.log('Updating data @', date + ', ', time);
 		}
 	}
 
 	let showPanel = false;
 	let userData = [];
 	let documentData = [];
-	let prevUserData;
+	let prevUserDataId;
+
+	let deleteClicked = false;
+	let deleteUser = [];
 
 	onMount(async () => {
 		setInterval(async () => {
+			toast.pop();
+			const date = new Date().toLocaleDateString();
+			const time = new Date().toLocaleTimeString();
+
+			updated = true;
+			await refresh(time);
+
 			const response = await fetch('/admin/database');
 			if (response.ok) {
 				const update = await response.json();
-				await refresh();
-				console.log(new Date().toLocaleString('fil-PH'));
-				data = { usersData: update.usersData, requestsData: update.requestsData };
+				setTimeout(async () => {
+					data = { usersData: update.usersData, requestsData: update.requestsData };
+					updated = false;
+				}, 2000);
+				console.log('Updating data @', date + ', ', time);
 			}
 		}, 600000);
 	});
@@ -209,12 +228,12 @@
 		</thead>
 		<tbody>
 			{#each slice as user (user.id)}
-				<tr class="user-rows" animate:flip={{ duration: 250 }}>
+				<tr class="user-rows" animate:flip={{ duration: 300 }}>
 					<td>
 						<button
 							on:click={() => {
-								userData = [];
-								documentData = [];
+								userData.length = 0;
+								documentData.length = 0;
 								for (var i = 0; i < data.requestsData.length; i++) {
 									const id = data.requestsData[i].userId;
 									if (user.id == id) {
@@ -223,9 +242,9 @@
 								}
 
 								userData.push(user);
-								if (prevUserData !== userData[0].id) {
+								if (prevUserDataId !== userData[0].id) {
 									showPanel = false;
-									prevUserData = userData[0].id;
+									prevUserDataId = userData[0].id;
 									setTimeout(() => {
 										showPanel = true;
 									}, 300);
@@ -304,7 +323,9 @@
 							}}
 						>
 							<input type="hidden" name="id" value={user.id} />
-							<button aria-label="Request Approve" disabled={user.request_approved == true}>
+							<input type="hidden" name="fname" value={user.first_name} />
+							<input type="hidden" name="email" value={user.email} />
+							<button aria-label="Request Approved" disabled={user.request_approved == true}>
 								{#if user.request_approved}
 									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
 										><path
@@ -336,7 +357,13 @@
 							}}
 						>
 							<input type="hidden" name="id" value={user.id} />
-							<button aria-label="Request Approve" disabled={user.documents_approved == true}>
+							<input type="hidden" name="fname" value={user.first_name} />
+							<input type="hidden" name="email" value={user.email} />
+							<button
+								class:disabled={user.request_approved == false}
+								aria-label="Requirements Verified"
+								disabled={user.documents_approved == true}
+							>
 								{#if user.documents_approved}
 									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
 										><path
@@ -352,7 +379,44 @@
 							</button>
 						</form>
 					</td>
-					<td>{user.request_paid ? 'Paid' : 'Pending'}</td>
+					<td
+						><form
+							action="?/paid"
+							method="POST"
+							use:enhance={() => {
+								return async ({ result, update }) => {
+									if (result.status === 200) {
+										await update();
+										await success(
+											`<b>Request Paid!</b><br/><small>Email has been sent to ${user.email}</small>`
+										);
+									}
+								};
+							}}
+						>
+							<input type="hidden" name="id" value={user.id} />
+							<input type="hidden" name="fname" value={user.first_name} />
+							<input type="hidden" name="email" value={user.email} />
+							<button
+								class:disabled={user.documents_approved == false}
+								aria-label="Request Paid"
+								disabled={user.request_paid == true}
+							>
+								{#if user.request_paid}
+									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+										><path
+											fill="currentColor"
+											d="M13 2.03v2.02c4.39.54 7.5 4.53 6.96 8.92c-.46 3.64-3.32 6.53-6.96 6.96v2c5.5-.55 9.5-5.43 8.95-10.93c-.45-4.75-4.22-8.5-8.95-8.97m-2 .03c-1.95.19-3.81.94-5.33 2.2L7.1 5.74c1.12-.9 2.47-1.48 3.9-1.68v-2M4.26 5.67A9.885 9.885 0 0 0 2.05 11h2c.19-1.42.75-2.77 1.64-3.9L4.26 5.67M15.5 8.5l-4.88 4.88l-2.12-2.12l-1.06 1.06l3.18 3.18l5.94-5.94L15.5 8.5M2.06 13c.2 1.96.97 3.81 2.21 5.33l1.42-1.43A8.002 8.002 0 0 1 4.06 13h-2m5.04 5.37l-1.43 1.37A9.994 9.994 0 0 0 11 22v-2a8.002 8.002 0 0 1-3.9-1.63Z"
+										/></svg
+									>
+									<span>Paid</span>
+								{:else}
+									<span class="loader" />
+									Pending
+								{/if}
+							</button>
+						</form></td
+					>
 					<td>
 						<form
 							action="?/available"
@@ -369,7 +433,13 @@
 							}}
 						>
 							<input type="hidden" name="id" value={user.id} />
-							<button aria-label="Request Approve" disabled={user.request_available == true}>
+							<input type="hidden" name="fname" value={user.first_name} />
+							<input type="hidden" name="email" value={user.email} />
+							<button
+								class:disabled={user.request_paid == false}
+								aria-label="Request Available"
+								disabled={user.request_available == true}
+							>
 								{#if user.request_available}
 									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
 										><path
@@ -400,7 +470,11 @@
 								};
 							}}
 						>
-							<button class="finish-btn" aria-label="Finish">
+							<button
+								class="finish-btn"
+								class:disabled-finish={user.request_available == false}
+								aria-label="Finish"
+							>
 								<input type="hidden" name="id" value={user.id} />
 								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
 									><path
@@ -412,32 +486,22 @@
 						</form>
 					</td>
 					<td class="delete">
-						<!-- CREATE DIALOG FOR REASON OF DELETION -->
-						<!-- MOVE FORM TO THE DIALOG -->
-						<form
-							action="?/delete"
-							method="POST"
-							use:enhance={() => {
-								return async ({ result, update }) => {
-									if (result.status === 200) {
-										await update();
-										await success(
-											`<b>Record deleted successfully.</b><br/><small>Reason has been sent to ${user.email}!<small/>`
-										);
-									}
-								};
+						<button
+							class="delete-btn"
+							aria-label="Delete"
+							on:click={() => {
+								deleteUser.length = 0;
+								deleteClicked = true;
+								deleteUser.push(user);
 							}}
 						>
-							<input type="hidden" name="id" value={user.id} />
-							<button class="delete-btn" aria-label="Delete">
-								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-									><path
-										fill="currentColor"
-										d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12l1.41 1.41L13.41 14l2.12 2.12l-1.41 1.41L12 15.41l-2.12 2.12l-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"
-									/></svg
-								>
-							</button>
-						</form>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+								><path
+									fill="currentColor"
+									d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12l1.41 1.41L13.41 14l2.12 2.12l-1.41 1.41L12 15.41l-2.12 2.12l-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"
+								/></svg
+							>
+						</button>
 					</td>
 				</tr>
 			{:else}
@@ -697,7 +761,61 @@
 	{/if}
 </div>
 
+{#if deleteClicked}
+	<div class="modal-container">
+		<div class="delete-modal">
+			<div class="modal-wrapper">
+				<button
+					class="close-modal"
+					on:click={() => {
+						deleteClicked = false;
+					}}
+					><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+						><path
+							fill="currentColor"
+							d="m12 13.4l-4.9 4.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.9-4.9l-4.9-4.9q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l4.9 4.9l4.9-4.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7L13.4 12l4.9 4.9q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275L12 13.4Z"
+						/></svg
+					></button
+				>
+				<form
+					action="?/delete"
+					method="POST"
+					use:enhance={() => {
+						return async ({ result, update }) => {
+							if (result.status === 200) {
+								await update();
+								deleteClicked = false;
+								await success(
+									`<b>Record deleted successfully.</b><br/><small>Reason has been sent to ${deleteUser[0].email}!<small/>`
+								);
+							}
+						};
+					}}
+				>
+					<input type="hidden" name="id" value={deleteUser[0].id} />
+					<input type="hidden" name="fname" value={deleteUser[0].first_name} />
+					<input type="hidden" name="email" value={deleteUser[0].email} />
+					<div>Confirm Delete</div>
+					<label for="reason">Reason</label>
+					<input type="text" name="reason" id="reason" required />
+					<button type="submit">Delete</button>
+				</form>
+			</div>
+		</div>
+	</div>
+{/if}
+
 <style>
+	form button.disabled {
+		pointer-events: none;
+		background-color: var(--disabled_text);
+		color: var(--disabled);
+	}
+	form button:is(.disabled-finish) {
+		pointer-events: none;
+		color: var(--disabled_text);
+		border-color: var(--disabled_text);
+	}
 	.container {
 		margin: 3em 5em;
 	}
@@ -719,12 +837,16 @@
 		scale: 0.95;
 	}
 	.side-panel {
-		position: absolute;
+		position: fixed;
 		padding: 1em 0;
-		top: 73.8px;
+		/* top: 73.8px; */
+		top: 0;
+		bottom: 0;
+		height: 100%;
+		/* height: calc(100% - 73.8px); */
 		background: transparent;
 		right: 0;
-		height: calc(100% - 73.8px);
+		margin: auto;
 		width: 40vw;
 		z-index: 10;
 	}
@@ -732,8 +854,13 @@
 		position: relative;
 		border-radius: 10px 0 0 10px;
 		background-color: #efefef;
-		box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px,
-			rgba(17, 17, 26, 0.1) 0px 16px 48px;
+		/* border-top: 1px solid;
+		border-bottom: 1px solid;
+		border-left: 1px solid;
+		border-color: var(--upcolor_maroon); */
+		box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px,
+			rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px,
+			rgba(0, 0, 0, 0.09) 0px -3px 5px;
 		height: 100%;
 		padding: 1em;
 		overflow-y: auto;
@@ -779,7 +906,7 @@
 	}
 	.row-border {
 		border-top: 1px solid #00000022;
-		grid-column: 1 / 3; /* this code makes the row stretch to entire width of the container */
+		grid-column: 1 / 3;
 	}
 	.panel-data > .wrapper .list {
 		display: grid;
@@ -904,6 +1031,7 @@
 		color: white;
 		background-color: var(--upcolor_maroon);
 		font-size: 9pt;
+		margin: 0 auto;
 	}
 	form button:disabled {
 		background-color: var(--upcolor_green);
@@ -917,7 +1045,7 @@
 		padding: 0.5em 1em;
 		border-radius: 50vw;
 	}
-	form button:is(.finish-btn) {
+	button.finish-btn {
 		border: 2px solid var(--upcolor_green);
 		color: var(--upcolor_green);
 	}
@@ -974,6 +1102,9 @@
 	}
 	.finish svg {
 		color: var(--upcolor_green);
+	}
+	button:is(.disabled-finish) svg {
+		color: var(--disabled_text);
 	}
 	.delete svg {
 		color: var(--upcolor_maroon);
@@ -1110,7 +1241,7 @@
 		width: inherit;
 		height: inherit;
 		border-radius: 50%;
-		background: #fff;
+		background-color: #fff;
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -1119,7 +1250,11 @@
 	.loader::after {
 		animation-delay: 1s;
 	}
-
+	button:is(.disabled) .loader::after,
+	button:is(.disabled) .loader::before {
+		background-color: var(--disabled);
+		animation: none;
+	}
 	@keyframes animloader {
 		0% {
 			transform: scale(0);
@@ -1129,5 +1264,35 @@
 			transform: scale(1);
 			opacity: 0;
 		}
+	}
+	.modal-container {
+		width: 100%;
+		height: 100%;
+		background-color: rgba(128, 128, 128, 0.279);
+		backdrop-filter: blur(1px);
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		margin: 0 auto;
+		position: fixed;
+		z-index: 100;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.modal-wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		height: 300px;
+		width: 500px;
+		background-color: white;
+	}
+	.close-modal {
+		appearance: none;
+		border: none;
+
+		cursor: pointer;
 	}
 </style>

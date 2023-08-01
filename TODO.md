@@ -1,0 +1,6 @@
+- [ ] Update upload requirements
+- [ ] Remove button on email for uploading requirements
+- [ ] Fix routing 
+- [ ] Add table for requirements
+- [ ] Add email function on admin side
+- [ ] Layout user page on admin

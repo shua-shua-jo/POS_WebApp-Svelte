@@ -1,6 +1,6 @@
 import { formData } from '$lib/server/lists.js';
 import { toast } from '@zerodevx/svelte-toast';
-import { redirect, error } from '@sveltejs/kit';
+import { redirect, error as s_error } from '@sveltejs/kit';
 import { db_user } from '$lib/server/db.js';
 import { usersTable, requestsTable } from '$lib/server/schema.js';
 import { validateEmail, validateSnum } from '$lib/server/validate.js';
@@ -57,8 +57,11 @@ export const actions = {
 
 		if (validEmail[0].count >= 1) {
 			cookies.set('success', false);
-			cookies.set('message', 'Error! Your request has been declined: Email has a pending request.');
-			throw error(400, 'Email already exists');
+			cookies.set(
+				'message',
+				'<b>Error!</b> Your request has been declined: Email has a pending request.'
+			);
+			throw s_error(400, 'Email already exists');
 		}
 
 		const validSnum = await validateSnum(snum);
@@ -67,16 +70,16 @@ export const actions = {
 			cookies.set('success', false);
 			cookies.set(
 				'message',
-				'Error! Your request has been declined: Student number has a pending request.'
+				'<b>Error!</b> Your request has been declined: Student number has a pending request.'
 			);
-			throw error(400, 'Student number already exists.');
+			throw s_error(400, 'Student number already exists.');
 		}
 
 		const date = new Date();
 		const localdate =
-			date.getFullYear() +
+			date.toLocaleDateString('fil-PH', { year: 'numeric' }) +
 			'-' +
-			('0' + (date.getMonth() + 1)).slice(-2) +
+			date.toLocaleDateString('fil-PH', { month: '2-digit' }) +
 			'-' +
 			date.toLocaleDateString('fil-PH', { day: 'numeric' }) +
 			'T' +
@@ -110,7 +113,7 @@ export const actions = {
 		}));
 
 		const formRequest = await db_user.insert(requestsTable).values(requests);
-
+		console.log(formRequest);
 		try {
 			const pdf_response = await fetch('http://localhost:5173/api/generate-invoice', {
 				method: 'POST',
@@ -134,6 +137,8 @@ export const actions = {
 					subject: `Invoice for Request No. ${user.insertId}`,
 					request_number: user.insertId,
 					emailType: 'invoice',
+					previewMsg: `Here's your invoice. Please upload requirement/s`,
+					contentMsg: `Attached document (pdf) is the invoice of your request. Please submit your requirement/s by clicking the button below. Thank you!`,
 					lname: lname,
 					fname: fname,
 					email: email,
@@ -152,11 +157,11 @@ export const actions = {
 			await db_user.delete(requestsTable).where(eq(requestsTable.userId, user.insertId));
 			cookies.set('emailSent', false);
 			cookies.set('message', error.message);
-			throw error(400, error.message);
+			throw s_error(400, error.message);
 		}
 
 		cookies.set('success', true);
-		cookies.set('message', 'Success! Your request has been submitted.');
+		cookies.set('message', '<b>Success!</b> Your request has been submitted.');
 		throw redirect(303, '/request-forms?success=true');
 	}
 };

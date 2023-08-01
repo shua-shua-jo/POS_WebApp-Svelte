@@ -1,8 +1,8 @@
 <script>
 	import bg_upb1 from '$lib/images/bg/bg-upb1.jpg';
+	import up2go_colored from '$lib/images/logos/up2go-colored.png';
 	import { success, failed } from '$lib/toast/themes.js';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
 	import * as func from '$lib/utils/forms.js';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { enhance } from '$app/forms';
@@ -44,9 +44,9 @@
 				await failed(data.message);
 			}
 			if (data.emailSent == 'true') {
-				await success(`An email has been sent to ${data.email}`);
+				await success(`An email has been sent to <b>${data.email}</b>`);
 			} else {
-				await failed(`Error sending email to ${data.email}`);
+				await failed(`Error sending email to <b>${data.email}</b>`);
 			}
 		}
 	});
@@ -90,6 +90,7 @@
 				>
 				<span>Home</span>
 			</a>
+			<img src={up2go_colored} alt="UP2GO Colored Logo" />
 		</div>
 		<header class="form-header">Please fill all form fields to go to next step.</header>
 		<div class="form-progress-bar">
@@ -107,19 +108,21 @@
 				<legend>Personal Information</legend>
 				<div class="inputs">
 					<label class="info-label" for="fname">
-						<input
-							class="info-input"
-							type="text"
-							id="fname"
-							name="fname"
-							pattern="^\s*[a-zA-Z]+[a-zA-Z ]*$"
-							placeholder=" "
-							on:keypress={func.handleNames}
-							bind:value={fname}
-							required
-							autocomplete="off"
-							maxlength="50"
-						/>
+						<span class="span-input">
+							<input
+								class="info-input"
+								type="text"
+								id="fname"
+								name="fname"
+								pattern="^\s*[a-zA-Z]+[a-zA-Z ]*$"
+								placeholder=" "
+								on:keypress={func.handleNames}
+								bind:value={fname}
+								required
+								autocomplete="off"
+								maxlength="50"
+							/>
+						</span>
 						<div class="label-text">First Name</div>
 					</label>
 					{#if fname.trim() == ''}
@@ -130,18 +133,20 @@
 				</div>
 				<div class="inputs">
 					<label class="info-label" for="mname">
-						<input
-							class="info-input"
-							type="text"
-							id="mname"
-							name="mname"
-							pattern="^\s*[a-zA-Z]+[a-zA-Z ]*$"
-							placeholder="N/A (Optional)"
-							on:keypress={func.handleNames}
-							bind:value={mname}
-							autocomplete="off"
-							maxlength="50"
-						/>
+						<span class="span-input">
+							<input
+								class="info-input"
+								type="text"
+								id="mname"
+								name="mname"
+								pattern="^\s*[a-zA-Z]+[a-zA-Z ]*$"
+								placeholder="N/A (Optional)"
+								on:keypress={func.handleNames}
+								bind:value={mname}
+								autocomplete="off"
+								maxlength="50"
+							/>
+						</span>
 						<div class="label-text">Middle Name</div>
 					</label>
 					{#if mname !== '' && !func.validateNames(mname.trim())}
@@ -150,19 +155,21 @@
 				</div>
 				<div class="inputs">
 					<label class="info-label" for="lname">
-						<input
-							class="info-input"
-							type="text"
-							id="lname"
-							name="lname"
-							pattern="^\s*[a-zA-Z]+[a-zA-Z ]*$"
-							placeholder=" "
-							on:keypress={func.handleNames}
-							bind:value={lname}
-							required
-							autocomplete="off"
-							maxlength="50"
-						/>
+						<span class="span-input">
+							<input
+								class="info-input"
+								type="text"
+								id="lname"
+								name="lname"
+								pattern="^\s*[a-zA-Z]+[a-zA-Z ]*$"
+								placeholder=" "
+								on:keypress={func.handleNames}
+								bind:value={lname}
+								required
+								autocomplete="off"
+								maxlength="50"
+							/>
+						</span>
 						<div class="label-text">Last Name</div>
 					</label>
 					{#if lname.trim() == ''}
@@ -173,20 +180,22 @@
 				</div>
 				<div class="inputs">
 					<label class="info-label" for="snum">
-						<input
-							class="info-input"
-							type="text"
-							id="snum"
-							name="snum"
-							pattern="^20[0-2]((?<!2)[\d]|(?<=2)[0-3])[\d]+$"
-							placeholder=" "
-							on:keypress={func.handleSnum}
-							bind:value={snum}
-							minlength="9"
-							maxlength="9"
-							required
-							autocomplete="off"
-						/>
+						<span class="span-input">
+							<input
+								class="info-input"
+								type="text"
+								id="snum"
+								name="snum"
+								pattern="^20[0-2]((?<!2)[\d]|(?<=2)[0-3])[\d]+$"
+								placeholder=" "
+								on:keypress={func.handleSnum}
+								bind:value={snum}
+								minlength="9"
+								maxlength="9"
+								required
+								autocomplete="off"
+							/>
+						</span>
 						<div class="label-text">Student Number</div>
 					</label>
 					{#if snum == ''}
@@ -199,16 +208,18 @@
 				</div>
 				<div class="inputs">
 					<label class="info-label" for="email">
-						<input
-							class="info-input"
-							type="email"
-							id="email"
-							name="email"
-							placeholder=" "
-							bind:value={email}
-							required
-							autocomplete="off"
-						/>
+						<span class="span-input">
+							<input
+								class="info-input"
+								type="email"
+								id="email"
+								name="email"
+								placeholder=" "
+								bind:value={email}
+								required
+								autocomplete="off"
+							/>
+						</span>
 						<div class="label-text">Email</div>
 					</label>
 					{#if email == ''}
@@ -219,22 +230,24 @@
 				</div>
 				<div class="inputs">
 					<label class="info-label year-container" for="yearLevel">
-						<select
-							class="info-input year-input"
-							name="yearLevel"
-							id="yearLevel"
-							bind:value={yearlvl}
-							required
-							on:change={func.handleYearLevel(yearlvl)}
-						>
-							<option disabled selected value="" />
-							<option value="First Year">First Year</option>
-							<option value="Second Year">Second Year</option>
-							<option value="Third Year">Third Year</option>
-							<option value="Fourth Year">Fourth Year</option>
-							<option value="Graduate">Graduate Student</option>
-							<option value="Alumni">Alumni</option>
-						</select>
+						<span class="span-input">
+							<select
+								class="info-input year-input"
+								name="yearLevel"
+								id="yearLevel"
+								bind:value={yearlvl}
+								required
+								on:change={func.handleYearLevel(yearlvl)}
+							>
+								<option disabled selected value="" />
+								<option value="First Year">First Year</option>
+								<option value="Second Year">Second Year</option>
+								<option value="Third Year">Third Year</option>
+								<option value="Fourth Year">Fourth Year</option>
+								<option value="Graduate">Graduate Student</option>
+								<option value="Alumni">Alumni</option>
+							</select>
+						</span>
 						<div class="label-text year-label">Year Level</div>
 					</label>
 					{#if yearlvl == ''}
@@ -264,19 +277,21 @@
 				</div>
 				<div class="inputs">
 					<label class="info-label" for="purpose">
-						<input
-							class="info-input"
-							type="text"
-							id="purpose"
-							name="purpose"
-							pattern="^\s*[A-Za-z\d\x28\x29\x2C-\x2F\x3A]+[A-Za-z\d\x28\x29\x2C-\x2F\x3A ]*$"
-							placeholder=" "
-							maxlength="255"
-							bind:value={purpose}
-							on:keypress={func.validateText(purpose.trim())}
-							autocomplete="off"
-							required
-						/>
+						<span class="span-input">
+							<input
+								class="info-input"
+								type="text"
+								id="purpose"
+								name="purpose"
+								pattern="^\s*[A-Za-z\d\x28\x29\x2C-\x2F\x3A]+[A-Za-z\d\x28\x29\x2C-\x2F\x3A ]*$"
+								placeholder=" "
+								maxlength="255"
+								bind:value={purpose}
+								on:keypress={func.validateText(purpose.trim())}
+								autocomplete="off"
+								required
+							/>
+						</span>
 						<div class="label-text">Purpose</div>
 					</label>
 					{#if purpose.trim() == ''}
@@ -491,6 +506,7 @@
 <style>
 	.loader-container {
 		user-select: none;
+		cursor: wait;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -638,7 +654,8 @@
 		object-fit: cover;
 	}
 	.back-btn {
-		margin-top: 1.5em;
+		position: relative;
+		margin-top: 2em;
 		padding: 0 5em;
 		grid-area: back-btn;
 	}
@@ -648,21 +665,22 @@
 		justify-content: flex-start;
 		align-items: center;
 		color: var(--upcolor_maroon);
-		padding: 0 20px;
 		border: none;
-		border-radius: 50vw;
 		transition: all 0.3s ease-in-out;
-	}
-	.back-btn a:hover {
-		color: white;
-		background-color: var(--upcolor_maroon) !important;
-		transition: none;
 	}
 	.back-btn a > svg {
 		transition: translate 0.3s ease-in-out;
 	}
 	.back-btn a:hover > svg {
 		translate: -5px;
+	}
+	.back-btn img {
+		position: absolute;
+		width: 12.5%;
+		right: 0;
+		left: 0;
+		top: -1em;
+		margin: 0 auto;
 	}
 	.form-header {
 		margin: auto;
@@ -712,35 +730,61 @@
 		margin: 0 auto;
 		z-index: -1;
 	}
-	.info-fieldset .info-input {
-		background-color: transparent;
+	.info-label .info-input {
 		border: 0;
+		background-color: transparent;
 		text-align: center;
-		border-bottom: 3px solid #8e8e8e;
 		color: black;
 		outline: 0;
 		height: 35px;
 		font-size: medium;
 		width: 250px;
-		transition: all 0.3s;
+		position: relative;
+	}
+	.info-label .year-input {
+		text-align: center;
+	}
+	.info-label .year-input:focus {
+		width: 300px;
+	}
+	.span-input::after {
+		content: '';
+		position: absolute;
+		border: 5px solid black;
+		bottom: 1.25em;
+		border: 0;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		height: 3px;
+		width: 250px;
+		background-color: var(--upcolor_maroon);
+		transition: width 0.3s ease, transform 0.3s ease, left 0.3s ease;
+	}
+	.info-label .span-input:has(.year-input)::after {
+		bottom: 0;
 	}
 	.inputs .year-container {
 		cursor: pointer;
 		transform: translateY(-4px);
 	}
-	.info-label .info-input:focus {
+	.info-label .span-input:has(.info-input:focus)::after {
+		left: -25px;
 		width: 300px;
 	}
-	.info-label .info-input:invalid {
-		border-color: var(--upcolor_maroon);
+	.info-label .span-input:has(.info-input:invalid)::after {
+		background-color: var(--upcolor_maroon);
 	}
-	.info-label .info-input:valid {
-		border-color: var(--upcolor_green);
+	.info-label .span-input:has(.info-input:valid)::after {
+		background-color: var(--upcolor_green);
 	}
-	.info-label .info-input:valid:not(:required) {
-		border-color: #8e8e8e;
+	.info-label .span-input:has(.year-input:valid)::after {
+		bottom: 6px;
 	}
-	.info-label .info-input:focus + .label-text {
+	.info-label .span-input:has(.info-input:valid:not(:required))::after {
+		background-color: #8e8e8e;
+	}
+	.info-label .span-input:has(.info-input:focus) + .label-text {
 		color: black;
 		font-size: 10px;
 		-moz-transform: translateY(-60px);
@@ -748,21 +792,23 @@
 		-webkit-transform: translateY(-60px);
 		transform: translateY(-60px);
 	}
-	.info-label:has(> .info-input:focus) + .error-info {
+	.info-label:has(> .span-input:has(.info-input:focus)) + .error-info {
 		opacity: 0;
 		visibility: hidden;
 		transition: opacity 0.3s;
 	}
-	.info-label .info-input:invalid + .label-text {
+	.info-label .span-input:has(.info-input:invalid) + .label-text {
 		color: var(--upcolor_maroon);
 	}
-	.info-label .info-input:invalid:not(:placeholder-shown) + .label-text:not(.year-label) {
+	.info-label
+		.span-input:has(.info-input:invalid:not(:placeholder-shown))
+		+ .label-text:not(.year-label) {
 		-moz-transform: translateY(-60px);
 		-ms-transform: translateY(-60px);
 		-webkit-transform: translateY(-60px);
 		transform: translateY(-60px);
 	}
-	.info-label .info-input:valid + .label-text {
+	.info-label .span-input:has(.info-input:valid) + .label-text {
 		font-size: 10px;
 		-moz-transform: translateY(-60px);
 		-ms-transform: translateY(-60px);
@@ -770,7 +816,7 @@
 		transform: translateY(-60px);
 		color: var(--upcolor_green);
 	}
-	.info-label .info-input:valid:not(:required) + .label-text {
+	.info-label .span-input:has(.info-input:valid:not(:required)) + .label-text {
 		color: #8e8e8e;
 	}
 	label.confirm-label,
