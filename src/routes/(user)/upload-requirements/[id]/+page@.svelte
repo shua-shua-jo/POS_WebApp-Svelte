@@ -26,7 +26,7 @@
 	<img src={up2go_colored} alt="UP2Go Colored Logo" />
 </div>
 {#if data.upload}
-	<h1>upload your requirements here</h1>
+	<h2 class="header">upload your requirements here</h2>
 {:else}
 	<h1>Thank you for submitting your requirements!</h1>
 	<a class="back-to-home" href="/">Back to Home</a>
@@ -87,13 +87,13 @@
 		width: 100%;
 		height: auto;
 	}
-	h1 {
+	.header {
 		position: relative;
 		text-transform: uppercase;
 		text-align: center;
 		margin: 1em 0 2em 0;
 	}
-	h1::before {
+	.header::before {
 		content: '';
 		position: absolute;
 		left: 0;

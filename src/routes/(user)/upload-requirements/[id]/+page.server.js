@@ -32,8 +32,7 @@ export const load = async ({ cookies, params }) => {
 	const requests = await db_user.select().from(requestsTable).where(eq(requestsTable.userId, id));
 
 	const req = getRequirements(requests);
-
-	if (req <= 0) {
+	if (req.size <= 0) {
 		cookies.set('req-error', 'Request not found or <br/> Requirements already satisfied.', {
 			path: '/'
 		});

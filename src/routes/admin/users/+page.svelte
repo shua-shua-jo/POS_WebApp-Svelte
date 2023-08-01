@@ -592,8 +592,8 @@
 						class="close-btn"
 						on:click={() => {
 							showPanel = false;
-							userData = [];
-							documentData = [];
+							userData.length = 0;
+							documentData.length = 0;
 						}}
 						aria-label="Close Side Panel"
 						title="Close Panel"
@@ -635,6 +635,10 @@
 							<div class="document-total-price"><b>Total Price: </b>PHP {user.total_price}</div>
 							<div><b>Payment Method: </b>{user.payment_method}</div>
 						</div>
+						<!-- <div class="wrapper">
+							<h4>Requirements Status</h4>
+							<div class="req-grid" />
+						</div> -->
 						<div class="wrapper">
 							<h4>Request Status</h4>
 							<div class="bool-grid">
@@ -702,7 +706,7 @@
 												d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5l1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
 											/></svg
 										>
-										{user.payment_date}
+										Request Paid @ {user.payment_date}
 									{:else}
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -806,16 +810,6 @@
 {/if}
 
 <style>
-	form button.disabled {
-		pointer-events: none;
-		background-color: var(--disabled_text);
-		color: var(--disabled);
-	}
-	form button:is(.disabled-finish) {
-		pointer-events: none;
-		color: var(--disabled_text);
-		border-color: var(--disabled_text);
-	}
 	.container {
 		margin: 3em 5em;
 	}
@@ -917,8 +911,16 @@
 		grid-gap: 0.5em;
 	}
 	.document-total-price {
-		margin-top: 1em;
-		border-top: 1px solid #00000022;
+		position: relative;
+		margin-top: 2em;
+	}
+	.document-total-price::before {
+		content: '';
+		position: absolute;
+		top: -10px;
+		width: 100%;
+		background-color: black;
+		height: 1px;
 	}
 	.user-grid {
 		display: grid;
@@ -1036,6 +1038,20 @@
 	form button:disabled {
 		background-color: var(--upcolor_green);
 		cursor: default;
+	}
+	form button.disabled {
+		pointer-events: none;
+		background-color: var(--disabled_text);
+		color: var(--disabled);
+	}
+	form button:is(.disabled-finish) {
+		pointer-events: none;
+		color: var(--disabled_text);
+		border-color: var(--disabled_text);
+	}
+	form:has(button.disabled),
+	form:has(button:is(.disabled-finish)) {
+		cursor: not-allowed;
 	}
 	form button:not(.delete-btn) {
 		display: flex;

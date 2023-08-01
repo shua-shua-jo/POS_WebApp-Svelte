@@ -6,18 +6,18 @@ export function parseISOString(s) {
 }
 
 export function getRequirements(docs) {
-	let req = [];
+	let req = new Set();
 	for (var i = 0, n = docs.length; i < n; i++) {
 		const required = requirements.get(docs[i].document);
 		if (required) {
 			if (required instanceof Array) {
 				required.forEach((value) => {
-					req.push(value);
+					req.add(value);
 				});
 			} else {
-				req.push(requirements.get(docs[i].document));
+				req.add(requirements.get(docs[i].document));
 			}
 		}
 	}
-	return [...new Set(req)];
+	return req;
 }
