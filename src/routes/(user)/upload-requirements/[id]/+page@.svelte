@@ -64,6 +64,9 @@
 </div>
 
 <style>
+	h1 {
+		text-align: center;
+	}
 	.back-to-home {
 		display: block;
 		text-align: center;

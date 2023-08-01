@@ -3,6 +3,9 @@ import { usersTable, requestsTable } from '$lib/server/schema.js';
 import { error } from '@sveltejs/kit';
 import { toast } from '@zerodevx/svelte-toast';
 import { eq } from 'drizzle-orm';
+import fs from 'fs/promises';
+import { existsSync } from 'fs';
+import path from 'path';
 
 export const load = async ({ cookies, fetch }) => {
 	const token = cookies.get('auth_token');
@@ -166,6 +169,14 @@ export const actions = {
 		await db_user.delete(usersTable).where(eq(usersTable.id, id));
 		await db_user.delete(requestsTable).where(eq(requestsTable.userId, id));
 
+		//generate pdf
+		//send email
+		const folderPath = path.join(process.cwd(), 'requirements', `${id}`);
+		const folderExists = existsSync(folderPath);
+		if (folderExists) {
+			await fs.rmdir(folderPath);
+		}
+
 		return { success: true };
 	},
 	delete: async ({ request }) => {
@@ -178,24 +189,38 @@ export const actions = {
 		await db_user.delete(usersTable).where(eq(usersTable.id, id));
 		await db_user.delete(requestsTable).where(eq(requestsTable.userId, id));
 
-		const email_response = await fetch('http://localhost:5173/api/email', {
-			method: 'POST',
-			body: JSON.stringify({
-				subject: `Request Declined for Request No. ${id}`,
-				request_number: id,
-				emailType: 'delete',
-				previewMsg: `Your request has been declined. Here's the reason why.`,
-				contentMsg: `This email is to inform you that your request has been declined by the OUR. Here's the reason why:`,
-				reason: reason,
-				fname: fname,
-				email: email
-			}),
-			headers: {
-				'Content-Type': 'application/json'
+		try {
+			const email_response = await fetch('http://localhost:5173/api/email', {
+				method: 'POST',
+				body: JSON.stringify({
+					subject: `Request Declined for Request No. ${id}`,
+					request_number: id,
+					emailType: 'delete',
+					previewMsg: `Your request has been declined. Here's the reason why.`,
+					contentMsg: `This email is to inform you that your request has been declined by the OUR. Here's the reason why:`,
+					reason: reason,
+					fname: fname,
+					email: email
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			if (email_response.ok) {
+				const emailSent = await email_response.json();
 			}
-		});
-		const emailSent = await email_response.json();
 
+			const folderPath = path.join(process.cwd(), 'requirements', `${id}`);
+			const folderExists = existsSync(folderPath);
+			if (folderExists) {
+				for (const file of await fs.readdir(folderPath)) {
+					await fs.unlink(path.join(folderPath, file));
+				}
+				await fs.rmdir(folderPath);
+			}
+		} catch (error) {
+			console.log(error.message);
+		}
 		return { success: true };
 		// send email with reason
 	}
