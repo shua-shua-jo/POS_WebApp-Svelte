@@ -174,6 +174,9 @@ export const actions = {
 		const folderPath = path.join(process.cwd(), 'requirements', `${id}`);
 		const folderExists = existsSync(folderPath);
 		if (folderExists) {
+			for (const file of await fs.readdir(folderPath)) {
+				await fs.unlink(path.join(folderPath, file));
+			}
 			await fs.rmdir(folderPath);
 		}
 
