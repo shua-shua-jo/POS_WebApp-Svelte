@@ -8,14 +8,14 @@ export function parseISOString(s) {
 export function getRequirements(docs) {
 	let req = new Set();
 	for (var i = 0, n = docs.length; i < n; i++) {
-		const required = requirements.get(docs[i].document);
+		const required = requirements.get(docs[i]);
 		if (required) {
 			if (required instanceof Array) {
 				required.forEach((value) => {
 					req.add(value);
 				});
 			} else {
-				req.add(requirements.get(docs[i].document));
+				req.add(requirements.get(docs[i]));
 			}
 		}
 	}

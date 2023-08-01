@@ -24,7 +24,7 @@ export const failed = async (m) =>
 
 export const refresh = async (time) =>
 	toast.push(
-		`<div style="display: flex; align-items:center; gap:1em;"><span class="updating"></span><span>Updating Data...<hr/><small style="color:#E3EBF8">${time}</small></span></div>
+		`<div style="display: flex; align-items:center; gap:1em;"><span class="updating"></span><span class="content">Updating Data...<small style="color:#E3EBF8">${time}</small></span></div>
 		<style>.updating {
 			width: 20px;
 			height: 20px;
@@ -34,6 +34,12 @@ export const refresh = async (time) =>
 			display: inline-block;
 			box-sizing: border-box;
 			animation: rotation 1s linear infinite;
+			}
+			.content{
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
 			}
 	
 			@keyframes rotation {

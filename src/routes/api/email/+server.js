@@ -29,7 +29,8 @@ export async function POST({ request, fetch }) {
 				request_number: data.request_number,
 				contentMsg: data.contentMsg,
 				previewMsg: data.previewMsg,
-				reason: data.reason || null
+				reason: data.reason || null,
+				req: data.req || null
 			}
 		}
 	});

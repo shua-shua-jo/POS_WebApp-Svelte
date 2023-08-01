@@ -6,6 +6,7 @@ import { usersTable, requestsTable } from '$lib/server/schema.js';
 import { validateEmail, validateSnum } from '$lib/server/validate.js';
 import { parseISOString } from '$lib/server/utils.js';
 import { eq } from 'drizzle-orm';
+import { getRequirements } from '$lib/server/utils.js';
 
 export async function load({ cookies }) {
 	const success = cookies.get('success');
@@ -113,7 +114,7 @@ export const actions = {
 		}));
 
 		const formRequest = await db_user.insert(requestsTable).values(requests);
-		console.log(formRequest);
+
 		try {
 			const pdf_response = await fetch('http://localhost:5173/api/generate-invoice', {
 				method: 'POST',
@@ -131,6 +132,8 @@ export const actions = {
 				}
 			});
 			const gen_pdf = await pdf_response.json();
+			const req = getRequirements(requestForms);
+
 			const email_response = await fetch('http://localhost:5173/api/email', {
 				method: 'POST',
 				body: JSON.stringify({
@@ -138,10 +141,14 @@ export const actions = {
 					request_number: user.insertId,
 					emailType: 'invoice',
 					previewMsg: `Here's your invoice. Please upload requirement/s`,
-					contentMsg: `Attached document (pdf) is the invoice of your request. Please submit your requirement/s by clicking the button below. Thank you!`,
+					contentMsg:
+						req.size > 0
+							? `Attached document (pdf) is the invoice of your request. Please submit your requirement/s by clicking the button below. Thank you!`
+							: `Attached document (pdf) is the invoice of your request. Please wait for the email regarding the approval of your request. Thank you!`,
 					lname: lname,
 					fname: fname,
 					email: email,
+					req: req.size,
 					pdf: gen_pdf
 				}),
 				headers: {

@@ -15,7 +15,6 @@
 	const heading = {
 		color: 'white',
 		fontWeight: 'bolder',
-		textTransform: 'uppercase',
 		fontSize: '34pt',
 		padding: '0.25em 1em'
 	};
@@ -92,9 +91,14 @@
 			<Text style={content}>Thank you!</Text>
 		{/if}
 		{#if data.emailType == 'invoice'}
-			<Button style={button} href="http://localhost:5173/upload-requirements/{data.request_number}">
-				UPLOAD HERE
-			</Button>
+			{#if data.req > 0}
+				<Button
+					style={button}
+					href="http://localhost:5173/upload-requirements/{data.request_number}"
+				>
+					UPLOAD HERE
+				</Button>
+			{/if}
 		{:else if data.emailType == 'verify'}
 			<Button style={button} href="https://tinyurl.com/8b2c8sdy">Confirm Payment</Button>
 		{/if}

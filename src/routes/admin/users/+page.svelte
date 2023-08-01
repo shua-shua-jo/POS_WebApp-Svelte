@@ -61,7 +61,7 @@
 	let updated = false;
 
 	async function updateData() {
-		toast.pop();
+		// toast.pop();
 		const date = new Date().toLocaleDateString();
 		const time = new Date().toLocaleTimeString();
 
