@@ -18,15 +18,19 @@ export const load = async ({ cookies, params }) => {
 		upload = false;
 		cookies.delete('req-message');
 	}
-
 	toast.pop();
 
-	const folderPath = path.join(process.cwd(), 'requirements', `${id}`);
+	const newDate = new Date()
+		.toLocaleDateString('fil-PH', { month: '2-digit', day: '2-digit', year: 'numeric' })
+		.replaceAll('/', '-');
+	const folderPathDate = path.join(process.cwd(), 'requirements', newDate);
+	const folderPathUser = path.join(folderPathDate, `${id}`);
 
-	const folderExists = existsSync(folderPath);
+	const folderExists = existsSync(folderPathUser);
 
 	if (folderExists) {
 		upload = false;
+		return { id: id, upload: upload };
 	}
 
 	const requests = await db_user.select().from(requestsTable).where(eq(requestsTable.userId, id));
@@ -51,17 +55,31 @@ export const actions = {
 		const files = data.getAll('files');
 		const file_types = data.getAll('fileTypes');
 
+		console.log(files instanceof File);
+		console.log(files instanceof Buffer);
 		try {
-			const folderPath = path.join(process.cwd(), 'requirements', `${id}`);
-			if (existsSync(folderPath)) {
+			// add to db
+			const newDate = new Date()
+				.toLocaleDateString('fil-PH', { month: '2-digit', day: '2-digit', year: 'numeric' })
+				.replaceAll('/', '-');
+			const folderPathDate = path.join(process.cwd(), 'requirements', newDate);
+
+			console.log(folderPathDate);
+
+			if (!existsSync(folderPathDate)) {
+				await fs.mkdir(folderPathDate);
+			}
+
+			const folderPathUser = path.join(folderPathDate, `${id}`);
+			if (existsSync(folderPathUser)) {
 				throw s_error(400, 'Requirements already submitted');
 			}
-			await fs.mkdir(folderPath);
+			await fs.mkdir(folderPathUser);
 
 			for (var i = 0, n = files.length; i < n; i++) {
 				const arraybuf = await files[i].arrayBuffer();
 				const buf = Buffer.from(arraybuf);
-				await fs.writeFile(path.join(folderPath, files[i].name), buf);
+				await fs.writeFile(path.join(folderPathUser, files[i].name), buf);
 			}
 			cookies.set('req-message', 'Requirements has been uploaded.');
 		} catch (error) {

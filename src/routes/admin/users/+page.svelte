@@ -476,6 +476,13 @@
 								aria-label="Finish"
 							>
 								<input type="hidden" name="id" value={user.id} />
+								<input type="hidden" name="fname" value={user.first_name} />
+								<input type="hidden" name="mname" value={user.middle_name} />
+								<input type="hidden" name="lname" value={user.last_name} />
+								<input type="hidden" name="snum" value={user.student_number} />
+								<input type="hidden" name="email" value={user.email} />
+								<input type="hidden" name="scholarship" value={user.scholarship} />
+								<input type="hidden" name="totalPrice" value={user.total_price} />
 								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
 									><path
 										fill="currentColor"

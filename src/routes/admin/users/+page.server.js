@@ -5,6 +5,7 @@ import { toast } from '@zerodevx/svelte-toast';
 import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';
 import { existsSync } from 'fs';
+import { sql } from 'drizzle-orm';
 import path from 'path';
 
 export const load = async ({ cookies, fetch }) => {
@@ -160,24 +161,94 @@ export const actions = {
 		}
 
 		return { success: true };
-		//send email
 	},
-	finish: async ({ request }) => {
+	finish: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const id = data.get('id');
+		const fname = data.get('fname');
+		const mname = data.get('mname');
+		const lname = data.get('lname');
+		const snum = data.get('snum');
+		const email = data.get('email');
+		const isScholar = data.get('scholarship') ? true : false;
+		const totalPrice = data.get('totalPrice');
+		const name = fname + ' ' + mname + ' ' + lname;
 
-		await db_user.delete(usersTable).where(eq(usersTable.id, id));
-		await db_user.delete(requestsTable).where(eq(requestsTable.userId, id));
+		const requests = await db_user
+			.select({
+				requestForms: requestsTable.document,
+				requestPrices: requestsTable.price
+			})
+			.from(requestsTable)
+			.where(eq(requestsTable.userId, id));
 
-		//generate pdf
-		//send email
-		const folderPath = path.join(process.cwd(), 'requirements', `${id}`);
-		const folderExists = existsSync(folderPath);
-		if (folderExists) {
-			for (const file of await fs.readdir(folderPath)) {
-				await fs.unlink(path.join(folderPath, file));
+		let requestForms = [];
+		let requestPrices = [];
+		for (var i = 0, n = requests.length; i < n; i++) {
+			requestForms.push(requests[i].requestForms);
+			requestPrices.push(requests[i].requestPrices);
+		}
+
+		try {
+			const pdf_response = await fetch('http://localhost:5173/api/generate-receipt', {
+				method: 'POST',
+				body: JSON.stringify({
+					name: name,
+					snum: snum,
+					date: new Date().toDateString('fil-PH'),
+					scholarship: isScholar,
+					forms: requestForms,
+					prices: requestPrices,
+					total_price: totalPrice
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			console.log(pdf_response.ok);
+			const gen_pdf = await pdf_response.json();
+
+			console.log(gen_pdf);
+			const email_response = await fetch('http://localhost:5173/api/email', {
+				method: 'POST',
+				body: JSON.stringify({
+					subject: `Receipt for Request No. ${id}`,
+					request_number: id,
+					emailType: 'receipt',
+					previewMsg: `Here's the receipt of your request. Thank you!`,
+					contentMsg: `Attached document is the receipt of your request documents. Thank you for waiting!`,
+					lname: lname,
+					fname: fname,
+					email: email,
+					pdf: gen_pdf
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			if (email_response.ok) {
+				const emailSent = await email_response.json();
+				if (emailSent.includes('250')) {
+					//set cookies
+				}
 			}
-			await fs.rmdir(folderPath);
+
+			await db_user.execute(
+				sql`delete ${usersTable}, ${requestsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
+			);
+			// get date of requirements from db
+			console.log('deleted user and requests');
+			const folderPath = path.join(process.cwd(), 'requirements', `${id}`);
+			const folderExists = existsSync(folderPath);
+			if (folderExists) {
+				for (const file of await fs.readdir(folderPath)) {
+					await fs.unlink(path.join(folderPath, file));
+				}
+				await fs.rmdir(folderPath);
+			}
+			console.log('deleted folder');
+		} catch (error) {
+			console.log(error.message);
 		}
 
 		return { success: true };
@@ -189,8 +260,9 @@ export const actions = {
 		const email = data.get('email');
 		const reason = data.get('reason');
 
-		await db_user.delete(usersTable).where(eq(usersTable.id, id));
-		await db_user.delete(requestsTable).where(eq(requestsTable.userId, id));
+		await db_user.execute(
+			sql`delete ${usersTable}, ${requestsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
+		);
 
 		try {
 			const email_response = await fetch('http://localhost:5173/api/email', {

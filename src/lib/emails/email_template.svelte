@@ -9,7 +9,8 @@
 	};
 	const section = {
 		backgroundColor: '#850038',
-		textAlign: 'center'
+		textAlign: 'center',
+		borderRadius: '5px'
 	};
 
 	const heading = {
@@ -42,7 +43,8 @@
 		textAlign: 'center',
 		margin: '2em 0',
 		padding: '1em',
-		backgroundColor: '#cccccc'
+		backgroundColor: '#cccccc',
+		borderRadius: '5px'
 	};
 
 	const button = {
