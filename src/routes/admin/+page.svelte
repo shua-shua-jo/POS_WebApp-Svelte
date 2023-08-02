@@ -8,5 +8,8 @@
 
 <h1>Welcome to admin page!</h1>
 
-<dialog open bind:this={dialog}>sd</dialog>
-{dialog}
+<form action="?/dummy" method="POST">
+	<label for="num">Insert Number of Rows to Insert</label>
+	<input type="number" name="num" id="num" required />
+	<button type="submit">Generate Dummy Data</button>
+</form>

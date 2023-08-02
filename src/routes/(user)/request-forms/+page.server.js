@@ -4,9 +4,8 @@ import { redirect, error as s_error } from '@sveltejs/kit';
 import { db_user } from '$lib/server/db.js';
 import { usersTable, requestsTable } from '$lib/server/schema.js';
 import { validateEmail, validateSnum } from '$lib/server/validate.js';
-import { parseISOString } from '$lib/server/utils.js';
+import { getRequirements, parseISOString } from '$lib/server/utils.js';
 import { eq } from 'drizzle-orm';
-import { getRequirements } from '$lib/server/utils.js';
 
 export async function load({ cookies }) {
 	const success = cookies.get('success');
