@@ -54,6 +54,15 @@
 	export let data;
 </script>
 
+<noscript>
+	<div class="no-script">
+		<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"
+			><path fill="currentColor" d="M10 3h4v11h-4V3m0 18v-4h4v4h-4Z" /></svg
+		>
+		<p>Oh no, you either have JavaScript turned off or your browser doesn't support JavaScript.</p>
+	</div>
+</noscript>
+
 <svelte:head>
 	<title>UP2GO: Request Forms</title>
 </svelte:head>
@@ -504,6 +513,29 @@
 </div>
 
 <style>
+	.no-script {
+		user-select: none;
+		position: fixed;
+		background-color: #26303887;
+		color: yellow;
+		top: 0;
+		bottom: 0;
+		margin: 0 auto;
+		text-align: center;
+		width: 100%;
+		height: 100%;
+		z-index: 100000;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	.no-script p {
+		padding: 0 1em;
+		width: 50vw;
+		font-size: xx-large;
+		font-weight: 900;
+	}
 	.loader-container {
 		user-select: none;
 		cursor: wait;
