@@ -47,6 +47,24 @@
 		borderRadius: '5px'
 	};
 
+	const req_header = {
+		textAlign: 'left',
+		fontWeight: 'bold',
+		padding: '0 1em',
+		fontSize: 'medium',
+		color: 'black'
+	};
+
+	const req_content = {
+		fontSize: 'small',
+		lineHeight: '24px',
+		margin: '0 2em',
+		textAlign: 'left',
+		fontWeight: '400',
+		color: 'gray',
+		borderBottom: '1px solid gray'
+	};
+
 	const button = {
 		alignItems: 'center',
 		appearance: 'button',
@@ -93,7 +111,15 @@
 			<Text style={content}>Thank you!</Text>
 		{/if}
 		{#if data.emailType == 'invoice'}
-			{#if data.req > 0}
+			{#if data.req.length > 0}
+				<Section style={{ marginTop: '-2em', marginBottom: '2em' }}>
+					<Text style={req_header}>Required Documents</Text>
+					{#each data.req as req}
+						<Text style={req_content}>
+							&#x274D;&nbsp;{req}
+						</Text>
+					{/each}
+				</Section>
 				<Button
 					style={button}
 					href="http://localhost:5173/upload-requirements/{data.request_number}"

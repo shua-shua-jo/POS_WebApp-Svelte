@@ -75,6 +75,7 @@
 		width: max-content;
 		color: white;
 		margin: 0 auto;
+		margin-top: 2em;
 		background-color: var(--blue_accent);
 		padding: 0.5em 1em;
 	}

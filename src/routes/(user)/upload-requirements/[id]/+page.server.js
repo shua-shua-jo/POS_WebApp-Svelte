@@ -1,5 +1,5 @@
 import { db_user } from '$lib/server/db.js';
-import { requestsTable } from '$lib/server/schema.js';
+import { requestsTable, requirementsTable } from '$lib/server/schema.js';
 import { getRequirements } from '$lib/server/utils.js';
 import { redirect, error as s_error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -20,10 +20,15 @@ export const load = async ({ cookies, params }) => {
 	}
 	toast.pop();
 
-	const newDate = new Date()
-		.toLocaleDateString('fil-PH', { month: '2-digit', day: '2-digit', year: 'numeric' })
-		.replaceAll('/', '-');
-	const folderPathDate = path.join(process.cwd(), 'requirements', newDate);
+	const date = new Date();
+	const localDate =
+		date.toLocaleDateString('fil-PH', { year: 'numeric' }) +
+		'-' +
+		date.toLocaleDateString('fil-PH', { month: '2-digit' }) +
+		'-' +
+		date.toLocaleDateString('fil-PH', { day: '2-digit' });
+
+	const folderPathDate = path.join(process.cwd(), 'requirements', localDate);
 	const folderPathUser = path.join(folderPathDate, `${id}`);
 
 	const folderExists = existsSync(folderPathUser);
@@ -55,16 +60,17 @@ export const actions = {
 		const files = data.getAll('files');
 		const file_types = data.getAll('fileTypes');
 
-		console.log(files instanceof File);
-		console.log(files instanceof Buffer);
 		try {
 			// add to db
-			const newDate = new Date()
-				.toLocaleDateString('fil-PH', { month: '2-digit', day: '2-digit', year: 'numeric' })
-				.replaceAll('/', '-');
-			const folderPathDate = path.join(process.cwd(), 'requirements', newDate);
+			const date = new Date();
+			const localDate =
+				date.toLocaleDateString('fil-PH', { year: 'numeric' }) +
+				'-' +
+				date.toLocaleDateString('fil-PH', { month: '2-digit' }) +
+				'-' +
+				date.toLocaleDateString('fil-PH', { day: '2-digit' });
 
-			console.log(folderPathDate);
+			const folderPathDate = path.join(process.cwd(), 'requirements', localDate);
 
 			if (!existsSync(folderPathDate)) {
 				await fs.mkdir(folderPathDate);
@@ -74,6 +80,16 @@ export const actions = {
 			if (existsSync(folderPathUser)) {
 				throw s_error(400, 'Requirements already submitted');
 			}
+
+			const requirements = files.map((item, index) => ({
+				upload_date: localDate,
+				tcg_format: tcg,
+				file_name: item.name,
+				requirement_type: file_types[index],
+				userId: id
+			}));
+
+			const reqdb = await db_user.insert(requirementsTable).values(requirements);
 			await fs.mkdir(folderPathUser);
 
 			for (var i = 0, n = files.length; i < n; i++) {

@@ -45,7 +45,7 @@ export async function POST({ request, fetch }) {
 			html: emailHtml,
 			attachments: [
 				{
-					filename: `${data.lname}_invoice`,
+					filename: `${data.lname}_${data.emailType}`,
 					content: new Buffer.from(data.pdf),
 					contentType: 'application/pdf'
 				}

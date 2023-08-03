@@ -81,7 +81,7 @@ export const actions = {
 			'-' +
 			date.toLocaleDateString('fil-PH', { month: '2-digit' }) +
 			'-' +
-			date.toLocaleDateString('fil-PH', { day: 'numeric' }) +
+			date.toLocaleDateString('fil-PH', { day: '2-digit' }) +
 			'T' +
 			date.toLocaleString('fil-PH', { hour: '2-digit', hour12: false }) +
 			':' +
@@ -133,6 +133,13 @@ export const actions = {
 			const gen_pdf = await pdf_response.json();
 			const req = getRequirements(requestForms);
 
+			if (req.size <= 0) {
+				await db_user
+					.update(usersTable)
+					.set({ documents_approved: true })
+					.where(eq(usersTable.id, user.insertId));
+			}
+
 			const email_response = await fetch('http://localhost:5173/api/email', {
 				method: 'POST',
 				body: JSON.stringify({
@@ -147,7 +154,7 @@ export const actions = {
 					lname: lname,
 					fname: fname,
 					email: email,
-					req: req.size,
+					req: Array.from(req),
 					pdf: gen_pdf
 				}),
 				headers: {

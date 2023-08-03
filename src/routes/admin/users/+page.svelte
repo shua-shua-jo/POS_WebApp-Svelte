@@ -370,9 +370,9 @@
 							<input type="hidden" name="fname" value={user.first_name} />
 							<input type="hidden" name="email" value={user.email} />
 							<button
-								class:disabled={user.request_approved == false}
+								class:disabled={!user.request_approved && !user.documents_approved}
 								aria-label="Requirements Verified"
-								disabled={user.documents_approved == true}
+								disabled={user.documents_approved}
 							>
 								{#if user.documents_approved}
 									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
@@ -411,9 +411,9 @@
 							<input type="hidden" name="fname" value={user.first_name} />
 							<input type="hidden" name="email" value={user.email} />
 							<button
-								class:disabled={user.documents_approved == false}
+								class:disabled={!user.request_approved || !user.documents_approved}
 								aria-label="Request Paid"
-								disabled={user.request_paid == true}
+								disabled={user.request_paid}
 							>
 								{#if user.request_paid}
 									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
@@ -452,9 +452,9 @@
 							<input type="hidden" name="fname" value={user.first_name} />
 							<input type="hidden" name="email" value={user.email} />
 							<button
-								class:disabled={user.request_paid == false}
+								class:disabled={!user.request_paid}
 								aria-label="Request Available"
-								disabled={user.request_available == true}
+								disabled={user.request_available}
 							>
 								{#if user.request_available}
 									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
@@ -490,7 +490,7 @@
 						>
 							<button
 								class="finish-btn"
-								class:disabled-finish={user.request_available == false}
+								class:disabled-finish={!user.request_available}
 								aria-label="Finish"
 							>
 								<input type="hidden" name="id" value={user.id} />

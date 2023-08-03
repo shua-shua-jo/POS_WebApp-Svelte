@@ -1,5 +1,14 @@
 import { relations, sql } from 'drizzle-orm';
-import { int, varchar, serial, boolean, mysqlTable, timestamp, char } from 'drizzle-orm/mysql-core';
+import {
+	int,
+	varchar,
+	date,
+	serial,
+	boolean,
+	mysqlTable,
+	timestamp,
+	char
+} from 'drizzle-orm/mysql-core';
 
 export const usersTable = mysqlTable('usersTable', {
 	id: serial('id').primaryKey(),
@@ -43,4 +52,13 @@ export const adminTable = mysqlTable('adminTable', {
 	id: serial('id').primaryKey(),
 	email: varchar('email', { length: 60 }).notNull(),
 	password: char('password', { length: 60 }).notNull()
+});
+
+export const requirementsTable = mysqlTable('requirementsTable', {
+	id: serial('id').primaryKey(),
+	upload_date: date('upload_date').notNull(),
+	tcg_format: varchar('tcg_format', { length: 15 }),
+	file_name: varchar('file_name', { length: 100 }),
+	requirement_type: varchar('requirement_type', { length: 70 }),
+	userId: int('userId').notNull()
 });

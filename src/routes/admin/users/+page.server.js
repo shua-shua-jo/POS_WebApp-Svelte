@@ -1,5 +1,5 @@
 import { db_user } from '$lib/server/db.js';
-import { usersTable, requestsTable } from '$lib/server/schema.js';
+import { usersTable, requestsTable, requirementsTable } from '$lib/server/schema.js';
 import { error } from '@sveltejs/kit';
 import { toast } from '@zerodevx/svelte-toast';
 import { eq } from 'drizzle-orm';
@@ -233,12 +233,24 @@ export const actions = {
 				}
 			}
 
+			const req_db = await db_user
+				.select({ upload_date: requirementsTable.upload_date })
+				.from(requirementsTable)
+				.where(eq(requirementsTable.userId, id));
+
 			await db_user.execute(
-				sql`delete ${usersTable}, ${requestsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
+				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
 			);
-			// get date of requirements from db
+
+			const { upload_date } = req_db[0];
+
 			console.log('deleted user and requests');
-			const folderPath = path.join(process.cwd(), 'requirements', `${id}`);
+			const folderPath = path.join(
+				process.cwd(),
+				'requirements',
+				upload_date.toISOString().split('T')[0],
+				`${id}`
+			);
 			const folderExists = existsSync(folderPath);
 			if (folderExists) {
 				for (const file of await fs.readdir(folderPath)) {
@@ -259,10 +271,6 @@ export const actions = {
 		const fname = data.get('fname');
 		const email = data.get('email');
 		const reason = data.get('reason');
-
-		await db_user.execute(
-			sql`delete ${usersTable}, ${requestsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
-		);
 
 		try {
 			const email_response = await fetch('http://localhost:5173/api/email', {
@@ -285,7 +293,24 @@ export const actions = {
 				const emailSent = await email_response.json();
 			}
 
-			const folderPath = path.join(process.cwd(), 'requirements', `${id}`);
+			const req_db = await db_user
+				.select({ upload_date: requirementsTable.upload_date })
+				.from(requirementsTable)
+				.where(eq(requirementsTable.userId, id));
+
+			await db_user.execute(
+				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
+			);
+
+			const { upload_date } = req_db[0];
+
+			console.log('deleted user and requests');
+			const folderPath = path.join(
+				process.cwd(),
+				'requirements',
+				upload_date.toISOString().split('T')[0],
+				`${id}`
+			);
 			const folderExists = existsSync(folderPath);
 			if (folderExists) {
 				for (const file of await fs.readdir(folderPath)) {
@@ -293,6 +318,7 @@ export const actions = {
 				}
 				await fs.rmdir(folderPath);
 			}
+			console.log('deleted folder');
 		} catch (error) {
 			console.log(error.message);
 		}
