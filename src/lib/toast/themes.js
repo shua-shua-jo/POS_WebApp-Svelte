@@ -59,3 +59,38 @@ export const refresh = async (time) =>
 			}
 		}
 	);
+
+export const sending = (content) => {
+	const id = toast.push(
+		`<div style="display: flex; align-items:center; gap:1em;"><span class="updating"></span><span>Processing ${content}...</span></div>
+		<style>.updating {
+			width: 20px;
+			height: 20px;
+			border: 3px solid #FFF;
+			border-bottom-color: #FF8400;
+			border-radius: 50%;
+			display: inline-block;
+			box-sizing: border-box;
+			animation: rotation 1s linear infinite;
+			}
+	
+			@keyframes rotation {
+			0% {
+					transform: rotate(0deg);
+			}
+			100% {
+					transform: rotate(360deg);
+			}
+			} </style>
+		`,
+		{
+			dismissable: false,
+			initial: 0,
+			theme: {
+				'--toastBackground': '#FF9C33',
+				'--toastBarHeight': 0
+			}
+		}
+	);
+	return id;
+};

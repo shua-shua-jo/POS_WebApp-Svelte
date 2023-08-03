@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { refresh, success } from '$lib/toast/themes.js';
+	import { refresh, success, sending } from '$lib/toast/themes.js';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { enhance } from '$app/forms';
 	import { slide } from 'svelte/transition';
@@ -312,7 +312,10 @@
 							action="?/approve"
 							method="POST"
 							use:enhance={() => {
+								user.request_approved = true;
+								const id = sending('approval');
 								return async ({ result, update }) => {
+									toast.pop(id);
 									if (result.status === 200) {
 										await update();
 										await success(
@@ -325,7 +328,11 @@
 							<input type="hidden" name="id" value={user.id} />
 							<input type="hidden" name="fname" value={user.first_name} />
 							<input type="hidden" name="email" value={user.email} />
-							<button aria-label="Request Approved" disabled={user.request_approved == true}>
+							<button
+								class="approve-btn"
+								aria-label="Request Approved"
+								disabled={user.request_approved == true}
+							>
 								{#if user.request_approved}
 									<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
 										><path
@@ -346,7 +353,10 @@
 							action="?/verify"
 							method="POST"
 							use:enhance={() => {
+								user.documents_approved = true;
+								const id = sending('verification');
 								return async ({ result, update }) => {
+									toast.pop(id);
 									if (result.status === 200) {
 										await update();
 										await success(
@@ -384,7 +394,10 @@
 							action="?/paid"
 							method="POST"
 							use:enhance={() => {
+								user.request_paid = true;
+								const id = sending('payment');
 								return async ({ result, update }) => {
+									toast.pop(id);
 									if (result.status === 200) {
 										await update();
 										await success(
@@ -422,7 +435,10 @@
 							action="?/available"
 							method="POST"
 							use:enhance={() => {
+								user.request_available = true;
+								const id = sending('availability');
 								return async ({ result, update }) => {
+									toast.pop(id);
 									if (result.status === 200) {
 										await update();
 										await success(
@@ -460,7 +476,9 @@
 							action="?/finish"
 							method="POST"
 							use:enhance={() => {
+								const id = sending('data');
 								return async ({ result, update }) => {
+									toast.pop(id);
 									if (result.status === 200) {
 										await update();
 										await success(
