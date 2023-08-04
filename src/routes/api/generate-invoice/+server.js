@@ -65,7 +65,7 @@ export async function POST({ request, fetch }) {
 
 	const total = table.row();
 	total.cell('TOTAL', { font: HelveticaBold, colspan: 2, textAlign: 'right' });
-	total.cell('PHP ' + data.total_price, { fontSize: 10 });
+	total.cell('PHP ' + data.total_price, { font: HelveticaBold, fontSize: 10 });
 
 	const buf = await doc.asBuffer();
 
