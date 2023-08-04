@@ -8,12 +8,12 @@ import { existsSync } from 'fs';
 import path from 'path';
 import { toast } from '@zerodevx/svelte-toast';
 
-export const load = async ({ cookies, params, url }) => {
+export const load = async ({ cookies, params }) => {
 	const id = params.id;
+	const email_id = params.emailId;
+
 	let upload = true;
 	let req_message;
-
-	const email_id = url.searchParams.get('emailId');
 
 	if (!email_id) {
 		upload = false;
@@ -36,7 +36,7 @@ export const load = async ({ cookies, params, url }) => {
 
 	if (emailId !== email_id) {
 		upload = false;
-		throw s_error(403, 'Unauthorized user.');
+		throw s_error(403, 'User not found.');
 	}
 
 	if (cookies.get('req-message')) {

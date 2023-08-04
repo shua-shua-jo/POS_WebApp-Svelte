@@ -129,7 +129,7 @@
 				</Section>
 				<Button
 					style={button}
-					href="http://localhost:5173/upload-requirements/{data.request_number}?emailId={data.emailId}"
+					href="http://localhost:5173/upload-requirements/{data.request_number}/{data.emailId}"
 				>
 					UPLOAD HERE
 				</Button>
