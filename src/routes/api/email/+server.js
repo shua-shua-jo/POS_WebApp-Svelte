@@ -25,6 +25,7 @@ export async function POST({ request, fetch }) {
 		props: {
 			data: {
 				emailType: data.emailType,
+				emailId: data.emailId || null,
 				name: data.fname,
 				request_number: data.request_number,
 				contentMsg: data.contentMsg,

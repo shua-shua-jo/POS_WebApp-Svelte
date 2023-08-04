@@ -1,5 +1,5 @@
 import { db_user } from '$lib/server/db.js';
-import { requestsTable, requirementsTable } from '$lib/server/schema.js';
+import { usersTable, requestsTable, requirementsTable } from '$lib/server/schema.js';
 import { getRequirements } from '$lib/server/utils.js';
 import { redirect, error as s_error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -8,10 +8,36 @@ import { existsSync } from 'fs';
 import path from 'path';
 import { toast } from '@zerodevx/svelte-toast';
 
-export const load = async ({ cookies, params }) => {
+export const load = async ({ cookies, params, url }) => {
 	const id = params.id;
 	let upload = true;
 	let req_message;
+
+	const email_id = url.searchParams.get('emailId');
+
+	if (!email_id) {
+		upload = false;
+		throw s_error(403, 'Unauthorized');
+	}
+
+	const user = await db_user
+		.select({ emailId: usersTable.email_id })
+		.from(usersTable)
+		.where(eq(usersTable.id, id));
+
+	if (user.length <= 0) {
+		cookies.set('req-error', 'User not found.', {
+			path: '/'
+		});
+		throw redirect(307, '/');
+	}
+
+	const { emailId } = user[0];
+
+	if (emailId !== email_id) {
+		upload = false;
+		throw s_error(403, 'Unauthorized user.');
+	}
 
 	if (cookies.get('req-message')) {
 		req_message = cookies.get('req-message');

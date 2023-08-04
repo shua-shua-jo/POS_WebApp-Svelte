@@ -16,6 +16,7 @@ export const usersTable = mysqlTable('usersTable', {
 	middle_name: varchar('middle_name', { length: 60 }).notNull(),
 	last_name: varchar('last_name', { length: 60 }).notNull(),
 	email: varchar('email', { length: 60 }).unique().notNull(),
+	email_id: char('email_id', { length: 46 }).unique().notNull(),
 	student_number: varchar('student_number', { length: 9 }).unique().notNull(),
 	year_level: varchar('year_level', { length: 15 }).notNull(),
 	is_scholar: boolean('is_scholar').notNull(),

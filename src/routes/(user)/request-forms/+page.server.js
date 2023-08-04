@@ -92,12 +92,15 @@ export const actions = {
 			date.getMilliseconds() +
 			'Z';
 
+		const emailId = crypto.randomUUID() + '-' + snum;
+
 		const user = await db_user.insert(usersTable).values({
 			first_name: fname.toString(),
 			middle_name: mname.toString(),
 			last_name: lname.toString(),
 			student_number: snum.toString(),
 			email: email.toString(),
+			email_id: emailId,
 			year_level: yearLevel.toString(),
 			is_scholar: isScholar,
 			purpose: purpose,
@@ -146,6 +149,7 @@ export const actions = {
 					subject: `Invoice for Request No. ${user.insertId}`,
 					request_number: user.insertId,
 					emailType: 'invoice',
+					emailId: emailId,
 					previewMsg: `Here's your invoice. Please upload requirement/s`,
 					contentMsg:
 						req.size > 0

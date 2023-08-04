@@ -13,6 +13,13 @@
 		borderRadius: '5px'
 	};
 
+	const invoice_section = {
+		backgroundColor: '#d4d4d4',
+		borderRadius: '20px',
+		paddingBottom: '2em',
+		margin: '0 0 2em 0'
+	};
+
 	const heading = {
 		color: 'white',
 		fontWeight: 'bolder',
@@ -51,6 +58,7 @@
 		textAlign: 'left',
 		fontWeight: 'bold',
 		padding: '0 1em',
+		margin: '1em 0 0.5em 0',
 		fontSize: 'medium',
 		color: 'black'
 	};
@@ -61,8 +69,7 @@
 		margin: '0 2em',
 		textAlign: 'left',
 		fontWeight: '400',
-		color: 'gray',
-		borderBottom: '1px solid gray'
+		color: '#464646'
 	};
 
 	const button = {
@@ -112,8 +119,8 @@
 		{/if}
 		{#if data.emailType == 'invoice'}
 			{#if data.req.length > 0}
-				<Section style={{ marginTop: '-2em', marginBottom: '2em' }}>
-					<Text style={req_header}>Required Documents</Text>
+				<Section style={invoice_section}>
+					<Text style={req_header}>Requirements</Text>
 					{#each data.req as req}
 						<Text style={req_content}>
 							&#x274D;&nbsp;{req}
@@ -122,7 +129,7 @@
 				</Section>
 				<Button
 					style={button}
-					href="http://localhost:5173/upload-requirements/{data.request_number}"
+					href="http://localhost:5173/upload-requirements/{data.request_number}?emailId={data.emailId}"
 				>
 					UPLOAD HERE
 				</Button>
