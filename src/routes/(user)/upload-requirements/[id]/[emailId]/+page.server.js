@@ -1,6 +1,6 @@
 import { db_user } from '$lib/server/db.js';
 import { usersTable, requestsTable, requirementsTable } from '$lib/server/schema.js';
-import { getRequirements } from '$lib/server/utils.js';
+import { getRequirements, parseISOString } from '$lib/server/utils.js';
 import { redirect, error as s_error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';
@@ -21,22 +21,15 @@ export const load = async ({ cookies, params }) => {
 	}
 
 	const user = await db_user
-		.select({ emailId: usersTable.email_id })
+		.select()
 		.from(usersTable)
-		.where(eq(usersTable.id, id));
+		.where(eq(usersTable.id, id), eq(usersTable.email_id, email_id));
 
 	if (user.length <= 0) {
 		cookies.set('req-error', 'User not found.', {
 			path: '/'
 		});
 		throw redirect(307, '/');
-	}
-
-	const { emailId } = user[0];
-
-	if (emailId !== email_id) {
-		upload = false;
-		throw s_error(403, 'User not found.');
 	}
 
 	if (cookies.get('req-message')) {
@@ -46,22 +39,26 @@ export const load = async ({ cookies, params }) => {
 	}
 	toast.pop();
 
-	const date = new Date();
-	const localDate =
-		date.toLocaleDateString('fil-PH', { year: 'numeric' }) +
-		'-' +
-		date.toLocaleDateString('fil-PH', { month: '2-digit' }) +
-		'-' +
-		date.toLocaleDateString('fil-PH', { day: '2-digit' });
+	const req_db = await db_user
+		.select({ upload_date: requirementsTable.upload_date })
+		.from(requirementsTable)
+		.where(eq(requirementsTable.userId, id));
 
-	const folderPathDate = path.join(process.cwd(), 'requirements', localDate);
-	const folderPathUser = path.join(folderPathDate, `${id}`);
+	if (req_db.length > 0) {
+		const { upload_date } = req_db[0];
 
-	const folderExists = existsSync(folderPathUser);
+		const folderPath = path.join(
+			process.cwd(),
+			'requirements',
+			upload_date.toISOString().split('T')[0],
+			`${id}`
+		);
+		const folderExists = existsSync(folderPath);
 
-	if (folderExists) {
-		upload = false;
-		return { id: id, upload: upload };
+		if (folderExists) {
+			upload = false;
+			return { message: req_message, id: id, upload: upload };
+		}
 	}
 
 	const requests = await db_user.select().from(requestsTable).where(eq(requestsTable.userId, id));
@@ -94,23 +91,34 @@ export const actions = {
 				'-' +
 				date.toLocaleDateString('fil-PH', { month: '2-digit' }) +
 				'-' +
-				date.toLocaleDateString('fil-PH', { day: '2-digit' });
+				date.toLocaleDateString('fil-PH', { day: '2-digit' }) +
+				'T' +
+				date.toLocaleString('fil-PH', { hour: '2-digit', hour12: false }) +
+				':' +
+				date.toLocaleString('fil-PH', { minute: '2-digit' }) +
+				':' +
+				date.toLocaleString('fil-PH', { second: '2-digit' }) +
+				'.' +
+				date.getMilliseconds() +
+				'Z';
 
-			const folderPathDate = path.join(process.cwd(), 'requirements', localDate);
+			const parsedDate = parseISOString(localDate);
+
+			const folderPathDate = path.join(process.cwd(), 'requirements', localDate.split('T')[0]);
 
 			if (!existsSync(folderPathDate)) {
 				await fs.mkdir(folderPathDate);
 			}
 
-			const folderPathUser = path.join(folderPathDate, `${id}`);
+			const folderPathUser = path.join(folderPathDate, id);
 			if (existsSync(folderPathUser)) {
 				throw s_error(400, 'Requirements already submitted');
 			}
 
-			const requirements = files.map((item, index) => ({
-				upload_date: localDate,
-				tcg_format: tcg,
-				file_name: item.name,
+			const requirements = file_types.map((item, index) => ({
+				upload_date: parsedDate,
+				tcg_format: item == 'Preferred Format for True Copy of Grades' ? tcg : null,
+				file_name: item == 'Preferred Format for True Copy of Grades' ? null : files[index].name,
 				requirement_type: file_types[index],
 				userId: id
 			}));

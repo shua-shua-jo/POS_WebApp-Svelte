@@ -135,7 +135,11 @@
 				</Button>
 			{/if}
 		{:else if data.emailType == 'verify'}
-			<Button style={button} href="https://tinyurl.com/8b2c8sdy">Confirm Payment</Button>
+			<Button
+				style={button}
+				href="http://localhost:5173/payment-confirmation/{data.request_number}/{data.emailId}"
+				>CONFIRM PAYMENT</Button
+			>
 		{/if}
 		<Hr style={hr} />
 		<Text style={footer}>&#169; 2023 OUR UPB. All rights reserved.</Text>

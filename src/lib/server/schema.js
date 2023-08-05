@@ -22,7 +22,7 @@ export const usersTable = mysqlTable('usersTable', {
 	is_scholar: boolean('is_scholar').notNull(),
 	purpose: varchar('purpose', { length: 255 }).notNull(),
 	payment_method: varchar('payment_method', { length: 10 }).notNull(),
-	request_date: timestamp('request_date').default(sql`CURRENT_TIMESTAMP`),
+	request_date: timestamp('request_date').notNull(),
 	payment_date: timestamp('payment_date'),
 	request_paid: boolean('request_paid').default(false),
 	request_approved: boolean('request_approved').default(false),
@@ -57,9 +57,15 @@ export const adminTable = mysqlTable('adminTable', {
 
 export const requirementsTable = mysqlTable('requirementsTable', {
 	id: serial('id').primaryKey(),
-	upload_date: date('upload_date').notNull(),
+	upload_date: timestamp('upload_date').notNull(),
 	tcg_format: varchar('tcg_format', { length: 15 }),
-	file_name: varchar('file_name', { length: 100 }),
-	requirement_type: varchar('requirement_type', { length: 70 }),
+	file_name: varchar('file_name', { length: 100 }).notNull(),
+	requirement_type: varchar('requirement_type', { length: 70 }).notNull(),
+	userId: int('userId').notNull()
+});
+
+export const paymentsTable = mysqlTable('paymentsTable', {
+	id: serial('id').primaryKey(),
+	payment_path: varchar('payment_path', { length: 100 }).unique().notNull(),
 	userId: int('userId').notNull()
 });

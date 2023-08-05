@@ -1,5 +1,5 @@
 import { db_user } from '$lib/server/db.js';
-import { usersTable, requestsTable, requirementsTable } from '$lib/server/schema.js';
+import { usersTable, requestsTable, requirementsTable, paymentsTable } from '$lib/server/schema.js';
 import { error } from '@sveltejs/kit';
 import { toast } from '@zerodevx/svelte-toast';
 import { eq } from 'drizzle-orm';
@@ -68,6 +68,7 @@ export const actions = {
 		const id = data.get('id');
 		const fname = data.get('fname');
 		const email = data.get('email');
+		const emailId = data.get('emailId');
 
 		await db_user.update(usersTable).set({ documents_approved: true }).where(eq(usersTable.id, id));
 
@@ -77,8 +78,9 @@ export const actions = {
 				subject: `Requirements Verified for Request No. ${id}`,
 				request_number: id,
 				emailType: 'verify',
+				emailId: emailId,
 				previewMsg: `Your request has been approved.`,
-				contentMsg: `This email is to inform you that your requirements has been verified by the OUR. Please process your payment for your request/s. Then, you can upload your proof of payment by scanning the attached qr code or by clicking the button below. Thank you!`,
+				contentMsg: `This email is to inform you that your requirements has been verified by the OUR. Please process your payment for your request/s. Then, you can upload your proof of payment by clicking the button below. Thank you!`,
 				fname: fname,
 				email: email
 			}),
@@ -238,11 +240,17 @@ export const actions = {
 				.from(requirementsTable)
 				.where(eq(requirementsTable.userId, id));
 
+			const pay_db = await db_user
+				.select({ payment_path: paymentsTable.payment_path })
+				.from(paymentsTable)
+				.where(eq(paymentsTable.userId, id));
+
 			await db_user.execute(
-				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
+				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable}, ${paymentsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) left join ${paymentsTable} on (${paymentsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
 			);
 
 			const { upload_date } = req_db[0];
+			const { payment_path } = pay_db[0];
 
 			console.log('deleted user and requests');
 			const folderPath = path.join(
@@ -251,12 +259,19 @@ export const actions = {
 				upload_date.toISOString().split('T')[0],
 				`${id}`
 			);
+			const paymentPath = path.join(process.cwd(), payment_path);
+			const paymentFolderExists = existsSync(paymentPath);
 			const folderExists = existsSync(folderPath);
 			if (folderExists) {
 				for (const file of await fs.readdir(folderPath)) {
 					await fs.unlink(path.join(folderPath, file));
 				}
 				await fs.rmdir(folderPath);
+			}
+			if (paymentFolderExists) {
+				const file = await fs.readdir(paymentPath);
+				await fs.unlink(path.join(paymentPath, file));
+				await fs.rmdir(paymentPath);
 			}
 			console.log('deleted folder');
 		} catch (error) {
@@ -298,11 +313,17 @@ export const actions = {
 				.from(requirementsTable)
 				.where(eq(requirementsTable.userId, id));
 
+			const pay_db = await db_user
+				.select({ payment_path: paymentsTable.payment_path })
+				.from(paymentsTable)
+				.where(eq(paymentsTable.userId, id));
+
 			await db_user.execute(
-				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
+				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable}, ${paymentsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) left join ${paymentsTable} on (${paymentsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
 			);
 
 			const { upload_date } = req_db[0];
+			const { payment_path } = pay_db[0];
 
 			console.log('deleted user and requests');
 			const folderPath = path.join(
@@ -311,12 +332,19 @@ export const actions = {
 				upload_date.toISOString().split('T')[0],
 				`${id}`
 			);
+			const paymentPath = path.join(process.cwd(), payment_path);
+			const paymentFolderExists = existsSync(paymentPath);
 			const folderExists = existsSync(folderPath);
 			if (folderExists) {
 				for (const file of await fs.readdir(folderPath)) {
 					await fs.unlink(path.join(folderPath, file));
 				}
 				await fs.rmdir(folderPath);
+			}
+			if (paymentFolderExists) {
+				const file = await fs.readdir(paymentPath);
+				await fs.unlink(path.join(paymentPath, file));
+				await fs.rmdir(paymentPath);
 			}
 			console.log('deleted folder');
 		} catch (error) {

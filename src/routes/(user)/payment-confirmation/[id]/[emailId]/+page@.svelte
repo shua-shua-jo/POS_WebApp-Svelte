@@ -18,7 +18,7 @@
 </script>
 
 <svelte:head>
-	<title>UP2GO: Upload Requirements</title>
+	<title>UP2GO: Payment Confirmation</title>
 </svelte:head>
 <SvelteToast options={{ duration: 3000 }} />
 
@@ -27,45 +27,43 @@
 </div>
 
 {#if data.upload}
-	<h2 class="header">upload your requirements here</h2>
+	<h2 class="header">Upload Proof of Payment Here</h2>
 	<div class="container">
 		<div class="wrapper">
 			<form method="POST" enctype="multipart/form-data">
-				{#each data.requirements as req}
-					{#if req == 'Preferred Format for True Copy of Grades'}
-						<div>
-							<input type="hidden" name="fileTypes" value={req} />
-							<label for="tcg">{req}:</label>
-							<select name="tcg" id="tcg" required>
-								<option value="Hard Copy">Hard Copy</option>
-								<option value="Soft Copy">Soft Copy</option>
-							</select>
-						</div>
-					{:else}
-						<div>
-							<label for="files">{req}:</label>
-							<input type="hidden" name="fileTypes" value={req} />
-							<input type="file" name="files" id="files" accept=".pdf" required />
-						</div>
-					{/if}
-				{/each}
+				<div class="user-info">
+					{#each data.userData as data}
+						<p><b>Request No. </b>{data.id}</p>
+						<p><b>Name: </b>{data.first_name + ' ' + data.middle_name + ' ' + data.last_name}</p>
+						<p><b>Student Number: </b>{data.student_number}</p>
+						<p><b>Year Level: </b>{data.year_level}</p>
+						<p><b>Total Price: </b>PHP {data.total_price}.00</p>
+					{/each}
+				</div>
+				<input type="file" name="payment" id="payment" accept="image/*,.pdf" required />
 				<div class="confirm-container">
 					<input class="confirm" type="checkbox" id="confirm" bind:checked={confirm} />
 					<label class="confirm_lbl" for="confirm">I am done reviewing my uploaded files</label>
 				</div>
 				<input type="hidden" name="id" value={data.id} />
-				<button disabled={!confirm}>Upload Files</button>
+				<button disabled={!confirm}>Confirm Payment</button>
 			</form>
 		</div>
 	</div>
 {:else}
-	<h1>Thank you for submitting your requirements!</h1>
+	<h1>Thank you for confirming your payment!</h1>
 	<a class="back-to-home" href="/">Back to Home</a>
 {/if}
 
 <style>
 	h1 {
 		text-align: center;
+	}
+	.user-info p {
+		display: flex;
+		justify-content: space-between;
+		padding: 1em 0;
+		border-bottom: 1px solid black;
 	}
 	.back-to-home {
 		display: block;
@@ -108,14 +106,6 @@
 		height: 5px;
 		background-color: var(--upcolor_maroon);
 	}
-	select {
-		font-weight: bold;
-		border-radius: 5px;
-		border: 2px solid var(--blue_accent);
-		padding: 0.5em 1em;
-		margin-left: 0;
-		outline-color: var(--blue_accent);
-	}
 	.container {
 		display: flex;
 		justify-content: center;
@@ -123,20 +113,10 @@
 		font-size: 11pt;
 	}
 	.wrapper {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: start;
+		width: 30dvw;
 	}
 	.wrapper div {
 		margin-bottom: 1.5em;
-	}
-	.wrapper div:has(input[type='file'], select) {
-		display: grid;
-		grid-template-columns: 1fr 250px;
-		gap: 2em;
-		padding-bottom: 10px;
-		border-bottom: 1px solid black;
 	}
 	.wrapper input {
 		width: auto;
