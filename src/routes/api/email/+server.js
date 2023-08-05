@@ -52,24 +52,6 @@ export async function POST({ request, fetch }) {
 				}
 			]
 		};
-	} else if (data.emailType == 'verify') {
-		const qr = await fetch(
-			'http://localhost:5173/src/lib/images/icons/qr-code-payment-form.png'
-		).then((res) => res.arrayBuffer());
-
-		options = {
-			from: 'up2go.test@gmail.com',
-			to: 'joshuaabello02@gmail.com',
-			subject: data.subject,
-			html: emailHtml,
-			attachments: [
-				{
-					filename: `QR_payment-confirmation`,
-					content: new Buffer.from(qr),
-					contentType: 'image/png'
-				}
-			]
-		};
 	} else {
 		options = {
 			from: 'up2go.test@gmail.com',
@@ -78,6 +60,27 @@ export async function POST({ request, fetch }) {
 			html: emailHtml
 		};
 	}
+
+	// GOOGLE FORM
+	// else if (data.emailType == 'verify') {
+	// 	const qr = await fetch(
+	// 		'http://localhost:5173/src/lib/images/icons/qr-code-payment-form.png'
+	// 	).then((res) => res.arrayBuffer());
+
+	// 	options = {
+	// 		from: 'up2go.test@gmail.com',
+	// 		to: 'joshuaabello02@gmail.com',
+	// 		subject: data.subject,
+	// 		html: emailHtml,
+	// 		attachments: [
+	// 			{
+	// 				filename: `QR_payment-confirmation`,
+	// 				content: new Buffer.from(qr),
+	// 				contentType: 'image/png'
+	// 			}
+	// 		]
+	// 	};
+	// }
 
 	console.time('sending email');
 	const res = await transporter.sendMail(options);

@@ -369,6 +369,7 @@
 							<input type="hidden" name="id" value={user.id} />
 							<input type="hidden" name="fname" value={user.first_name} />
 							<input type="hidden" name="email" value={user.email} />
+							<input type="hidden" name="emailId" value={user.email_id} />
 							<button
 								class:disabled={!user.request_approved && !user.documents_approved}
 								aria-label="Requirements Verified"
