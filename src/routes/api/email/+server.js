@@ -41,7 +41,7 @@ export async function POST({ request, fetch }) {
 	if (data.emailType == 'invoice' || data.emailType == 'receipt') {
 		options = {
 			from: 'up2go.test@gmail.com',
-			to: 'joshuaabello02@gmail.com',
+			to: data.email,
 			subject: data.subject,
 			html: emailHtml,
 			attachments: [
@@ -55,7 +55,7 @@ export async function POST({ request, fetch }) {
 	} else {
 		options = {
 			from: 'up2go.test@gmail.com',
-			to: 'joshuaabello02@gmail.com',
+			to: data.email,
 			subject: data.subject,
 			html: emailHtml
 		};
