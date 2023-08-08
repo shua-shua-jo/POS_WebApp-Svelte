@@ -306,7 +306,11 @@
 					>
 					<td style="text-align: start;">PHP {user.total_price}</td>
 					<td>{new Date(user.request_date).toLocaleString('en-US', options)}</td>
-					<td>{user.payment_date ? user.payment_date : 'Not Paid'}</td>
+					<td
+						>{user.payment_date
+							? new Date(user.payment_date).toLocaleString('en-US', options)
+							: 'Not Paid'}</td
+					>
 					<td>
 						<form
 							action="?/approve"
@@ -412,7 +416,9 @@
 							<input type="hidden" name="fname" value={user.first_name} />
 							<input type="hidden" name="email" value={user.email} />
 							<button
-								class:disabled={!user.request_approved || !user.documents_approved}
+								class:disabled={!user.request_approved ||
+									!user.documents_approved ||
+									!user.payment_date}
 								aria-label="Request Paid"
 								disabled={user.request_paid}
 							>

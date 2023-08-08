@@ -1,4 +1,14 @@
 <script>
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { success } from '$lib/toast/themes.js';
+
+	onMount(async () => {
+		const login = $page.url.searchParams.get('login');
+		if (login && login == 'success') {
+			await success('Login successful');
+		}
+	});
 	let dialog = '';
 </script>
 

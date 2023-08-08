@@ -3,7 +3,6 @@ import { db_user } from '$lib/server/db.js';
 import { usersTable, requestsTable } from '$lib/server/schema.js';
 import { parseISOString } from '$lib/server/utils.js';
 import { formData } from '$lib/server/lists.js';
-import { eq } from 'drizzle-orm';
 
 export const load = async ({ cookies }) => {
 	const token = cookies.get('auth_token');
@@ -72,13 +71,14 @@ export const actions = {
 
 		for (var i = 0; i < num; i++) {
 			const { requestForms, requestPrices } = generateForms();
-
+			const snum = generateSnum();
 			const user = await db_user.insert(usersTable).values({
 				first_name: generateName(),
 				middle_name: Math.random() < 0.5 ? generateName() : '',
 				last_name: generateName(),
-				student_number: generateSnum(),
+				student_number: snum,
 				email: generateEmail(),
+				email_id: crypto.randomUUID() + '-' + snum,
 				year_level: year_level[Math.floor(Math.random() * year_level.length)],
 				is_scholar: Math.random() < 0.5 ? true : false,
 				purpose: generateName(),
