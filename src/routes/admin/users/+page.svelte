@@ -36,6 +36,7 @@
 	$: if (showPanel) {
 		userData = userData;
 		documentData = documentData;
+		requirementData = requirementData;
 	}
 
 	// Holds table sort state.  Initialized to reflect table sorted by id column ascending.
@@ -75,7 +76,11 @@
 		if (response.ok) {
 			const update = await response.json();
 			setTimeout(async () => {
-				data = { usersData: update.usersData, requestsData: update.requestsData };
+				data = {
+					usersData: update.usersData,
+					requestsData: update.requestsData,
+					requirementsData: update.requirementsData
+				};
 				updated = false;
 			}, 2000);
 			console.log('Updating data @', date + ', ', time);
@@ -85,6 +90,7 @@
 	let showPanel = false;
 	let userData = [];
 	let documentData = [];
+	let requirementData = [];
 	let prevUserDataId;
 
 	let deleteClicked = false;
@@ -96,6 +102,7 @@
 			const date = new Date().toLocaleDateString();
 			const time = new Date().toLocaleTimeString();
 
+			showPanel = false;
 			updated = true;
 			await refresh(time);
 
@@ -103,7 +110,11 @@
 			if (response.ok) {
 				const update = await response.json();
 				setTimeout(async () => {
-					data = { usersData: update.usersData, requestsData: update.requestsData };
+					data = {
+						usersData: update.usersData,
+						requestsData: update.requestsData,
+						requirementsData: update.requirementsData
+					};
 					updated = false;
 				}, 2000);
 				console.log('Updating data @', date + ', ', time);
@@ -234,10 +245,17 @@
 							on:click={() => {
 								userData.length = 0;
 								documentData.length = 0;
-								for (var i = 0; i < data.requestsData.length; i++) {
+								requirementData.length = 0;
+								for (var i = 0, n = data.requestsData.length; i < n; i++) {
 									const id = data.requestsData[i].userId;
 									if (user.id == id) {
 										documentData.push(data.requestsData[i]);
+									}
+								}
+								for (var i = 0, n = data.requirementsData.length; i < n; i++) {
+									const id = data.requirementsData[i].userId;
+									if (user.id == id) {
+										requirementData.push(data.requirementsData[i]);
 									}
 								}
 
@@ -626,6 +644,7 @@
 							showPanel = false;
 							userData.length = 0;
 							documentData.length = 0;
+							requirementData.length = 0;
 						}}
 						aria-label="Close Side Panel"
 						title="Close Panel"
@@ -667,10 +686,27 @@
 							<div class="document-total-price"><b>Total Price: </b>PHP {user.total_price}</div>
 							<div><b>Payment Method: </b>{user.payment_method}</div>
 						</div>
-						<!-- <div class="wrapper">
-							<h4>Requirements Status</h4>
-							<div class="req-grid" />
-						</div> -->
+						<div class="wrapper">
+							<h4>Uploaded Requirements</h4>
+							<div class="req-list" role="list">
+								{#each requirementData as req, i}
+									{@const date = new Date(req.upload_date).toLocaleString('en-US', options)}
+									<div class="req-row">
+										<div>
+											<b>{req.requirement_type}</b> - {req.tcg_format !== null
+												? req.tcg_format
+												: req.file_name}
+										</div>
+										<div>{date}</div>
+									</div>
+									{#if i < requirementData.length - 1}
+										<div class="row-border" />
+									{/if}
+								{:else}
+									<b>N/A</b>
+								{/each}
+							</div>
+						</div>
 						<div class="wrapper">
 							<h4>Request Status</h4>
 							<div class="bool-grid">
@@ -941,6 +977,15 @@
 		grid-template-columns: auto auto;
 		/* grid-template-rows: repeat(9, auto); */
 		grid-gap: 0.5em;
+	}
+	.panel-data > .wrapper .req-list {
+		font-size: 9pt;
+		list-style: none;
+	}
+	.panel-data > .wrapper .req-list > .req-row {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.5em;
 	}
 	.document-total-price {
 		position: relative;

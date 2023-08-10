@@ -22,7 +22,8 @@ export const load = async ({ cookies, fetch }) => {
 		toast.pop();
 		return {
 			usersData: data.usersData,
-			requestsData: data.requestsData
+			requestsData: data.requestsData,
+			requirementsData: data.requirementsData
 		};
 	} else {
 		throw error(response.status, 'Request Failed');
