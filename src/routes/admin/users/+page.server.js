@@ -207,31 +207,31 @@ export const actions = {
 					'Content-Type': 'application/json'
 				}
 			});
-			console.log(pdf_response.ok);
-			const gen_pdf = await pdf_response.json();
+			if (pdf_response.ok) {
+				const gen_pdf = await pdf_response.json();
 
-			console.log(gen_pdf);
-			const email_response = await fetch('http://localhost:5173/api/email', {
-				method: 'POST',
-				body: JSON.stringify({
-					subject: `Receipt for Request No. ${id}`,
-					request_number: id,
-					emailType: 'receipt',
-					previewMsg: `Here's the receipt of your request. Thank you!`,
-					contentMsg: `Attached document is the receipt of your request documents. Thank you for waiting!`,
-					lname: lname,
-					fname: fname,
-					email: email,
-					pdf: gen_pdf
-				}),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-			if (email_response.ok) {
-				const emailSent = await email_response.json();
-				if (emailSent.includes('250')) {
-					//set cookies
+				const email_response = await fetch('http://localhost:5173/api/email', {
+					method: 'POST',
+					body: JSON.stringify({
+						subject: `Receipt for Request No. ${id}`,
+						request_number: id,
+						emailType: 'receipt',
+						previewMsg: `Here's the receipt of your request. Thank you!`,
+						contentMsg: `Attached document is the receipt of your request documents. Thank you for waiting!`,
+						lname: lname,
+						fname: fname,
+						email: email,
+						pdf: gen_pdf
+					}),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				});
+				if (email_response.ok) {
+					const emailSent = await email_response.json();
+					if (emailSent.includes('250')) {
+						//set cookies
+					}
 				}
 			}
 
@@ -249,31 +249,44 @@ export const actions = {
 				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable}, ${paymentsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) left join ${paymentsTable} on (${paymentsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
 			);
 
-			const { upload_date } = req_db[0];
-			const { payment_path } = pay_db[0];
+			if (req_db) {
+				const { upload_date } = req_db[0];
+				const datePath = path.join(
+					process.cwd(),
+					'requirements',
+					upload_date.toISOString().split('T')[0]
+				);
+				const folderPath = path.join(datePath, `${id}`);
 
-			console.log('deleted user and requests');
-			const folderPath = path.join(
-				process.cwd(),
-				'requirements',
-				upload_date.toISOString().split('T')[0],
-				`${id}`
-			);
-			const paymentPath = path.join(process.cwd(), payment_path);
-			const paymentFolderExists = existsSync(paymentPath);
-			const folderExists = existsSync(folderPath);
-			if (folderExists) {
-				for (const file of await fs.readdir(folderPath)) {
-					await fs.unlink(path.join(folderPath, file));
+				const folderExists = existsSync(folderPath);
+				if (folderExists) {
+					for (const file of await fs.readdir(folderPath)) {
+						await fs.unlink(path.join(folderPath, file));
+					}
+					await fs.rmdir(folderPath);
+					const removePath = await fs.readdir(datePath);
+					if (removePath.length <= 0) {
+						await fs.rmdir(datePath);
+					}
 				}
-				await fs.rmdir(folderPath);
 			}
-			if (paymentFolderExists) {
-				const file = await fs.readdir(paymentPath);
-				await fs.unlink(path.join(paymentPath, file));
-				await fs.rmdir(paymentPath);
+			if (pay_db) {
+				const { payment_path } = pay_db[0];
+				const datePath = path.join(process.cwd(), 'payments', payment_path.split('\\')[1]);
+				const paymentPath = path.join(process.cwd(), payment_path);
+				const paymentFolderExists = existsSync(paymentPath);
+				if (paymentFolderExists) {
+					const file = await fs.readdir(paymentPath);
+					await fs.unlink(path.join(paymentPath, file[0]));
+					await fs.rmdir(paymentPath);
+					const removePath = await fs.readdir(datePath);
+					if (removePath.length <= 0) {
+						await fs.rmdir(datePath);
+					}
+				}
 			}
-			console.log('deleted folder');
+
+			console.log('deleted folders');
 		} catch (error) {
 			console.log(error.message);
 		}
@@ -322,35 +335,47 @@ export const actions = {
 				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable}, ${paymentsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) left join ${paymentsTable} on (${paymentsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
 			);
 
-			const { upload_date } = req_db[0];
-			const { payment_path } = pay_db[0];
+			if (req_db) {
+				const { upload_date } = req_db[0];
+				const datePath = path.join(
+					process.cwd(),
+					'requirements',
+					upload_date.toISOString().split('T')[0]
+				);
+				const folderPath = path.join(datePath, `${id}`);
 
-			console.log('deleted user and requests');
-			const folderPath = path.join(
-				process.cwd(),
-				'requirements',
-				upload_date.toISOString().split('T')[0],
-				`${id}`
-			);
-			const paymentPath = path.join(process.cwd(), payment_path);
-			const paymentFolderExists = existsSync(paymentPath);
-			const folderExists = existsSync(folderPath);
-			if (folderExists) {
-				for (const file of await fs.readdir(folderPath)) {
-					await fs.unlink(path.join(folderPath, file));
+				const folderExists = existsSync(folderPath);
+				if (folderExists) {
+					for (const file of await fs.readdir(folderPath)) {
+						await fs.unlink(path.join(folderPath, file));
+					}
+					await fs.rmdir(folderPath);
+					const removePath = await fs.readdir(datePath);
+					if (removePath.length <= 0) {
+						await fs.rmdir(datePath);
+					}
 				}
-				await fs.rmdir(folderPath);
 			}
-			if (paymentFolderExists) {
-				const file = await fs.readdir(paymentPath);
-				await fs.unlink(path.join(paymentPath, file));
-				await fs.rmdir(paymentPath);
+			if (pay_db) {
+				const { payment_path } = pay_db[0];
+				const datePath = path.join(process.cwd(), 'payments', payment_path.split('\\')[1]);
+				const paymentPath = path.join(process.cwd(), payment_path);
+				const paymentFolderExists = existsSync(paymentPath);
+				if (paymentFolderExists) {
+					const file = await fs.readdir(paymentPath);
+					await fs.unlink(path.join(paymentPath, file[0]));
+					await fs.rmdir(paymentPath);
+					const removePath = await fs.readdir(datePath);
+					if (removePath.length <= 0) {
+						await fs.rmdir(datePath);
+					}
+				}
 			}
-			console.log('deleted folder');
+
+			console.log('deleted folders');
 		} catch (error) {
 			console.log(error.message);
 		}
 		return { success: true };
-		// send email with reason
 	}
 };

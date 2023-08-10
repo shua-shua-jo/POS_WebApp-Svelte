@@ -45,20 +45,22 @@ export const load = async ({ cookies, params }) => {
 		.where(eq(requirementsTable.userId, id));
 
 	if (req_db.length > 0) {
-		const { upload_date } = req_db[0];
+		// const { upload_date } = req_db[0];
 
-		const folderPath = path.join(
-			process.cwd(),
-			'requirements',
-			upload_date.toISOString().split('T')[0],
-			`${id}`
-		);
-		const folderExists = existsSync(folderPath);
+		// const folderPath = path.join(
+		// 	process.cwd(),
+		// 	'requirements',
+		// 	upload_date.toISOString().split('T')[0],
+		// 	`${id}`
+		// );
+		// const folderExists = existsSync(folderPath);
 
-		if (folderExists) {
-			upload = false;
-			return { message: req_message, id: id, upload: upload };
-		}
+		// if (folderExists) {
+		// 	upload = false;
+		// 	return { message: req_message, id: id, upload: upload };
+		// }
+		upload = false;
+		return { message: req_message, id: id, upload: upload };
 	}
 
 	const requests = await db_user.select().from(requestsTable).where(eq(requestsTable.userId, id));
@@ -104,15 +106,24 @@ export const actions = {
 
 			const parsedDate = parseISOString(localDate);
 
-			const folderPathDate = path.join(process.cwd(), 'requirements', localDate.split('T')[0]);
+			if (files.length > 0) {
+				const folderPathDate = path.join(process.cwd(), 'requirements', localDate.split('T')[0]);
 
-			if (!existsSync(folderPathDate)) {
-				await fs.mkdir(folderPathDate);
-			}
+				if (!existsSync(folderPathDate)) {
+					await fs.mkdir(folderPathDate);
+				}
 
-			const folderPathUser = path.join(folderPathDate, id);
-			if (existsSync(folderPathUser)) {
-				throw s_error(400, 'Requirements already submitted');
+				const folderPathUser = path.join(folderPathDate, id);
+				if (existsSync(folderPathUser)) {
+					throw s_error(400, 'Requirements already submitted');
+				}
+				await fs.mkdir(folderPathUser);
+
+				for (var i = 0, n = files.length; i < n; i++) {
+					const arraybuf = await files[i].arrayBuffer();
+					const buf = Buffer.from(arraybuf);
+					await fs.writeFile(path.join(folderPathUser, files[i].name), buf);
+				}
 			}
 
 			const requirements = file_types.map((item, index) => ({
@@ -124,13 +135,7 @@ export const actions = {
 			}));
 
 			const reqdb = await db_user.insert(requirementsTable).values(requirements);
-			await fs.mkdir(folderPathUser);
 
-			for (var i = 0, n = files.length; i < n; i++) {
-				const arraybuf = await files[i].arrayBuffer();
-				const buf = Buffer.from(arraybuf);
-				await fs.writeFile(path.join(folderPathUser, files[i].name), buf);
-			}
 			cookies.set('req-message', 'Requirements has been uploaded.');
 		} catch (error) {
 			console.log(error);
