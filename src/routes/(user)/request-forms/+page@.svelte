@@ -239,7 +239,7 @@
 				</div>
 				<div class="inputs">
 					<label class="info-label year-container" for="yearLevel">
-						<span class="span-input">
+						<span class="span-input has-year-input">
 							<select
 								class="info-input year-input"
 								name="yearLevel"
@@ -793,7 +793,7 @@
 		background-color: var(--upcolor_maroon);
 		transition: width 0.3s ease, transform 0.3s ease, left 0.3s ease;
 	}
-	.info-label .span-input:has(.year-input)::after {
+	.info-label .has-year-input::after {
 		bottom: 0;
 	}
 	.inputs .year-container {
