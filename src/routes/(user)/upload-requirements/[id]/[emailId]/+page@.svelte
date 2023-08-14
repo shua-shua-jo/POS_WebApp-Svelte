@@ -190,7 +190,6 @@
 	}
 	.wrapper button:disabled {
 		cursor: not-allowed;
-		color: var(--disabled_text);
-		background-color: var(--disabled);
+		opacity: 0.3;
 	}
 </style>

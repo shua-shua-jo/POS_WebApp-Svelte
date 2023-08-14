@@ -1273,7 +1273,6 @@
 	}
 	button:disabled {
 		cursor: not-allowed;
-		color: var(--disabled_text);
-		border-color: var(--disabled_text);
+		opacity: 0.3;
 	}
 </style>

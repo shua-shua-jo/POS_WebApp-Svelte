@@ -1118,13 +1118,11 @@
 	}
 	form button.disabled {
 		pointer-events: none;
-		background-color: var(--disabled_text);
-		color: var(--disabled);
+		opacity: 0.3;
 	}
 	form button:is(.disabled-finish) {
 		pointer-events: none;
-		color: var(--disabled_text);
-		border-color: var(--disabled_text);
+		opacity: 0.3;
 	}
 	form:has(button.disabled),
 	form:has(button:is(.disabled-finish)) {
