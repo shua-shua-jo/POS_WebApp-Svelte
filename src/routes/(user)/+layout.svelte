@@ -15,10 +15,7 @@
 	});
 </script>
 
-<nav
-	class="navbar navbar-expand-sm"
-	style="border-bottom: 5px solid var(--upcolor_green); background-color: var(--upcolor_maroon)"
->
+<nav class="navbar navbar-expand-sm">
 	<div class="container">
 		<a class="navbar-brand" href="/"
 			><img src={up2go_white} alt="UP2GoLogoWhite" width="auto" height="45" class="navlogo" /></a
@@ -62,7 +59,7 @@
 	/* template */
 
 	a {
-		color: #fff;
+		color: white;
 		font-weight: 600;
 		border-radius: 30px;
 		text-align: center;
@@ -76,6 +73,10 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 10px 0px;
+	}
+	.navbar {
+		border-bottom: 5px solid var(--upcolor_green);
+		background-color: var(--upcolor_maroon);
 	}
 	.navbar-brand {
 		margin-left: 20px;

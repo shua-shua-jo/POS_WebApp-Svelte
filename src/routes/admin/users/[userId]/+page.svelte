@@ -1,5 +1,17 @@
 <script>
 	export let data;
+
+	const options = {
+		year: 'numeric',
+		month: 'numeric',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		second: '2-digit',
+		weekday: 'short',
+		hour12: false,
+		timeZone: 'UTC'
+	};
 </script>
 
 <svelte:head>
@@ -29,17 +41,15 @@
 				<div class="boxed">
 					<h3>User Info</h3>
 					<div class="user-info">
-						<p><b>Request No. </b>{data.user.id}</p>
+						<p><b>Request No. </b><span class="input">{data.user.id}</span></p>
 						<p>
-							<b>Name: </b>{data.user.first_name +
-								' ' +
-								data.user.middle_name +
-								' ' +
-								data.user.last_name}
+							<b>Name: </b><span class="input">
+								{data.user.first_name + ' ' + data.user.middle_name + ' ' + data.user.last_name}
+							</span>
 						</p>
-						<p><b>Email: </b>{data.user.email}</p>
-						<p><b>Student Number: </b>{data.user.student_number}</p>
-						<p><b>Year Level: </b>{data.user.year_level}</p>
+						<p><b>Email: </b><span class="input">{data.user.email}</span></p>
+						<p><b>Student Number: </b><span class="input">{data.user.student_number}</span></p>
+						<p><b>Year Level: </b><span class="input">{data.user.year_level}</span></p>
 					</div>
 				</div>
 				<div class="boxed">
@@ -63,46 +73,51 @@
 					<div class="requirement-info">
 						{#each data.requirement as requirement, i}
 							<div class="req-container">
-								<p>{requirement.id}</p>
-								<p>{requirement.upload_date}</p>
 								{#if requirement.file_name !== null}
-									<p>{requirement.file_name.replace(/\.[^.]*$/, '')}</p>
+									<p><b>Requirement ID: </b>{requirement.id}</p>
+									<p>
+										<b>Upload Date: </b>{new Date(requirement.upload_date).toLocaleString(
+											'en-US',
+											options
+										)}
+									</p>
+									<p><b>File Name: </b>{requirement.file_name.replace(/\.[^.]*$/, '')}</p>
+									<div class="pdf-wrapper">
+										{#each data.pdfReqs as pdf}
+											<div class="pdf-viewer">
+												{#if pdf.id == requirement.id}
+													<button
+														class="btn{pdf.id}"
+														on:click={() => {
+															const embPdf = document.querySelector(`.pdf${pdf.id}`);
+															const btnPdf = document.querySelector(`.btn${pdf.id}`);
+															if (!embPdf.className.includes('hidden')) {
+																embPdf.classList.add('hidden');
+																embPdf.classList.remove('show');
+																btnPdf.textContent = 'Show Preview';
+															} else {
+																embPdf.classList.remove('hidden');
+																embPdf.classList.add('show');
+																btnPdf.textContent = 'Close Preview';
+															}
+														}}>Show Preview</button
+													>
+													<embed
+														class="pdf{pdf.id} hidden"
+														src="{pdf.url}#toolbar=0&navpanes=0"
+														type="application/pdf"
+														width="500px"
+														height="500px"
+														aria-label={pdf.req_type}
+													/>
+												{/if}
+											</div>
+										{/each}
+									</div>
+								{:else}
+									<p>For <b>TCG</b></p>
+									<p><b>{requirement.requirement_type}: </b> {requirement.tcg_format}</p>
 								{/if}
-								<div class="pdf-wrapper">
-									{#each data.pdfReqs as pdf}
-										<div class="pdf-viewer">
-											{#if pdf.id == requirement.id}
-												<button
-													class="btn{pdf.id}"
-													on:click={() => {
-														const embPdf = document.querySelector(`.pdf${pdf.id}`);
-														const btnPdf = document.querySelector(`.btn${pdf.id}`);
-														if (!embPdf.className.includes('hidden')) {
-															embPdf.classList.add('hidden');
-															embPdf.classList.remove('show');
-															btnPdf.textContent = 'Show Preview';
-														} else {
-															embPdf.classList.remove('hidden');
-															embPdf.classList.add('show');
-															btnPdf.textContent = 'Close Preview';
-														}
-													}}>Show Preview</button
-												>
-												<embed
-													class="pdf{pdf.id} hidden"
-													src="{pdf.url}#toolbar=0&navpanes=0"
-													type="application/pdf"
-													width="500px"
-													height="500px"
-													aria-label={pdf.req_type}
-												/>
-											{/if}
-										</div>
-									{/each}
-									{#if requirement.tcg_format !== null}
-										<p>{requirement.tcg_format}</p>
-									{/if}
-								</div>
 							</div>
 						{:else}
 							<div class="not-available">N/A</div>
@@ -227,6 +242,7 @@
 		background-color: rgba(255, 255, 255, 0.8);
 		backdrop-filter: blur(2px);
 		box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+		min-height: 50dvh;
 	}
 	h3 {
 		font-weight: 900;
@@ -236,24 +252,50 @@
 		color: var(--upcolor_maroon);
 	}
 	.user-info {
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
+		display: flex;
+		flex-direction: column;
+	}
+	.user-info p {
+		display: flex;
+		flex-direction: column;
 	}
 	p {
 		margin: 0.5em 0;
 		/* box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px; */
 	}
+	span.input {
+		background-color: rgba(150, 150, 150, 0.292);
+		padding: 0.25em 0.5em;
+		border-radius: 5px;
+	}
 	.requirement-info {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 1em;
-		/* border: 1px solid black; */
+		margin-bottom: 0.5em;
 	}
 	.req-container {
-		/* border: 1px solid black; */
+		background-color: rgba(133, 0, 55, 0.15);
+		border-radius: 10px;
+		padding: 10px;
 	}
-	.pdf-wrapper {
-		/* border: 1px solid black; */
+	.pdf-wrapper button {
+		border-radius: 5px;
+		padding: 0.5em 1em;
+		border: 0;
+		background-color: var(--blue_accent);
+		color: white;
+		font-weight: 500;
+		cursor: pointer;
+	}
+	.req-container:nth-of-type(odd) .pdf-wrapper {
+		text-align: start;
+	}
+	.req-container:nth-of-type(even) .pdf-wrapper {
+		text-align: end;
+	}
+	.pdf-wrapper button:active {
+		opacity: 0.95;
 	}
 	.pdf-viewer {
 		position: relative;

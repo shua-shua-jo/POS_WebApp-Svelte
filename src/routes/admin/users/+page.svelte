@@ -1238,6 +1238,7 @@
 		content: '\276E';
 		padding: 0 0 0 10px;
 		margin-bottom: 1.5px;
+		transition: transform 0.3s;
 	}
 	.dropdown .contents {
 		pointer-events: none;
@@ -1264,8 +1265,7 @@
 		z-index: 1;
 	}
 	.dropdown input:checked + label::after {
-		padding: 0;
-		transform: rotate(-90deg);
+		transform: rotate(-90deg) translate(-5px, 5px);
 		transition: transform 0.3s;
 	}
 	.contents ul {
