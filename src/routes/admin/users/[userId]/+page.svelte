@@ -81,11 +81,16 @@
 											options
 										)}
 									</p>
-									<p><b>File Name: </b>{requirement.file_name.replace(/\.[^.]*$/, '')}</p>
-									<div class="pdf-wrapper">
-										{#each data.pdfReqs as pdf}
-											<div class="pdf-viewer">
-												{#if pdf.id == requirement.id}
+									{#each data.pdfReqs as pdf}
+										{#if pdf.id == requirement.id}
+											<p>
+												<b>File Name: </b><a href={pdf.url} target="_blank"
+													>{requirement.file_name}</a
+												>
+											</p>
+											<p><b>Requirement Type: </b>{requirement.requirement_type}</p>
+											<div class="pdf-wrapper">
+												<div class="pdf-viewer">
 													<button
 														class="btn{pdf.id}"
 														on:click={() => {
@@ -110,10 +115,10 @@
 														height="500px"
 														aria-label={pdf.req_type}
 													/>
-												{/if}
+												</div>
 											</div>
-										{/each}
-									</div>
+										{/if}
+									{/each}
 								{:else}
 									<p>For <b>TCG</b></p>
 									<p><b>{requirement.requirement_type}: </b> {requirement.tcg_format}</p>
@@ -221,17 +226,16 @@
 		left: 99%;
 		bottom: 0;
 		width: 100%;
-		height: 100%;
 		clip-path: polygon(
-			2.3% 37.8%,
+			0% 15%,
+			1.1% 26.5%,
+			2.3% 38%,
 			3.6% 50%,
 			5.3% 64.5%,
 			6.9% 76.5%,
 			8.8% 88%,
 			11.7% 100.3%,
-			0% 100.3%,
-			0% 15%,
-			1.1% 26.5%
+			0% 100.3%
 		);
 		background-color: var(--upcolor_maroon);
 		z-index: 1;
@@ -261,7 +265,9 @@
 	}
 	p {
 		margin: 0.5em 0;
-		/* box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px; */
+	}
+	a {
+		color: var(--blue_accent);
 	}
 	span.input {
 		background-color: rgba(150, 150, 150, 0.292);
@@ -278,37 +284,35 @@
 		background-color: rgba(133, 0, 55, 0.15);
 		border-radius: 10px;
 		padding: 10px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		font-size: 10pt;
 	}
 	.pdf-wrapper button {
 		border-radius: 5px;
 		padding: 0.5em 1em;
 		border: 0;
-		background-color: var(--blue_accent);
+		background-color: var(--upcolor_maroon);
 		color: white;
-		font-weight: 500;
+		font-weight: 600;
 		cursor: pointer;
-	}
-	.req-container:nth-of-type(odd) .pdf-wrapper {
-		text-align: start;
-	}
-	.req-container:nth-of-type(even) .pdf-wrapper {
-		text-align: end;
 	}
 	.pdf-wrapper button:active {
 		opacity: 0.95;
 	}
-	.pdf-viewer {
+	.pdf-wrapper {
 		position: relative;
 	}
 	.pdf-viewer embed {
 		position: absolute;
-		top: 2em;
+		top: 2.5em;
 		z-index: 10;
 	}
-	.pdf-viewer:nth-of-type(odd) embed {
+	.req-container:nth-of-type(odd) embed {
 		left: 0;
 	}
-	.pdf-viewer:nth-of-type(even) embed {
+	.req-container:nth-of-type(even) embed {
 		right: 0;
 	}
 	.not-available {
