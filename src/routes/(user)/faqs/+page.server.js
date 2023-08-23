@@ -1,6 +1,5 @@
-import { queries } from './queries.js';
+import { queries } from '$lib/server/queries.js';
 
-/** @type {import('./$types').PageLoad} */
 export function load() {
 	return {
 		faqs: queries.map((faq) => ({

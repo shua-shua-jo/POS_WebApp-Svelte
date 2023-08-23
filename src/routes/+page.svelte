@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-	<title>UP2GO: Home</title>
+	<title>UP2GO</title>
 </svelte:head>
 <SvelteToast options={{ duration: 3000 }} />
 <div class="content">
@@ -36,7 +36,7 @@
 		>
 	</div>
 	<section class="start-button">
-		<a class="start-btn" href="/manual">PROCEED</a>
+		<a class="start-btn" href="/home">PROCEED</a>
 	</section>
 	<section class="social_icons">
 		<a href="/about" title="About Us"
