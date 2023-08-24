@@ -11,38 +11,38 @@
 		<img src={bg_upb} alt="UPB Oble Background" />
 	</div>
 
-	<div class="abt-title">
-		<h1>OFFICE OF THE UNIVERSITY REGISTRAR</h1>
-	</div>
-
-	<div class="line-container">
-		<div class="line" />
-	</div>
-
-	<div class="abt-content">
-		<p>
-			The University of the Registrar at the University of the Philippines Baguio serves as the
-			central hub for all academic records and administrative functions related to students. We are
-			committed to maintaining accurate and secure records, supporting the academic journey of
-			students, and upholding the values of excellence and integrity. <br /><br />
-			As the custodian of student records, our primary responsibilities include the registration and
-			enrollment of students, managing class schedules, maintaining academic transcripts, and facilitating
-			the graduation process. We strive to provide efficient and reliable services to students, faculty,
-			and staff, ensuring that all processes adhere to the highest standards of professionalism and confidentiality.
-		</p>
+	<div class="wrapper">
+		<div class="abt-title">
+			<h1>OFFICE OF THE UNIVERSITY REGISTRAR</h1>
+		</div>
+		<div class="line-container">
+			<div class="line" />
+		</div>
+		<div class="abt-content">
+			<p>
+				The University of the Registrar at the University of the Philippines Baguio serves as the
+				central hub for all academic records and administrative functions related to students. We
+				are committed to maintaining accurate and secure records, supporting the academic journey of
+				students, and upholding the values of excellence and integrity. <br /><br />
+				As the custodian of student records, our primary responsibilities include the registration and
+				enrollment of students, managing class schedules, maintaining academic transcripts, and facilitating
+				the graduation process. We strive to provide efficient and reliable services to students, faculty,
+				and staff, ensuring that all processes adhere to the highest standards of professionalism and
+				confidentiality.
+			</p>
+		</div>
 	</div>
 </section>
 
 <style>
 	.abt-container {
-		display: grid;
-		grid-template-columns: 1fr;
-		grid-template-rows: 1fr 1fr 1fr 1fr;
-		height: calc(100vh - 73.8px);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
 	}
 
 	.oblePic {
-		/* display: block; */
 		width: 100%;
 		height: 420px;
 		overflow: hidden;
