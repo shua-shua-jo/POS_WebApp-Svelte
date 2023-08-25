@@ -100,6 +100,7 @@ export const actions = {
 
 			const pay_db = await db_user.insert(paymentsTable).values({
 				payment_path: path.join(pathDate, id),
+				file_name: payment.name,
 				userId: id
 			});
 

@@ -79,11 +79,18 @@ export async function load({ cookies, params, fetch }) {
 			});
 		}
 	}
+
+	const paymentURL = `http://localhost:5173/${paymentData.payment_path.replaceAll('\\', '/')}/${
+		paymentData.file_name
+	}`;
+	console.log(paymentURL);
+
 	return {
 		user: userData,
 		request: requestData,
 		requirement: requirementData,
 		payment: paymentData,
-		pdfReqs: pdfReqs
+		pdfReqs: pdfReqs,
+		payURL: paymentURL
 	};
 }

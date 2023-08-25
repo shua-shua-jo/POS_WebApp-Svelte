@@ -67,5 +67,6 @@ export const requirementsTable = mysqlTable('requirementsTable', {
 export const paymentsTable = mysqlTable('paymentsTable', {
 	id: serial('id').primaryKey(),
 	payment_path: varchar('payment_path', { length: 100 }).unique().notNull(),
+	file_name: varchar('file_name', { length: 100 }).notNull(),
 	userId: int('userId').notNull()
 });
