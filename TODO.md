@@ -1,1 +1,3 @@
-- [ ] FIX SHOW USERS PAGE (PDF PREVIEW)
+- [ ] MODAL CONTAINER FOR DELETING
+- [ ] CHECK DELETION OF DATA FOR ADMIN
+- [ ] build and preview again
