@@ -17,6 +17,16 @@
 </script>
 
 <SvelteToast options={{ duration: 2000 }} />
+
+<svelte:body
+	on:click={(event) => {
+		const className = event.target.className;
+		if (dropdown && !className.includes('dropdown')) {
+			dropdown = false;
+		}
+	}}
+/>
+
 <nav
 	class="navbar navbar-expand-sm"
 	style="border-bottom: 5px solid var(--upcolor_green); background-color: var(--upcolor_maroon)"
@@ -138,9 +148,14 @@
 	.nav-admin .dropdown {
 		position: absolute;
 		background-color: white;
-		border: 2px solid black;
 		color: black;
 		right: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 50px;
+		width: 100px;
+		box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 	}
 	.dropdown a {
 		color: black;
@@ -164,7 +179,6 @@
 	}
 	.nav-link-req:focus {
 		scale: 0.98;
-		background-color: #cfcfcf;
 	}
 	.nav-link-req * {
 		padding: 0px 5px;

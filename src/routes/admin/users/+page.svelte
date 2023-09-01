@@ -62,7 +62,7 @@
 	let updated = false;
 
 	async function updateData() {
-		// toast.pop();
+		toast.pop(0);
 		const date = new Date().toLocaleDateString();
 		const time = new Date().toLocaleTimeString();
 
@@ -99,7 +99,7 @@
 
 	onMount(async () => {
 		setInterval(async () => {
-			toast.pop();
+			toast.pop(0);
 			const date = new Date().toLocaleDateString();
 			const time = new Date().toLocaleTimeString();
 
