@@ -1385,6 +1385,7 @@
 		align-items: center;
 	}
 	.modal-wrapper {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -1394,6 +1395,7 @@
 		background-color: white;
 	}
 	.close-modal {
+		position: absolute;
 		appearance: none;
 		border: none;
 

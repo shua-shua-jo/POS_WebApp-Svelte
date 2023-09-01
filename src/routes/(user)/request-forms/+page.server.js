@@ -1,41 +1,25 @@
 import { formData } from '$lib/server/lists.js';
 import { toast } from '@zerodevx/svelte-toast';
-import { redirect, error as s_error } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { db_user } from '$lib/server/db.js';
 import { usersTable, requestsTable } from '$lib/server/schema.js';
 import { validateEmail, validateSnum } from '$lib/server/validate.js';
 import { getRequirements, parseISOString } from '$lib/server/utils.js';
 import { eq } from 'drizzle-orm';
 
-export async function load({ cookies }) {
-	const success = cookies.get('success');
-	const message = cookies.get('message');
-	const email = cookies.get('email');
-	const emailSent = cookies.get('emailSent');
-
-	if (emailSent || email || success || message) {
-		cookies.delete('emailSent');
-		cookies.delete('email');
-		cookies.delete('success');
-		cookies.delete('message');
-	}
-
+export async function load() {
 	toast.pop();
 
 	return {
 		summaries: {
 			list1: formData.get('documents1'),
 			list2: formData.get('documents2')
-		},
-		success: success,
-		message: message,
-		email: email,
-		emailSent: emailSent
+		}
 	};
 }
 
 export const actions = {
-	default: async ({ cookies, request, fetch }) => {
+	default: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const fname = data.get('fname');
 		const mname = data.get('mname') || '';
@@ -53,26 +37,21 @@ export const actions = {
 		const name = fname + ' ' + mname + ' ' + lname;
 		const validEmail = await validateEmail(email);
 
-		cookies.set('email', email);
-
 		if (validEmail[0].count >= 1) {
-			cookies.set('success', false);
-			cookies.set(
-				'message',
-				'<b>Error!</b> Your request has been declined: Email has a pending request.'
-			);
-			throw s_error(400, 'Email already exists');
+			return fail(400, {
+				message: '<b>Error!</b> Your request has been declined: Email has a pending request.',
+				email: email
+			});
 		}
 
 		const validSnum = await validateSnum(snum);
 
 		if (validSnum[0].count >= 1) {
-			cookies.set('success', false);
-			cookies.set(
-				'message',
-				'<b>Error!</b> Your request has been declined: Student number has a pending request.'
-			);
-			throw s_error(400, 'Student number already exists.');
+			return fail(400, {
+				message:
+					'<b>Error!</b> Your request has been declined: Student number has a pending request.',
+				email: email
+			});
 		}
 
 		const date = new Date();
@@ -94,7 +73,6 @@ export const actions = {
 
 		const emailId = crypto.randomUUID() + '-' + snum;
 
-		console.log('inserting values to users tables');
 		const user = await db_user.insert(usersTable).values({
 			first_name: fname.toString(),
 			middle_name: mname.toString(),
@@ -109,7 +87,6 @@ export const actions = {
 			payment_method: paymentMethod.toString(),
 			request_date: parseISOString(localdate)
 		});
-		console.log(user);
 
 		const requests = requestForms.map((item, index) => ({
 			document: item,
@@ -117,12 +94,10 @@ export const actions = {
 			userId: user.insertId
 		}));
 
-		console.log('inserting values to requests tables');
 		const formRequest = await db_user.insert(requestsTable).values(requests);
-		console.log(formRequest);
 
+		let emailMsgSent;
 		try {
-			console.log('generating pdf');
 			const pdf_response = await fetch('/api/generate-invoice', {
 				method: 'POST',
 				body: JSON.stringify({
@@ -138,7 +113,6 @@ export const actions = {
 					'Content-Type': 'application/json'
 				}
 			});
-			console.log(pdf_response);
 			const gen_pdf = await pdf_response.json();
 			const req = getRequirements(requestForms);
 
@@ -150,7 +124,6 @@ export const actions = {
 					.where(eq(usersTable.id, user.insertId));
 			}
 
-			console.log('sending email');
 			const email_response = await fetch('/api/email', {
 				method: 'POST',
 				body: JSON.stringify({
@@ -173,21 +146,22 @@ export const actions = {
 					'Content-Type': 'application/json'
 				}
 			});
-			console.log(email_response);
 			const emailSent = await email_response.json();
 			if (emailSent.includes('250')) {
-				cookies.set('emailSent', true);
+				emailMsgSent = true;
 			}
 		} catch (error) {
 			await db_user.delete(usersTable).where(eq(usersTable.id, user.insertId));
 			await db_user.delete(requestsTable).where(eq(requestsTable.userId, user.insertId));
-			cookies.set('emailSent', false);
-			cookies.set('message', error.message);
-			throw s_error(400, error.message);
+			emailMsgSent = false;
+			return fail(400, { message: error.message, email: email });
 		}
 
-		cookies.set('success', true);
-		cookies.set('message', '<b>Success!</b> Your request has been submitted.');
-		throw redirect(303, '/request-forms?success=true');
+		return {
+			email,
+			success: true,
+			emailSent: emailMsgSent,
+			message: '<b>Success!</b> Your request has been submitted.'
+		};
 	}
 };

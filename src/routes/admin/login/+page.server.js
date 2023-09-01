@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { db_user } from '$lib/server/db.js';
 import { adminTable } from '$lib/server/schema.js';
 import { eq } from 'drizzle-orm';
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { OUR_TOKEN } from '$env/static/private';
 
 export async function load({ cookies }) {

@@ -1,11 +1,11 @@
 <script>
 	import bg_upb1 from '$lib/images/bg/bg-upb1.jpg';
 	import up2go_colored from '$lib/images/logos/up2go-colored.png';
-	import { success, failed } from '$lib/toast/themes.js';
-	import { onMount } from 'svelte';
+	import { success, failed, reload } from '$lib/toast/themes.js';
 	import * as func from '$lib/utils/forms.js';
-	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 
 	let submittingForm = false;
 
@@ -20,10 +20,9 @@
 		summaryPrice = new Map(),
 		mop = '',
 		purpose = '',
-		confirm = false;
+		confirm = false,
+		btndsbl = false;
 	$: name = fname + ' ' + mname + ' ' + lname;
-
-	let histLength = 0;
 
 	let price = 0;
 	func.totalPrice.subscribe((val) => (price = val));
@@ -33,23 +32,28 @@
 	let progNum = 1;
 	func.progressNum.subscribe((val) => (progNum = val));
 
-	onMount(async () => {
-		histLength = history.length;
-		if (data.success !== undefined) {
-			if (data.success == 'true') {
-				console.log('Success!');
-				await success(data.message);
+	async function showNotif() {
+		const status = $page.status;
+		const email = $page.form.email;
+		console.log($page);
+		if (status == 400) {
+			await failed($page.form.message);
+			await failed(`Error sending email to <b>${email}</b>`);
+			setTimeout(async () => {
+				await reload();
+			}, 3000);
+		} else if (status == 200 && $page.form.success == true) {
+			await success($page.form.message);
+			if ($page.form.emailSent == 'false') {
+				await failed(`Error sending email to <b>${email}</b>`);
 			} else {
-				console.log('Error!');
-				await failed(data.message);
+				await success(`An email has been sent to <b>${email}</b>`);
 			}
-			if (data.emailSent == 'true') {
-				await success(`An email has been sent to <b>${data.email}</b>`);
-			} else {
-				await failed(`Error sending email to <b>${data.email}</b>`);
-			}
+			setTimeout(() => {
+				window.location.replace('/request-forms?success=true');
+			}, 5000);
 		}
-	});
+	}
 
 	export let data;
 </script>
@@ -66,7 +70,7 @@
 <svelte:head>
 	<title>UP2GO: Request Forms</title>
 </svelte:head>
-<SvelteToast options={{ duration: 3000 }} />
+<SvelteToast options={{ duration: 5000 }} />
 
 {#if submittingForm}
 	<div class="loader-container">
@@ -83,8 +87,10 @@
 			submittingForm = true;
 			return async ({ update }) => {
 				submittingForm = false;
+				confirm = false;
+				btndsbl = true;
 				await update();
-				window.location.reload();
+				await showNotif();
 			};
 		}}
 	>
@@ -473,7 +479,13 @@
 					</div>
 				</div>
 				<label class="confirm-label" for="confirm"
-					><input type="checkbox" id="confirm" required bind:checked={confirm} />
+					><input
+						type="checkbox"
+						id="confirm"
+						required
+						bind:checked={confirm}
+						disabled={btndsbl ? 'disabled' : null}
+					/>
 					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24">
 						<path
 							fill="currentColor"
@@ -490,9 +502,11 @@
 				{#if next}
 					<a
 						class="btn"
-						class:invinsible={progNum == 1}
+						class:invinsible={progNum == 1 || btndsbl}
+						class:disabled={btndsbl}
 						href=""
 						on:click={func.handlePrevButton(progNum)}
+						disabled={btndsbl ? 'disabled' : null}
 					>
 						Previous
 					</a>
@@ -500,12 +514,20 @@
 				{#if progNum == 4}
 					<button
 						class="submit-button"
+						class:disabled={!confirm}
 						aria-label="Submit"
 						type="submit"
-						disabled={confirm ? '' : 'disabled'}>Submit</button
+						disabled={confirm ? null : 'disabled'}>Submit</button
 					>
 				{:else}
-					<a class="btn" href="" on:click={func.handleNextButton(progNum)}>Next</a>
+					<a
+						class="btn"
+						class:invinsible={btndsbl}
+						class:disabled={btndsbl}
+						href=""
+						on:click={func.handleNextButton(progNum)}
+						disabled={btndsbl ? 'disabled' : null}>Next</a
+					>
 				{/if}
 			</div>
 		</footer>
@@ -1277,5 +1299,10 @@
 	button:disabled {
 		cursor: not-allowed;
 		opacity: 0.3;
+	}
+	.disabled {
+		cursor: not-allowed;
+		opacity: 0.3;
+		pointer-events: none;
 	}
 </style>
