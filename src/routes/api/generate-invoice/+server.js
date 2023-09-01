@@ -5,10 +5,10 @@ import HelveticaBold from 'pdfjs/font/Helvetica-Bold.js';
 export async function POST({ request, fetch }) {
 	const data = await request.json();
 	const scholarship = data.scholarship == 'true' ? 'Yes' : 'No';
+	console.log('creating new document');
 	const doc = new pdf.Document({ padding: 40 });
-	const pdf_template = await fetch('http://localhost:5173/src/lib/pdfs/invoice.pdf').then((res) =>
-		res.arrayBuffer()
-	);
+	console.log('fetching invoice template');
+	const pdf_template = await fetch('/invoice.pdf').then((res) => res.arrayBuffer());
 
 	const invoice = new pdf.ExternalDocument(pdf_template);
 	doc.setTemplate(invoice);

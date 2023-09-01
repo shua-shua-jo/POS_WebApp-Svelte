@@ -31,7 +31,7 @@ export const load = async ({ cookies, fetch }) => {
 };
 
 export const actions = {
-	approve: async ({ request }) => {
+	approve: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const id = data.get('id');
 		const fname = data.get('fname');
@@ -39,7 +39,7 @@ export const actions = {
 
 		await db_user.update(usersTable).set({ request_approved: true }).where(eq(usersTable.id, id));
 
-		const email_response = await fetch('http://localhost:5173/api/email', {
+		const email_response = await fetch('/api/email', {
 			method: 'POST',
 			body: JSON.stringify({
 				subject: `Request Approved for Request No. ${id}`,
@@ -64,7 +64,7 @@ export const actions = {
 
 		return { success: true };
 	},
-	verify: async ({ request }) => {
+	verify: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const id = data.get('id');
 		const fname = data.get('fname');
@@ -73,7 +73,7 @@ export const actions = {
 
 		await db_user.update(usersTable).set({ documents_approved: true }).where(eq(usersTable.id, id));
 
-		const email_response = await fetch('http://localhost:5173/api/email', {
+		const email_response = await fetch('/api/email', {
 			method: 'POST',
 			body: JSON.stringify({
 				subject: `Requirements Verified for Request No. ${id}`,
@@ -99,7 +99,7 @@ export const actions = {
 
 		return { success: true };
 	},
-	paid: async ({ request }) => {
+	paid: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const id = data.get('id');
 		const fname = data.get('fname');
@@ -107,7 +107,7 @@ export const actions = {
 
 		await db_user.update(usersTable).set({ request_paid: true }).where(eq(usersTable.id, id));
 
-		const email_response = await fetch('http://localhost:5173/api/email', {
+		const email_response = await fetch('/api/email', {
 			method: 'POST',
 			body: JSON.stringify({
 				subject: `Payment Confirmation for Request No. ${id}`,
@@ -132,7 +132,7 @@ export const actions = {
 
 		return { success: true };
 	},
-	available: async ({ request }) => {
+	available: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const id = data.get('id');
 		const fname = data.get('fname');
@@ -140,7 +140,7 @@ export const actions = {
 
 		await db_user.update(usersTable).set({ request_available: true }).where(eq(usersTable.id, id));
 
-		const email_response = await fetch('http://localhost:5173/api/email', {
+		const email_response = await fetch('/api/email', {
 			method: 'POST',
 			body: JSON.stringify({
 				subject: `Documents Available for Request No. ${id}`,
@@ -193,7 +193,7 @@ export const actions = {
 		}
 
 		try {
-			const pdf_response = await fetch('http://localhost:5173/api/generate-receipt', {
+			const pdf_response = await fetch('/api/generate-receipt', {
 				method: 'POST',
 				body: JSON.stringify({
 					name: name,
@@ -211,7 +211,7 @@ export const actions = {
 			if (pdf_response.ok) {
 				const gen_pdf = await pdf_response.json();
 
-				const email_response = await fetch('http://localhost:5173/api/email', {
+				const email_response = await fetch('/api/email', {
 					method: 'POST',
 					body: JSON.stringify({
 						subject: `Receipt for Request No. ${id}`,
@@ -294,7 +294,7 @@ export const actions = {
 
 		return { success: true };
 	},
-	delete: async ({ request }) => {
+	delete: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const id = data.get('id');
 		const fname = data.get('fname');
@@ -302,7 +302,7 @@ export const actions = {
 		const reason = data.get('reason');
 
 		try {
-			const email_response = await fetch('http://localhost:5173/api/email', {
+			const email_response = await fetch('/api/email', {
 				method: 'POST',
 				body: JSON.stringify({
 					subject: `Request Declined for Request No. ${id}`,

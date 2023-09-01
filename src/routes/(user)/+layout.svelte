@@ -1,16 +1,13 @@
 <script>
 	import up2go_white from '$lib/images/logos/up2go-white.png';
-	import { afterUpdate } from 'svelte';
+	import { page } from '$app/stores';
+	import { onNavigate } from '$app/navigation';
 
-	afterUpdate(() => {
-		document.querySelectorAll('.nav-link').forEach((link) => {
-			if (link.href === window.location.href) {
-				link.classList.add('nav-active');
-				link.setAttribute('aria-current', 'page');
-			} else {
-				link.classList.remove('nav-active');
-				link.removeAttribute('aria-current', 'page');
-			}
+	onNavigate(() => {
+		if (!document.startViewTransition) return;
+
+		return new Promise((fulfill) => {
+			document.startViewTransition(() => new Promise(fulfill));
 		});
 	});
 </script>
@@ -23,16 +20,32 @@
 		<div class="navbar-items">
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					<a class="nav-link" href="/home">Home</a>
+					<a
+						class="nav-link nav-active"
+						aria-current={$page.url.pathname.startsWith('/home') ? 'page' : undefined}
+						href="/home">Home</a
+					>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/about">About Us</a>
+					<a
+						class="nav-link"
+						aria-current={$page.url.pathname.startsWith('/about') ? 'page' : undefined}
+						href="/about">About Us</a
+					>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/contact">Contact Us</a>
+					<a
+						class="nav-link"
+						aria-current={$page.url.pathname.startsWith('/contact') ? 'page' : undefined}
+						href="/contact">Contact Us</a
+					>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/faqs">FAQs</a>
+					<a
+						class="nav-link"
+						aria-current={$page.url.pathname.startsWith('/faqs') ? 'page' : undefined}
+						href="/faqs">FAQs</a
+					>
 				</li>
 			</ul>
 		</div>
@@ -60,7 +73,6 @@
 		font-weight: 600;
 		border-radius: 30px;
 		text-align: center;
-		text-transform: uppercase;
 	}
 	/*  */
 
@@ -89,12 +101,19 @@
 	}
 	.nav-link {
 		font-weight: 400;
+		position: relative;
 	}
-	.nav-link:hover,
-	.nav-link:active {
+	.nav-link:hover {
 		font-weight: 600;
-		text-decoration: underline;
-		text-underline-offset: 0.3em;
+	}
+	.nav-link:hover::after {
+		content: '';
+		position: absolute;
+		width: 100%;
+		left: 0;
+		bottom: -2px;
+		height: 1px;
+		background-color: white;
 	}
 	.nav-request {
 		margin-right: 20px;

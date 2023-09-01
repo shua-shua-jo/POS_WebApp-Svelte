@@ -69,7 +69,7 @@
 		showPanel = false;
 		updated = true;
 
-		await refresh(time);
+		const id = await refresh(time);
 
 		const response = await fetch('/admin/database');
 
@@ -82,6 +82,7 @@
 					requirementsData: update.requirementsData
 				};
 				updated = false;
+				toast.pop(id);
 			}, 2000);
 			console.log('Updating data @', date + ', ', time);
 		}
@@ -104,7 +105,7 @@
 
 			showPanel = false;
 			updated = true;
-			await refresh(time);
+			const id = await refresh(time);
 
 			const response = await fetch('/admin/database');
 			if (response.ok) {
@@ -116,6 +117,7 @@
 						requirementsData: update.requirementsData
 					};
 					updated = false;
+					toast.pop(id);
 				}, 2000);
 				console.log('Updating data @', date + ', ', time);
 			}
@@ -636,26 +638,28 @@
 	</table>
 	{#if showPanel}
 		<div class="side-panel" transition:slide={{ duration: 300, easing: quintInOut, axis: 'x' }}>
+			<div class="close-wrap">
+				<button
+					class="close-btn"
+					on:click={() => {
+						showPanel = false;
+						userData.length = 0;
+						documentData.length = 0;
+						requirementData.length = 0;
+					}}
+					aria-label="Close Side Panel"
+					title="Close Panel"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+						><path
+							fill="currentColor"
+							d="m11.71 15.29l2.59-2.59a.996.996 0 0 0 0-1.41L11.71 8.7c-.63-.62-1.71-.18-1.71.71v5.17c0 .9 1.08 1.34 1.71.71z"
+						/></svg
+					>
+				</button>
+			</div>
 			<div class="panel-wrapper">
 				{#each userData as user}
-					<button
-						class="close-btn"
-						on:click={() => {
-							showPanel = false;
-							userData.length = 0;
-							documentData.length = 0;
-							requirementData.length = 0;
-						}}
-						aria-label="Close Side Panel"
-						title="Close Panel"
-					>
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-							><path
-								fill="currentColor"
-								d="m11.71 15.29l2.59-2.59a.996.996 0 0 0 0-1.41L11.71 8.7c-.63-.62-1.71-.18-1.71.71v5.17c0 .9 1.08 1.34 1.71.71z"
-							/></svg
-						>
-					</button>
 					<div class="panel-data">
 						<h3>Request No. {user.id}</h3>
 						<div class="wrapper">
@@ -818,17 +822,17 @@
 							</div>
 						</div>
 					</div>
-					<a href="/admin/users/{user.id}" target="_blank">
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-							><path
-								fill="currentColor"
-								d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3h-7z"
-							/>
-						</svg>
-						Open in New Tab
-					</a>
 				{/each}
 			</div>
+			<a href="/admin/users/{userData[0].id}" target="_blank">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+					><path
+						fill="currentColor"
+						d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83l1.41 1.41L19 6.41V10h2V3h-7z"
+					/>
+				</svg>
+				Open in New Tab
+			</a>
 		</div>
 	{/if}
 </div>
@@ -912,26 +916,25 @@
 		width: 40vw;
 		z-index: 10;
 	}
+	.side-panel .close-wrap {
+		position: absolute;
+		height: 100%;
+		padding: 1em 0;
+		margin-top: -1em;
+		z-index: 9;
+	}
 	.panel-wrapper {
 		position: relative;
 		border-radius: 10px 0 0 10px;
 		background-color: #efefef;
-		/* border-top: 1px solid;
-		border-bottom: 1px solid;
-		border-left: 1px solid;
-		border-color: var(--upcolor_maroon); */
 		box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px,
 			rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px,
 			rgba(0, 0, 0, 0.09) 0px -3px 5px;
 		height: 100%;
-		padding: 1em;
-		overflow-y: auto;
-		overflow-x: hidden;
+		width: 100%;
+		padding: 1em 0 1em 1em;
 	}
-	.panel-wrapper button {
-		position: absolute;
-		margin-top: -1.2em;
-		margin-left: -1.2em;
+	.side-panel .close-btn {
 		border-radius: 10px 0 0 10px;
 		background: var(--disabled);
 		color: black;
@@ -940,11 +943,15 @@
 		appearance: none;
 		border: 0;
 	}
-	.panel-wrapper button:hover {
+	.side-panel .close-btn:hover {
 		background-color: var(--disabled_text);
 	}
 	.panel-data {
 		padding-left: 1em;
+		height: 100%;
+		padding-bottom: 2em;
+		overflow-y: auto;
+		overflow-x: hidden;
 	}
 	.panel-data h3 {
 		padding: 1em;
@@ -1015,10 +1022,13 @@
 		gap: 5px;
 		align-items: center;
 	}
-	.panel-wrapper a {
+	.side-panel a {
 		position: absolute;
-		bottom: 1em;
-		width: 566.4px;
+		bottom: 2.5em;
+		left: 0;
+		right: 0;
+		margin-left: 2.5em;
+		width: calc(100% - (2.5em + 24px));
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -1027,9 +1037,12 @@
 		color: var(--upcolor_maroon);
 		background-color: transparent;
 		border: 2px solid var(--upcolor_maroon);
-		margin-left: 1.2em;
 		padding: 0.5em 0;
 		border-radius: 10px;
+	}
+	.side-panel a:hover {
+		background-color: var(--upcolor_maroon);
+		color: white;
 	}
 
 	table {

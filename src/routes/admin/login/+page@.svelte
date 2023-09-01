@@ -2,9 +2,25 @@
 	import up2gologo_colored from '$lib/images/logos/up2go-colored.png';
 	import uplogo from '$lib/images/logos/uplogo.png';
 	import login_bg1 from '$lib/images/bg/login-bg1.jpg';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { failed } from '$lib/toast/themes.js';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 
+	onMount(async () => {
+		if ($page.status === 200) {
+			return;
+		}
+		await failed($page.form.message);
+	});
 	let showPass = false;
 </script>
+
+<svelte:head>
+	<title>UP2GO: Admin Login</title>
+</svelte:head>
+
+<SvelteToast options={{ duration: 3000 }} />
 
 <section class="login-page">
 	<div class="login">
@@ -35,6 +51,7 @@
 				<input
 					class="admin_email"
 					type="email"
+					id="email"
 					name="email"
 					placeholder="Enter your email"
 					autocomplete="off"
@@ -52,6 +69,7 @@
 				<input
 					class="admin_password"
 					type={!showPass ? 'password' : 'text'}
+					id="password"
 					name="password"
 					placeholder="Enter your password"
 					autocomplete="off"

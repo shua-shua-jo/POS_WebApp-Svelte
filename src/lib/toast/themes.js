@@ -22,8 +22,8 @@ export const failed = async (m) =>
 		}
 	);
 
-export const refresh = async (time) =>
-	toast.push(
+export const refresh = async (time) => {
+	const id = toast.push(
 		`<div style="display: flex; align-items:center; gap:1em;"><span class="updating"></span><span class="content">Updating Data...<small style="color:#E3EBF8">${time}</small></span></div>
 		<style>.updating {
 			width: 20px;
@@ -56,9 +56,12 @@ export const refresh = async (time) =>
 			theme: {
 				'--toastBackground': '#3A19E6',
 				'--toastBarBackground': '#2000C3'
-			}
+			},
+			initial: 0
 		}
 	);
+	return id;
+};
 
 export const sending = (content) => {
 	const id = toast.push(

@@ -4,7 +4,7 @@ import email_template from '$lib/emails/email_template.svelte';
 import nodemailer from 'nodemailer';
 import { EMAIL, APP_PASSWORD } from '$env/static/private';
 
-export async function POST({ request, fetch }) {
+export async function POST({ request }) {
 	const data = await request.json();
 
 	console.time('creating transporter');

@@ -1155,9 +1155,12 @@
 	.form-progress-steps li.activated::after,
 	.form-progress-steps li.active::after {
 		background-color: var(--upcolor_maroon);
+		border-color: var(--upcolor_maroon);
+	}
+	.form-progress-steps li.activated:first-child::after,
+	.form-progress-steps li.active:first-child::after {
 		left: 50%;
 		width: 50%;
-		border-color: var(--upcolor_maroon);
 	}
 	.form-progress-steps li.activated::after {
 		width: 100%;

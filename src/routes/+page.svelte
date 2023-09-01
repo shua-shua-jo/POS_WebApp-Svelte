@@ -95,7 +95,7 @@
 		color: #fff;
 		font-family: 'Montserrat', sans-serif;
 		font-weight: 500;
-		font-size: x-large;
+		font-size: 1.75vw;
 		letter-spacing: 8px;
 		text-align: center;
 		margin-left: 8%;
@@ -245,10 +245,6 @@
 		}
 		.content img {
 			width: 50vw;
-		}
-		.start-page {
-			width: auto;
-			font-size: small;
 		}
 		/* .content .social_icons {
 			position: fixed;

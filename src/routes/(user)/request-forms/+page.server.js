@@ -35,7 +35,7 @@ export async function load({ cookies }) {
 }
 
 export const actions = {
-	default: async ({ cookies, request }) => {
+	default: async ({ cookies, request, fetch }) => {
 		const data = await request.formData();
 		const fname = data.get('fname');
 		const mname = data.get('mname') || '';
@@ -94,6 +94,7 @@ export const actions = {
 
 		const emailId = crypto.randomUUID() + '-' + snum;
 
+		console.log('inserting values to users tables');
 		const user = await db_user.insert(usersTable).values({
 			first_name: fname.toString(),
 			middle_name: mname.toString(),
@@ -108,6 +109,7 @@ export const actions = {
 			payment_method: paymentMethod.toString(),
 			request_date: parseISOString(localdate)
 		});
+		console.log(user);
 
 		const requests = requestForms.map((item, index) => ({
 			document: item,
@@ -115,10 +117,13 @@ export const actions = {
 			userId: user.insertId
 		}));
 
+		console.log('inserting values to requests tables');
 		const formRequest = await db_user.insert(requestsTable).values(requests);
+		console.log(formRequest);
 
 		try {
-			const pdf_response = await fetch('http://localhost:5173/api/generate-invoice', {
+			console.log('generating pdf');
+			const pdf_response = await fetch('/api/generate-invoice', {
 				method: 'POST',
 				body: JSON.stringify({
 					name: name,
@@ -133,17 +138,20 @@ export const actions = {
 					'Content-Type': 'application/json'
 				}
 			});
+			console.log(pdf_response);
 			const gen_pdf = await pdf_response.json();
 			const req = getRequirements(requestForms);
 
 			if (req.size <= 0) {
+				console.log('updating value for students without requirements needed');
 				await db_user
 					.update(usersTable)
 					.set({ documents_approved: true })
 					.where(eq(usersTable.id, user.insertId));
 			}
 
-			const email_response = await fetch('http://localhost:5173/api/email', {
+			console.log('sending email');
+			const email_response = await fetch('/api/email', {
 				method: 'POST',
 				body: JSON.stringify({
 					subject: `Invoice for Request No. ${user.insertId}`,
@@ -165,6 +173,7 @@ export const actions = {
 					'Content-Type': 'application/json'
 				}
 			});
+			console.log(email_response);
 			const emailSent = await email_response.json();
 			if (emailSent.includes('250')) {
 				cookies.set('emailSent', true);

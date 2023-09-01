@@ -4,7 +4,7 @@ import { usersTable, requestsTable, requirementsTable, paymentsTable } from '$li
 import { error } from '@sveltejs/kit';
 import { toast } from '@zerodevx/svelte-toast';
 
-export async function load({ cookies, params, fetch }) {
+export async function load({ cookies, params }) {
 	const token = cookies.get('auth_token');
 
 	if (!token) {
@@ -63,34 +63,28 @@ export async function load({ cookies, params, fetch }) {
 	for (const req of requirementData) {
 		if (req.file_name !== null) {
 			const reqDatePath = req.upload_date.split('T')[0];
-			// const value = await fetch(
-			// 	`http://localhost:5173/requirements/${reqDatePath}/${req.userId}/${req.file_name}`
-			// );
-			// const arrayBuf = await value.arrayBuffer();
-			// const buf = Buffer.from(arrayBuf);
-			// const blob = new Blob([buf], { type: 'application/pdf' });
-			// const url = URL.createObjectURL(blob);
-			// pdfReqs.push({ req_type: req.requirement_type, pdf_name: req.file_name, url: url });
+			const reqPath = `/requirements/${reqDatePath}/${req.userId}/${req.file_name}`;
+
 			pdfReqs.push({
 				id: req.id,
 				req_type: req.requirement_type,
 				pdf_name: req.file_name,
-				url: `http://localhost:5173/requirements/${reqDatePath}/${req.userId}/${req.file_name}`
+				url: reqPath
 			});
 		}
 	}
 
-	const paymentURL = `http://localhost:5173/${paymentData.payment_path.replaceAll('\\', '/')}/${
-		paymentData.file_name
-	}`;
-	console.log(paymentURL);
+	let paymentURL;
+	if (paymentData) {
+		paymentURL = `/${paymentData.payment_path.replaceAll('\\', '/')}/${paymentData.file_name}`;
+	}
 
 	return {
 		user: userData,
 		request: requestData,
-		requirement: requirementData,
-		payment: paymentData,
-		pdfReqs: pdfReqs,
-		payURL: paymentURL
+		requirement: requirementData || null,
+		payment: paymentData || null,
+		pdfReqs: pdfReqs || null,
+		payURL: paymentURL || null
 	};
 }

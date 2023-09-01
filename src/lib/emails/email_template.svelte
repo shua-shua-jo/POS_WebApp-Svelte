@@ -129,7 +129,7 @@
 				</Section>
 				<Button
 					style={button}
-					href="http://localhost:5173/upload-requirements/{data.request_number}/{data.emailId}"
+					href="http://localhost:4173/upload-requirements/{data.request_number}/{data.emailId}"
 				>
 					UPLOAD HERE
 				</Button>
@@ -137,7 +137,7 @@
 		{:else if data.emailType == 'verify'}
 			<Button
 				style={button}
-				href="http://localhost:5173/payment-confirmation/{data.request_number}/{data.emailId}"
+				href="http://localhost:4173/payment-confirmation/{data.request_number}/{data.emailId}"
 				>CONFIRM PAYMENT</Button
 			>
 		{/if}

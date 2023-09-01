@@ -94,8 +94,9 @@
 									</p>
 									{#each data.pdfReqs as pdf}
 										{#if pdf.id == requirement.id}
+											{@const fileUrl = `/api/read-file?path=${pdf.url}&type=application/pdf`}
 											<p>
-												<b>File Name: </b><a href={pdf.url} target="_blank"
+												<b>File Name: </b><a href={fileUrl} target="_blank"
 													>{requirement.file_name}</a
 												>
 											</p>
@@ -120,7 +121,8 @@
 													>
 													<embed
 														class="pdf{pdf.id} hidden"
-														src="{pdf.url}#toolbar=0&navpanes=0"
+														title={pdf.pdf_name}
+														src="{fileUrl}#toolbar=0&navpanes=0"
 														type="application/pdf"
 														width="500px"
 														height="500px"
@@ -131,8 +133,10 @@
 										{/if}
 									{/each}
 								{:else}
-									<p>For <b>TCG</b></p>
-									<p><b>{requirement.requirement_type}: </b> {requirement.tcg_format}</p>
+									<div>
+										<p>For <b>TCG</b></p>
+										<p><b>{requirement.requirement_type}: </b> {requirement.tcg_format}</p>
+									</div>
 								{/if}
 							</div>
 						{:else}
@@ -144,6 +148,7 @@
 					<h3>Payment Info</h3>
 					<div class="payment-info">
 						{#if data.payment !== null}
+							{@const imgUrl = `/api/read-file?path=${data.payURL}&type=image/*`}
 							<div class="req-container">
 								<p><b>Payment ID: </b>{data.payment.id}</p>
 								<p>
@@ -153,9 +158,7 @@
 									)}
 								</p>
 								<p>
-									<b>File Name: </b><a href={data.payURL} target="_blank"
-										>{data.payment.file_name}</a
-									>
+									<b>File Name: </b><a href={imgUrl} target="_blank">{data.payment.file_name}</a>
 								</p>
 								<div class="pay-wrapper">
 									<button
@@ -176,7 +179,7 @@
 										>
 									</button>
 									<img
-										src={data.payURL}
+										src={imgUrl}
 										alt={data.payment.file_name}
 										width="100%"
 										aria-label="Payment File Preview"

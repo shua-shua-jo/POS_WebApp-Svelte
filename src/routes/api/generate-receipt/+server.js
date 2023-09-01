@@ -6,9 +6,7 @@ export async function POST({ request, fetch }) {
 	const data = await request.json();
 	const scholarship = data.isScholar == 'true' ? 'Yes' : 'No';
 	const doc = new pdf.Document({ padding: 40 });
-	const pdf_template = await fetch('http://localhost:5173/src/lib/pdfs/receipt.pdf').then((res) =>
-		res.arrayBuffer()
-	);
+	const pdf_template = await fetch('/receipt.pdf').then((res) => res.arrayBuffer());
 
 	const invoice = new pdf.ExternalDocument(pdf_template);
 	doc.setTemplate(invoice);
