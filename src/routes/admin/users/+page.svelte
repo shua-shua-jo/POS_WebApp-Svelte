@@ -241,7 +241,11 @@
 		</thead>
 		<tbody>
 			{#each slice as user (user.id)}
-				<tr class="user-rows" animate:flip={{ duration: 300 }}>
+				<tr
+					class="user-rows"
+					class:rowDelete={deleteClicked && deleteUser[0].id == user.id}
+					animate:flip={{ duration: 300 }}
+				>
 					<td>
 						<button
 							on:click={() => {
@@ -871,7 +875,7 @@
 					<input type="hidden" name="id" value={deleteUser[0].id} />
 					<input type="hidden" name="fname" value={deleteUser[0].first_name} />
 					<input type="hidden" name="email" value={deleteUser[0].email} />
-					<div>Confirm Delete</div>
+					<h3>Confirm Delete</h3>
 					<label for="reason">Reason</label>
 					<input type="text" name="reason" id="reason" required />
 					<button type="submit">Delete</button>
@@ -1398,7 +1402,11 @@
 		position: absolute;
 		appearance: none;
 		border: none;
-
+		top: 1em;
+		right: 1em;
 		cursor: pointer;
+	}
+	.rowDelete {
+		background-color: #85003727;
 	}
 </style>

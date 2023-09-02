@@ -18,6 +18,7 @@ export const actions = {
 		const data = await request.formData();
 		const email = data.get('email');
 		const password = data.get('password');
+		const keepLogin = data.get('keepLogin') ? true : false;
 
 		const trimmedPass = password.trim().toLowerCase();
 		if (
@@ -44,18 +45,18 @@ export const actions = {
 			return fail(400, { message: 'Password is wrong.' });
 		}
 
+		console.log(keepLogin);
 		cookies.set('auth_token', OUR_TOKEN, {
 			path: '/admin',
 			httpOnly: true,
 			secure: true,
-			sameSite: 'lax'
+			maxAge: keepLogin ? 60 * 60 * 24 * 7 : null
 		});
 
 		cookies.set('admin-login', 'success', {
 			path: '/admin',
 			httpOnly: true,
-			secure: true,
-			sameSite: 'lax'
+			secure: true
 		});
 
 		throw redirect(303, '/admin?login=success');

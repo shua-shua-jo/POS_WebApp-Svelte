@@ -45,7 +45,6 @@
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
 					><path
 						d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.7l-8 5.334L4 8.7V6.297l8 5.333l8-5.333V8.7z"
-						fill="var(--upcolor_maroon)"
 					/></svg
 				>
 				<input
@@ -62,7 +61,6 @@
 			<div class="input-password">
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
 					><path
-						fill="var(--upcolor_maroon)"
 						d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7zm4 10.723V20h-2v-2.277a1.993 1.993 0 0 1 .567-3.677A2.001 2.001 0 0 1 14 16a1.99 1.99 0 0 1-1 1.723z"
 					/></svg
 				>
@@ -109,6 +107,18 @@
 					>
 				{/if}
 			</div>
+
+			<div class="checkbox-wrapper-46">
+				<input class="inp-cbx" id="cbx-46" type="checkbox" name="keepLogin" />
+				<label class="cbx" for="cbx-46"
+					><span>
+						<svg width="12px" height="10px" viewbox="0 0 12 10">
+							<polyline points="1.5 6 4.5 9 10.5 1" />
+						</svg></span
+					><span>Keep me logged in</span>
+				</label>
+			</div>
+
 			<button class="login-button" aria-label="Login Button" type="submit"
 				><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
 					><path
@@ -144,7 +154,7 @@
 	.togglePass {
 		position: absolute;
 		cursor: pointer;
-		right: 0;
+		right: 1em;
 		color: var(--disabled_text);
 	}
 	section {
@@ -253,24 +263,61 @@
 		text-align: left;
 		font-size: 13px;
 		margin-top: 5px;
-		margin-left: 25px;
 		display: block;
 		color: #666;
 	}
+	::placeholder {
+		/* Chrome, Firefox, Opera, Safari 10.1+ */
+		color: var(--disabled_text);
+		opacity: 1; /* Firefox */
+		font-size: small;
+	}
 
+	:-ms-input-placeholder {
+		/* Internet Explorer 10-11 */
+		color: var(--disabled_text);
+		font-size: small;
+	}
+
+	::-ms-input-placeholder {
+		/* Microsoft Edge */
+		color: var(--disabled_text);
+		font-size: small;
+	}
 	.input-email,
 	.input-password {
 		width: 100%;
 		background: #ededed;
-		border-radius: 25px;
+		border-radius: 10px;
+		border: 1px solid var(--disabled);
 		margin: 4px 0 8px 0;
 		padding: 10px;
 		display: flex;
 		align-items: center;
-		justify-content: space-evenly;
+		justify-content: start;
+		gap: 1em;
 	}
 	.input-password {
 		position: relative;
+	}
+	.input-email:has(input[type='email']:focus),
+	.input-password:has(input[type='password']:focus) {
+		border: 1px solid var(--upcolor_maroon);
+		transition: all 0.3s ease-in-out;
+	}
+	label[for='email']:has(+ .input-email input[type='email']:focus),
+	label[for='password']:has(+ .input-password input[type='password']:focus) {
+		color: var(--upcolor_maroon);
+		font-weight: 600;
+		transition: all 0.3s ease-in-out;
+	}
+	path {
+		fill: var(--disabled_text);
+	}
+	.input-email:has(input[type='email']:focus) > svg path,
+	.input-password:has(input[type='password']:focus) > svg:not(.togglePass) path {
+		transition: fill 0.3s ease-in-out;
+		fill: var(--upcolor_maroon);
 	}
 
 	.admin_email,
@@ -280,12 +327,13 @@
 		font-size: 16px;
 		padding: 4px 0;
 		outline: none;
+		width: 100%;
 	}
 
 	button[type='submit'] {
 		width: 100%;
 		border: 0;
-		border-radius: 25px;
+		border-radius: 10px;
 		padding: 14px;
 		background: var(--upcolor_maroon);
 		color: #fff;
@@ -345,5 +393,89 @@
 
 	.background span {
 		font-weight: 400;
+	}
+
+	/* checkbox */
+
+	.checkbox-wrapper-46 {
+		margin: 1em 0;
+	}
+	.checkbox-wrapper-46 input[type='checkbox'] {
+		display: none;
+		visibility: hidden;
+	}
+
+	.checkbox-wrapper-46 .cbx {
+		margin: auto;
+		-webkit-user-select: none;
+		user-select: none;
+		cursor: pointer;
+	}
+	.checkbox-wrapper-46 .cbx span {
+		display: inline-block;
+		vertical-align: middle;
+		transform: translate3d(0, 0, 0);
+	}
+	.checkbox-wrapper-46 .cbx span:first-child {
+		position: relative;
+		width: 18px;
+		height: 18px;
+		border-radius: 3px;
+		transform: scale(1);
+		vertical-align: middle;
+		border: 1px solid #9098a9;
+		transition: all 0.2s ease;
+	}
+	.checkbox-wrapper-46 .cbx span:first-child svg {
+		position: absolute;
+		top: 3px;
+		left: 2px;
+		fill: none;
+		stroke: #ffffff;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-dasharray: 16px;
+		stroke-dashoffset: 16px;
+		transition: all 0.3s ease;
+		transition-delay: 0.1s;
+		transform: translate3d(0, 0, 0);
+	}
+	.checkbox-wrapper-46 .cbx span:first-child:before {
+		content: '';
+		width: 100%;
+		height: 100%;
+		background: var(--upcolor_maroon);
+		display: block;
+		transform: scale(0);
+		opacity: 1;
+		border-radius: 50%;
+	}
+	.checkbox-wrapper-46 .cbx span:last-child {
+		padding-left: 8px;
+		font-size: small;
+	}
+	.checkbox-wrapper-46 .cbx:hover span:first-child {
+		border-color: var(--upcolor_maroon);
+	}
+
+	.checkbox-wrapper-46 .inp-cbx:checked + .cbx span:first-child {
+		background: var(--upcolor_maroon);
+		border-color: var(--upcolor_maroon);
+		animation: wave-46 0.4s ease;
+	}
+	.checkbox-wrapper-46 .inp-cbx:checked + .cbx span:first-child svg {
+		stroke-dashoffset: 0;
+	}
+	.checkbox-wrapper-46 .inp-cbx:checked + .cbx span:first-child:before {
+		transform: scale(3.5);
+		opacity: 0;
+		transition: all 0.6s ease;
+	}
+
+	@keyframes wave-46 {
+		50% {
+			transform: scale(0.9);
+		}
 	}
 </style>
