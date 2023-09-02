@@ -8,13 +8,7 @@ import { existsSync } from 'fs';
 import { sql } from 'drizzle-orm';
 import path from 'path';
 
-export const load = async ({ cookies, fetch }) => {
-	const token = cookies.get('auth_token');
-
-	if (!token) {
-		throw error(401, 'Unauthorized User');
-	}
-
+export const load = async ({ fetch }) => {
 	const response = await fetch('/admin/database');
 
 	if (response.ok) {

@@ -18,7 +18,7 @@
 
 <SvelteToast options={{ duration: 2000 }} />
 
-<svelte:body
+<svelte:window
 	on:click={(event) => {
 		const className = event.target.className;
 		if (dropdown && !className.includes('dropdown')) {
