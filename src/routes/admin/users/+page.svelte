@@ -845,18 +845,31 @@
 	<div class="modal-container">
 		<div class="delete-modal">
 			<div class="modal-wrapper">
-				<button
-					class="close-modal"
-					on:click={() => {
-						deleteClicked = false;
-					}}
-					><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-						><path
-							fill="currentColor"
-							d="m12 13.4l-4.9 4.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l4.9-4.9l-4.9-4.9q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l4.9 4.9l4.9-4.9q.275-.275.7-.275t.7.275q.275.275.275.7t-.275.7L13.4 12l4.9 4.9q.275.275.275.7t-.275.7q-.275.275-.7.275t-.7-.275L12 13.4Z"
-						/></svg
-					></button
-				>
+				<div class="modal-grid">
+					<div class="icon">
+						<svg
+							class="aside"
+							xmlns="http://www.w3.org/2000/svg"
+							width="42"
+							height="42"
+							viewBox="0 0 24 24"
+							><path
+								fill="currentColor"
+								d="M2.725 21q-.275 0-.5-.138t-.35-.362q-.125-.225-.138-.488t.138-.512l9.25-16q.15-.25.388-.375T12 3q.25 0 .488.125t.387.375l9.25 16q.15.25.138.513t-.138.487q-.125.225-.35.363t-.5.137H2.725Zm1.725-2h15.1L12 6L4.45 19ZM12 18q.425 0 .713-.288T13 17q0-.425-.288-.713T12 16q-.425 0-.713.288T11 17q0 .425.288.713T12 18Zm0-3q.425 0 .713-.288T13 14v-3q0-.425-.288-.713T12 10q-.425 0-.713.288T11 11v3q0 .425.288.713T12 15Zm0-2.5Z"
+							/></svg
+						>
+					</div>
+					<h3 class="modal-header">Delete User</h3>
+					<p class="question">Are you sure you want to delete this user?</p>
+					<div class="delete-user-container">
+						{#each deleteUser as user}
+							<p><b>Request No. </b>{user.id}</p>
+							<p><b>Name: </b>{user.first_name + ' ' + user.middle_name + ' ' + user.last_name}</p>
+							<p><b>Student Number: </b>{user.student_number}</p>
+							<p><b>Email: </b>{user.email}</p>
+						{/each}
+					</div>
+				</div>
 				<form
 					action="?/delete"
 					method="POST"
@@ -875,10 +888,19 @@
 					<input type="hidden" name="id" value={deleteUser[0].id} />
 					<input type="hidden" name="fname" value={deleteUser[0].first_name} />
 					<input type="hidden" name="email" value={deleteUser[0].email} />
-					<h3>Confirm Delete</h3>
-					<label for="reason">Reason</label>
-					<input type="text" name="reason" id="reason" required />
-					<button type="submit">Delete</button>
+					<div class="reason">
+						<label for="reason">State the reason:</label>
+						<input type="text" name="reason" id="reason" autocomplete="off" required />
+					</div>
+					<div class="modal-btn">
+						<button
+							class="close-modal"
+							on:click={() => {
+								deleteClicked = false;
+							}}>Cancel</button
+						>
+						<button class="submit-modal" type="submit">Delete</button>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -1376,10 +1398,11 @@
 	.modal-container {
 		width: 100%;
 		height: 100%;
-		background-color: rgba(128, 128, 128, 0.279);
+		background-color: rgba(96, 96, 96, 0.642);
 		backdrop-filter: blur(1px);
 		top: 50%;
 		left: 50%;
+		font-size: 11pt;
 		transform: translate(-50%, -50%);
 		margin: 0 auto;
 		position: fixed;
@@ -1390,21 +1413,66 @@
 	}
 	.modal-wrapper {
 		position: relative;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		height: 300px;
-		width: 500px;
+		padding: 1em 2em;
+		height: max-content;
+		width: 40dvw;
+		border-radius: 10px;
 		background-color: white;
+		box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+	}
+	.modal-grid {
+		display: grid;
+		grid-template-columns: max-content auto;
+		grid-template-rows: auto auto;
+		grid-template-areas: 'aside header' 'aside question';
+		row-gap: 0.25em;
+	}
+	.reason {
+		text-align: right;
+		margin: 2em 0;
+	}
+	.modal-grid .icon {
+		grid-area: aside;
+		display: flex;
+		align-items: center;
+		justify-content: start;
+		width: 4em;
+	}
+	.modal-grid .modal-header {
+		font-size: 12pt;
+		grid-area: header;
+	}
+	.modal-grid p {
+		grid-area: question;
+	}
+	.delete-user-container {
+		grid-column: 2/2;
+		margin: 1em 0;
+	}
+	.delete-user-container p {
+		border-bottom: 1px solid #85003741;
+	}
+	.modal-btn {
+		display: flex;
+		align-items: center;
+		justify-content: end;
+		gap: 1em;
 	}
 	.close-modal {
-		position: absolute;
-		appearance: none;
-		border: none;
-		top: 1em;
-		right: 1em;
-		cursor: pointer;
+		color: black;
+		background-color: white;
+	}
+	.submit-modal {
+		color: var(--upcolor_maroon);
+		background-color: #85003741;
+	}
+	.modal-btn button {
+		font-size: 11pt;
+		font-weight: 500;
+		text-transform: none;
+		border-radius: 5px !important;
+		padding: 0.75em 1.25em !important;
+		margin: 0 !important;
 	}
 	.rowDelete {
 		background-color: #85003727;
