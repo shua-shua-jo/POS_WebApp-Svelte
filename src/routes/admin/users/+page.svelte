@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { refresh, success, sending } from '$lib/toast/themes.js';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { enhance } from '$app/forms';
@@ -61,6 +61,9 @@
 
 	let updated = false;
 
+	var timeoutId;
+	var intervalId;
+
 	async function updateData() {
 		toast.pop(0);
 		const date = new Date().toLocaleDateString();
@@ -75,7 +78,7 @@
 
 		if (response.ok) {
 			const update = await response.json();
-			setTimeout(async () => {
+			timeoutId = setTimeout(async () => {
 				data = {
 					usersData: update.usersData,
 					requestsData: update.requestsData,
@@ -98,7 +101,7 @@
 	let deleteUser = [];
 
 	onMount(async () => {
-		setInterval(async () => {
+		intervalId = setInterval(async () => {
 			toast.pop(0);
 			const date = new Date().toLocaleDateString();
 			const time = new Date().toLocaleTimeString();
@@ -122,6 +125,14 @@
 				console.log('Updating data @', date + ', ', time);
 			}
 		}, 600000);
+	});
+
+	onDestroy(() => {
+		clearInterval(intervalId);
+		if (timeoutId) {
+			clearTimeout(timeoutId);
+		}
+		toast.pop(0);
 	});
 </script>
 

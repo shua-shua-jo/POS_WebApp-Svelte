@@ -193,12 +193,12 @@
 		justify-content: flex-start;
 		vertical-align: middle;
 		text-decoration: none;
-		color: black;
+		color: black !important;
 	}
 
 	#back-btn-log a {
 		cursor: pointer;
-		color: black;
+		color: black !important;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -208,8 +208,17 @@
 	.back-btn a > svg {
 		transition: translate 0.3s ease-in-out;
 	}
+	.back-btn a > svg path {
+		fill: black;
+	}
+	#back-btn-log:hover a {
+		color: var(--upcolor_maroon) !important;
+	}
 	.back-btn a:hover > svg {
 		translate: -5px;
+	}
+	.back-btn a:hover > svg path {
+		fill: var(--upcolor_maroon);
 	}
 
 	#back-btn-log a:active,
@@ -398,7 +407,8 @@
 	/* checkbox */
 
 	.checkbox-wrapper-46 {
-		margin: 1em 0;
+		margin: 1.25em 0;
+		padding-left: 0.25em;
 	}
 	.checkbox-wrapper-46 input[type='checkbox'] {
 		display: none;
