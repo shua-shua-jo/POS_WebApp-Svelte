@@ -244,7 +244,7 @@ export const actions = {
 				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable}, ${paymentsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) left join ${paymentsTable} on (${paymentsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
 			);
 
-			if (req_db) {
+			if (req_db.length > 0) {
 				const { upload_date } = req_db[0];
 				const datePath = path.join(
 					process.cwd(),
@@ -265,7 +265,7 @@ export const actions = {
 					}
 				}
 			}
-			if (pay_db) {
+			if (pay_db.length > 0) {
 				const { payment_path } = pay_db[0];
 				const datePath = path.join(process.cwd(), 'payments', payment_path.split('\\')[1]);
 				const paymentPath = path.join(process.cwd(), payment_path);
@@ -280,8 +280,6 @@ export const actions = {
 					}
 				}
 			}
-
-			console.log('deleted folders');
 		} catch (error) {
 			console.log(error.message);
 		}
@@ -330,7 +328,7 @@ export const actions = {
 				sql`delete ${usersTable}, ${requestsTable}, ${requirementsTable}, ${paymentsTable} from ${requestsTable} left join ${usersTable} on (${requestsTable.userId} = ${usersTable.id}) left join ${requirementsTable} on (${requirementsTable.userId} = ${usersTable.id}) left join ${paymentsTable} on (${paymentsTable.userId} = ${usersTable.id}) where ${usersTable.id} = ${id}`
 			);
 
-			if (req_db) {
+			if (req_db.length > 0) {
 				const { upload_date } = req_db[0];
 				const datePath = path.join(
 					process.cwd(),
@@ -351,7 +349,7 @@ export const actions = {
 					}
 				}
 			}
-			if (pay_db) {
+			if (pay_db.length > 0) {
 				const { payment_path } = pay_db[0];
 				const datePath = path.join(process.cwd(), 'payments', payment_path.split('\\')[1]);
 				const paymentPath = path.join(process.cwd(), payment_path);
@@ -366,8 +364,6 @@ export const actions = {
 					}
 				}
 			}
-
-			console.log('deleted folders');
 		} catch (error) {
 			console.log(error.message);
 		}
