@@ -6,6 +6,7 @@
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { quintInOut } from 'svelte/easing';
+	import { tweened } from 'svelte/motion';
 
 	export let data;
 
@@ -61,8 +62,8 @@
 
 	let updated = false;
 
-	var timeoutId;
-	var intervalId;
+	let timeoutId;
+	let intervalId;
 
 	async function updateData() {
 		toast.pop(0);
@@ -100,6 +101,10 @@
 	let deleteClicked = false;
 	let deleteUser = [];
 
+	let timeInSeconds = 10 * 60; // 10 minutes
+	let timer = tweened(timeInSeconds);
+	let timerId;
+
 	onMount(async () => {
 		intervalId = setInterval(async () => {
 			toast.pop(0);
@@ -125,7 +130,20 @@
 				console.log('Updating data @', date + ', ', time);
 			}
 		}, 600000);
+		timerId = setInterval(async () => {
+			if ($timer > 1) {
+				$timer--;
+				return;
+			}
+			clearInterval(timerId);
+		}, 1000);
 	});
+
+	let updateHover = false;
+	$: minutes = Math.floor($timer / 60);
+	$: formatMin = minutes < 10 ? '0' + minutes : minutes;
+	$: seconds = Math.floor($timer - minutes * 60);
+	$: formatSec = seconds < 10 ? '0' + seconds : seconds;
 
 	onDestroy(() => {
 		clearInterval(intervalId);
@@ -151,15 +169,30 @@
 /> -->
 
 <div class="container">
-	<button aria-label="Update Data" on:click={updateData}>
-		<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
-			><path
-				fill="currentColor"
-				d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1c-2.73 2.71-2.73 7.08 0 9.79s7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29c-3.51 3.48-9.21 3.48-12.72 0c-3.5-3.47-3.53-9.11-.02-12.58s9.14-3.47 12.65 0L21 3v7.12zM12.5 8v4.25l3.5 2.08l-.72 1.21L11 13V8h1.5z"
-			/>
-		</svg>
-		Update Data
-	</button>
+	<div class="button-upd-container">
+		<button
+			aria-label="Update Data"
+			id="update-data-btn"
+			on:click={updateData}
+			on:mouseenter={() => {
+				updateHover = true;
+			}}
+			on:mouseleave={() => {
+				updateHover = false;
+			}}
+		>
+			<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+				><path
+					fill="currentColor"
+					d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1c-2.73 2.71-2.73 7.08 0 9.79s7.15 2.71 9.88 0C18.32 15.65 19 14.08 19 12.1h2c0 1.98-.88 4.55-2.64 6.29c-3.51 3.48-9.21 3.48-12.72 0c-3.5-3.47-3.53-9.11-.02-12.58s9.14-3.47 12.65 0L21 3v7.12zM12.5 8v4.25l3.5 2.08l-.72 1.21L11 13V8h1.5z"
+				/>
+			</svg>
+			{updateHover ? 'Update Now' : 'Updating Data in'}
+		</button>
+		<div class="timer">
+			<span class="mins">{formatMin}</span>:<span class="secs">{formatSec}</span>
+		</div>
+	</div>
 	<table>
 		<thead>
 			<tr>
@@ -922,23 +955,42 @@
 	.container {
 		margin: 3em 5em;
 	}
-	.container > button {
+	.container #update-data-btn {
 		appearance: none;
-		display: flex;
-		justify-content: space-between;
+		display: grid;
+		align-items: center;
+		grid-template-columns: 30px 1fr;
 		color: white;
 		background-color: var(--blue_accent);
 		border: none;
 		border-radius: 0.5em;
 		cursor: pointer;
-		align-items: center;
+		width: 200px;
 		gap: 1em;
 		padding: 5px 1em;
-		margin-bottom: 10px;
 	}
-	.container > button:active {
+	.container #update-data-btn:active {
 		scale: 0.95;
 	}
+	.button-upd-container {
+		display: flex;
+		align-items: center;
+		gap: 1em;
+		margin-bottom: 10px;
+	}
+	.button-upd-container .timer {
+		font-size: small;
+		padding: 5px 1em;
+		border-radius: 10px;
+		color: white;
+		background-color: var(--blue_accent);
+		/* border: 1px solid black; */
+	}
+	.button-upd-container:has(#update-data-btn:hover) .timer {
+		visibility: hidden;
+		/* border-color: var(--disabled); */
+	}
+
 	.side-panel {
 		position: fixed;
 		padding: 1em 0;
@@ -1487,5 +1539,8 @@
 	}
 	.rowDelete {
 		background-color: #85003727;
+	}
+	#update-data-btn:hover {
+		background-color: var(--upcolor_maroon);
 	}
 </style>
