@@ -1,3 +1,5 @@
 - [x] MODAL CONTAINER FOR DELETING
 - [x] CHECK DELETION OF DATA FOR ADMIN
+- [ ] WebSocket for dev and prod
+- [ ] Socket.io
 - [ ] build and preview again
